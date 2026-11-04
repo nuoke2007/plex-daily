@@ -1,0 +1,238 @@
+{
+  "channel": "recruiting",
+  "channel_name": "招聘/HR/猎头",
+  "per_company": [
+    {
+      "id": "M-01",
+      "company": "上海永茂泰",
+      "hit": "未命中",
+      "evidence": [
+        "检索式：永茂泰 墨西哥 招聘 MES IT 岗位；官网招聘页仅列国内岗位（压铸工艺、技术经理、质量、总账、设备），无海外IT/MES|官网|在线招聘-上海永茂泰|https://www.ymtauto.com/recruit.html|2025-11-22",
+        "51job显示安徽永茂泰在招进出口专员要求西班牙语，说明墨西哥建厂筹备中但非IT/MES岗|公开检索|前程无忧-进出口专员|https://msearch.51job.com/jobs/xuancheng-gds/174072848.html|2026-11-02",
+        "猎聘公司页存在（ID 12923583）但未检索到墨西哥IT/MES职位|公开检索|猎聘-永茂泰|https://m.liepin.com/company/12923583/|2026-11-04"
+      ],
+      "note": "官网招聘页无墨西哥岗位，猎聘公司页无墨西哥IT/MES职位。51job上的西班牙语进出口专员仅说明建厂筹备，不构成IT/MES入口。",
+      "lead": "无",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "M-02",
+      "company": "苏州瑞玛精密",
+      "hit": "部分",
+      "evidence": [
+        "猎聘公司职位页（ID 9402833，city-360040墨西哥）显示46个墨西哥在招职位，含工厂厂长(墨西哥)35-50k、运营经理(墨西哥工厂)26-45k、冲压工艺工程师(墨西哥)20-28k|公开检索|猎聘-墨西哥瑞玛招聘|https://www.liepin.com/company-jobs/9402833/city-360040/|2026-10-08",
+        "企查查显示工厂厂长(墨西哥)J10006 posted 2026-06-01，要求8年以上制造工厂运营管理、5年以上同等岗位|公开检索|企查查-工厂厂长(墨西哥)|https://m.qcc.com/jobdetail/58b5a0e540922ab9193621d37ba82a4a.html|2026-06-01",
+        "企查查显示财务经理(海外工厂)墨西哥 24-35k posted 2025-11-24|公开检索|企查查-财务经理(海外工厂)|https://m.qcc.com/jobdetail/555f1fb9b15b0e1ea1d9307956b0878e.html|2025-11-24",
+        "水滴信息显示应用系统助理工程师(J10044)7-9k在苏州（国内IT岗，非墨西哥）posted 2026-07-25|公开检索|水滴-瑞玛精密招聘|https://shuidi.cn/company-c0ae75b8a79dbead5ccbb36b0fba44a.html|2026-08-28"
+      ],
+      "note": "46个墨西哥在招岗位证明工厂正在运营扩张，但全部为生产运营/工艺/财务类，无IT/MES专项岗位。发布方均为公司自发布（HR蔡女士、HRBP高级经理原先生）。财务经理岗已挂近一年（2025-11至2026-11），说明海外岗位招聘周期长。",
+      "lead": "无直接IT/MES入口；工厂厂长岗(J10006)为关键决策人岗位，但发布方为公司HR，非猎头",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "M-03",
+      "company": "浙江银轮股份",
+      "hit": "部分",
+      "evidence": [
+        "猎聘公司职位页（ID 6786305，city-360040墨西哥）显示31个墨西哥在招职位，含弯管工艺工程师、CNC工艺工程师、质量工程师(外派墨西哥)20-25k、行政专员、成本会计、招聘专员(外派墨西哥)14-20k|公开检索|猎聘-墨西哥银轮招聘|https://m.liepin.com/company-jobs/6786305/city-360040/|2026-11-04",
+        "Moka校招平台显示计划工程师(外派)墨西哥17-20K，要求派往墨西哥工作3-5年|公开检索|Moka-银轮校招|https://app.mokahr.com/m/campus-recruitment/yinlun/128571|2026-08-21",
+        "官网招聘页仅列研发设计工程师、项目工程师等国内岗位|官网|银轮招聘|https://www.yinlun.cn/Recruit|2026-10-11"
+      ],
+      "note": "31个墨西哥在招职位覆盖工艺/质量/行政/财务/招聘，但无IT/MES专项岗位。发布方均为公司自发布（HR徐女士）。招聘专员(外派墨西哥)岗说明HR团队在建。",
+      "lead": "无直接IT/MES入口",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "M-04",
+      "company": "祥鑫科技",
+      "hit": "部分",
+      "evidence": [
+        "BOSS直聘显示西语翻译(外派-墨西哥)(驻墨西哥) posted 2026-08-24，职责含中方高管与墨方员工沟通、墨西哥工厂营运支持|公开检索|BOSS直聘-祥鑫科技|https://m.zhipin.com/job_detail/16a2178e4b1e9a700nRy39W4ElJU.html|2026-08-24",
+        "外聘网显示电气设备工程师 墨西哥 20-30k posted 2026-01-22，发布企业为祥鑫科技股份有限公司|公开检索|外聘网-祥鑫科技|https://wap.wpinjobs.com/jobs/show/id/98854.htm|2026-01-22",
+        "职友集显示东莞祥鑫科技在招成本会计(墨西哥)9-18k|公开检索|职友集-祥鑫科技|https://m.jobui.com/company/11217339/jobs/all/dongguan/|2026-10-27",
+        "官网加入我们页面仅列解决方案工程师、设计工程师、CAE工程师等国内岗位|官网|祥鑫科技-加入我们|https://www.luckyharvest.cn/join|2026-10-09"
+      ],
+      "note": "墨西哥在招岗位含翻译、电气设备、成本会计，但无IT/MES专项岗位。电气设备工程师岗已挂近10个月（2026-01至2026-11），说明驻墨技术岗招聘困难。发布方均为公司自发布。",
+      "lead": "无直接IT/MES入口",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "T-01",
+      "company": "飞龙股份",
+      "hit": "未命中",
+      "evidence": [
+        "检索式：飞龙股份 泰国 罗勇 招聘 IT MES 岗位；龙泰汽车部件(泰国)有限公司位于299 Moo.4, Nong Lalok, Ban Khai, Rayong|交易所公告|飞龙股份-增资公告|https://disc.static.szse.cn/download/disc/disk03/finalpage/2026-02-12/19c55516-e460-48b4-8a32-c862b050e9f5.PDF|2026-02-11",
+        "投资者关系记录显示泰国工厂计划分两期建设，预计2026年上半年全线竣工|权威媒体|东方财富-飞龙投资者关系|https://pdf.dfcfw.com/pdf/H2_AN202507301718425627_1.pdf|2025-07-30",
+        "中文招聘平台（猎聘/BOSS/51job/企查查）未检索到龙泰汽车部件(泰国)任何在招岗位|公开检索|多平台检索|无|2026-11-04"
+      ],
+      "note": "泰国工厂预计2026H1才全线竣工，目前尚处建设期，未开始大规模招聘运营/IT人员。这是正常节奏，不是招聘通道失效。",
+      "lead": "无（工厂未建成）",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "无"
+    },
+    {
+      "id": "T-02",
+      "company": "中原内配",
+      "hit": "未命中",
+      "evidence": [
+        "企查查显示泰语翻译 6千-1万 泰国 posted 2024-12-17，职责为中泰语言翻译及部分管理工作|公开检索|企查查-中原内配泰语翻译|https://m.qcc.com/jobdetail/03c1676ced16ef0dcb49859b56de971b.html|2024-12-17",
+        "检索式：中原内配 泰国 罗勇 招聘 IT MES 岗位；除上述泰语翻译外未发现任何泰国IT/MES/信息化岗位|公开检索|多平台检索|无|2026-11-04"
+      ],
+      "note": "唯一发现的泰国岗位为泰语翻译，且发布于2024-12，已近2年，大概率已过期。无IT/MES相关岗位。",
+      "lead": "无",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "T-03",
+      "company": "科达利",
+      "hit": "部分",
+      "evidence": [
+        "51job显示采购专员(派驻泰国) posted 2026-10-28，工作地址深圳湾科技生态园，用人单位深圳市科达利实业股份有限公司|公开检索|前程无忧-科达利|https://msearch.51job.com/jobs/shenzhen-nsq/172690875.html|2026-10-28",
+        "公告显示KEDALI (THAILAND) CO., LTD.注册资本50000万泰铢，注册日期2025-09-12，注册地曼谷|交易所公告|科达利-泰国子公司工商变更|http://static.cninfo.com.cn/finalpage/2026-03-20/1225018244.PDF|2026-03-20",
+        "官网招聘页列体系工程师等岗位但未明确标注泰国IT/MES|官网|科达利招聘|https://www.kedali.com.cn/recruit.html|2026-10-15"
+      ],
+      "note": "泰国子公司2025-09才完成工商登记，尚处早期。51job上有派驻泰国的采购岗，但无IT/MES专项岗位。JobThai上的HG Kaoli Electronics经核实非科达利（泰文名称不匹配）。",
+      "lead": "无直接IT/MES入口",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "T-04",
+      "company": "斯菱智驱",
+      "hit": "部分",
+      "evidence": [
+        "猎聘公司职位页（ID 13945179）显示生产设备工程师(驻泰国子公司)15-18k·14薪 posted 2026-11-04|公开检索|猎聘-斯菱智驱|https://m.liepin.com/company-jobs/13945179/|2026-11-04",
+        "企查查显示泰语翻译(驻泰国子公司) posted 2025-11-26，要求3年以上翻译经验|公开检索|企查查-斯菱泰语翻译|https://m.qcc.com/jobdetail/0f0683ac9af8ae2f224c46cb5a7a4756.html|2025-11-26",
+        "企查查显示人事行政专员(驻泰国公司)10-14k·13薪 posted 2025-12-25|公开检索|企查查-斯菱智驱|https://m.qcc.com/firm/5fa79ec57a4b283bdca02e20fcb9954b.html|2026-10-30",
+        "官网显示储备干部工作地含斯菱泰国(大城府)|官网|斯菱智驱-储备干部|https://www.slingbearings.com/JobPosting_Detail_1/8.html|2026-05-26"
+      ],
+      "note": "泰国在招岗位含生产设备工程师、泰语翻译、人事行政专员，但无IT/MES专项岗位。注意：智联校招平台上的智能制造岗(泰国)经核实为深南电路，非斯菱智驱。",
+      "lead": "无直接IT/MES入口",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "E-01",
+      "company": "继峰股份",
+      "hit": "部分",
+      "evidence": [
+        "企查查显示格拉默车辆部件(沈阳)有限公司MES Engineer posted 2026-01-21，职责含MES项目需求调研与分析、方案制定、测试环境验证、现场部署|公开检索|企查查-格拉默MES Engineer|https://m.qcc.com/jobdetail/6b25aaa900e98b51ccac2927851997a3.html|2026-01-21",
+        "Grammer AG德国招聘市场存在但需德语界面查看具体职位|官网|Grammer Job Market|https://www.grammer.com/en/career/job-market/|2026-08-17",
+        "继峰官网职位页指向全球工作机会链接但具体职位需跳转|官网|职在继锋|https://www.jfseat.com/position/|2026-09-24"
+      ],
+      "note": "格拉默在国内（沈阳）招MES Engineer，JD描述为MES实施/部署类（需求调研、方案制定、现场部署），说明集团在推MES上线。但德国Ursensollen本地IT/MES岗位需在Grammer德国招聘系统查看，中文平台无法覆盖。沈阳MES Engineer岗为公司自发布。",
+      "lead": "格拉默沈阳MES Engineer岗位说明集团在推MES实施，可推断欧洲新厂也有MES需求；但德国本地岗位入口在Grammer德国招聘系统（需德语/英语浏览）",
+      "mes_classification": "MES实施/部署类（国内沈阳岗，推断为可打客户信号）",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "E-02",
+      "company": "时代新材",
+      "hit": "未命中",
+      "evidence": [
+        "BOSS直聘显示博戈橡胶IT Operation Engineer posted 2026-09-07，职责为终端软件安装、设备问题解决、IT运维流程体系制定（国内岗位）|公开检索|BOSS直聘-博戈橡胶|https://m.zhipin.com/job_detail/1d4f0bcad40752c50nV60tm-GFNQ.html|2026-09-07",
+        "智联招聘显示中车时代信息化过程控制工程师 posted 2026-04-22，职责含智能制造平台、设备设施运行维护管理信息平台建设（国内岗位）|公开检索|智联招聘-中车时代|https://m.zhaopin.com/jobs/CC386131080J40874003103.htm|2026-04-22",
+        "BOGE Rubber & Plastics全球招聘门户karriere.boge.com存在但未检索到塞尔维亚Nis IT/MES岗位|官网|BOGE Vacancies|https://www.boge.tech/en/vacancies|2026-07-13",
+        "ESG报告显示时代新材在德国、法国、斯洛伐克、墨西哥、澳大利亚、巴西有基地，塞尔维亚Nis为BOGE绿地新项目|交易所公告|时代新材ESG报告|http://static.sse.com.cn/disclosure/listedinfo/announcement/c/new/2024-03-29/600458_20240329_CSWD.pdf|2024-03-27"
+      ],
+      "note": "博戈在国内招IT运维和信息化工程师，说明集团有信息化需求，但塞尔维亚Nis绿地新厂可能尚未到招聘IT阶段。BOGE全球招聘门户需英文/德文浏览，中文搜索无法覆盖塞尔维亚本地职位。",
+      "lead": "无直接塞尔维亚入口；博戈国内IT运维岗说明集团有IT团队建设需求",
+      "mes_classification": "国内IT运维/信息化岗（非MES专项）",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "E-03",
+      "company": "保隆科技",
+      "hit": "命中",
+      "evidence": [
+        "BOSS直聘显示系统实施高级顾问(MES方向)(MJ001214)(驻匈牙利) posted 2026-08-27，职位状态已关闭；JD要求改进/实施/优化MES解决方案，3年以上MES实施经验，熟悉生产制造流程/质量管理/设备管理，标签含ERP SAP/APS/WMS/实施|公开检索|BOSS直聘-保隆MES方向|https://m.zhipin.com/job_detail/ec1845b2093a2d4303Zy2NW7GVNV.html|2026-08-27",
+        "保隆科技欧洲制造中心位于匈牙利，2023年开园，产品含TPMS/传感器/Busbar/空气悬架|官网|保隆科技|http://www.baolong.biz/|2026-11-04",
+        "保隆2019年收购奥地利MMS（Modular Molding System GmbH），MMS拥有标准化软件含MES系统/数据采集/电子操作指导/返修控制/智能诊断/数据分析|官网|保隆MMS样册|https://www.baolong.biz/upload/files/%E4%BA%A7%E5%93%81%E7%94%BB%E5%86%8C%E4%B8%8E%E8%A7%86%E9%A2%91/%E6%B1%BD%E8%BD%A6%E5%90%8E%E5%B8%82%E5%9C%BA%E4%B8%8E%E8%A3%85%E5%A4%87/MMS%E6%A0%B7%E5%86%8C%E4%B8%AD%E6%96%87%E7%89%88.pdf|无日期"
+      ],
+      "note": "这是12家中唯一明确招MES实施方向海外岗位的公司。岗位为MES实施/选型类（非开发），属于可打客户信号。但职位已关闭（2026-08-27更新后关闭），说明要么已招到、要么暂停。HR为吴女士（招聘经理），公司自发布。注意：保隆旗下奥地利MMS自带MES系统，存在自建/内化MES的可能性，需进一步确认匈牙利工厂用的是MMS自研MES还是外部采购。",
+      "lead": "HR吴女士（招聘经理）通过BOSS直聘发布；MES实施岗(MJ001214)已关闭，但说明匈牙利工厂确有MES实施需求",
+      "mes_classification": "MES实施/选型类（可打客户信号）；但旗下MMS自带MES系统，存在内化可能",
+      "publisher_type": "公司自发布"
+    },
+    {
+      "id": "E-04",
+      "company": "均胜电子",
+      "hit": "部分",
+      "evidence": [
+        "Joyson Safety全球招聘门户careers.joysonsafety.com显示196个职位，分类含法语IT(Technologie d'information)、西班牙语IT(Tecnologías de la información)、匈牙利语IT(Informatika)，但具体职位列表需JS交互加载|官网|Joyson Safety Careers|https://careers.joysonsafety.com/viewalljobs/|2026-10-17",
+        "BOSS直聘显示均胜电子IT审计经理(MJ002314) posted 2026-09-30（国内岗）|公开检索|BOSS直聘-均胜IT审计|https://m.zhipin.com/job_detail/9290d0a6ab5437dc0nZy0tW7EFNS.html|2026-09-30",
+        "均胜集团网申通道careersite.tupu360.com/joyson需登录查看|官网|均胜招聘|http://joyson.51job.com/sch3.html|2026-10-06"
+      ],
+      "note": "全球招聘门户有法语IT分类（覆盖摩洛哥法语区），但具体职位需在线交互/登录才能查看，无法通过公开搜索获取摩洛哥IT/MES岗位详情。51job招聘页职位数量显示为N（需JS加载）。",
+      "lead": "全球招聘门户存在法语IT分类但需交互加载；摩洛哥具体岗位未公开检索到",
+      "mes_classification": "未发现MES相关岗位",
+      "publisher_type": "公司自发布"
+    }
+  ],
+  "headhunter_agencies": [
+    {
+      "agency": "锐仕方达 (Risfond Executive Search)",
+      "type": "中国头部猎头",
+      "evidence": [
+        "发布IT岗位-总部、墨西哥工厂-苏州某电缆生产企业，JD要求ERP/MES/WMS运维 posted 2026-11-02|公开检索|锐仕方达职位|https://m.risfond.com/jobs/content-546482|2026-11-02",
+        "发布前期质量经理-汽车零部件上市公司，要求可短期出差墨西哥或摩洛哥 posted 2026-10-09|公开检索|猎聘-锐仕方达|https://www.liepin.com/a/80543343.shtml|2026-10-09"
+      ],
+      "serves_companies": "未确认服务12家中任何一家（苏州某电缆企业非12家目标；汽车零部件上市公司未具名）",
+      "note": "证明锐仕方达在做汽车零部件出海墨西哥的IT/MES运维岗位，但客户匿名，无法确认具体服务哪家"
+    },
+    {
+      "agency": "Chester & Black",
+      "type": "墨西哥本地精品猎头",
+      "evidence": [
+        "官网声明专做制造业和汽车行业15年以上|官网|Chester & Black|https://www.chesterandblack.com/en/|2026-09-30"
+      ],
+      "serves_companies": "未确认服务12家中任何一家",
+      "note": "墨西哥本地汽车行业猎头，可作为反向触达渠道"
+    },
+    {
+      "agency": "Barbachano International (BIP)",
+      "type": "美洲高管搜寻公司",
+      "evidence": [
+        "官网声明专注汽车行业招聘，覆盖美国/墨西哥/拉美|官网|BIP Automotive|https://www.bipsearch.com/executive-recruitment-automotive/|2026-10-21"
+      ],
+      "serves_companies": "未确认服务12家中任何一家",
+      "note": "美洲汽车行业高管搜寻"
+    },
+    {
+      "agency": "智乐聘 (ZhiLePin)",
+      "type": "中国全球猎头接单平台",
+      "evidence": [
+        "官网文章专讲中企出海南美（含墨西哥）招聘全流程|公开检索|智乐聘-南美招聘|https://new.zhilepin.com/home/article/detail/6203|2026-07-10",
+        "另一篇文章专讲热管理企业出海墨西哥建厂招聘，提到定向寻访马勒/翰昂等企业人才|公开检索|智乐聘-热管理出海|https://www.zhilepin.com/home/article/detail/6227|2026-06-04"
+      ],
+      "serves_companies": "未确认服务12家中任何一家（热管理企业可能关联银轮/三花但未具名）",
+      "note": "专做中企出海拉美的猎头平台，热管理行业文章可能关联银轮等客户"
+    },
+    {
+      "agency": "贝思哲猎头 (BeLesprit)",
+      "type": "中资企业海外HR服务",
+      "evidence": [
+        "官网声明专注中资企业海外人力资源，覆盖高科技/智能制造/新能源|官网|贝思哲|https://www.belesprit.cn/|2026-10-25"
+      ],
+      "serves_companies": "未确认服务12家中任何一家",
+      "note": "智能制造方向海外HR服务"
+    },
+    {
+      "agency": "TMA Group (泰美安)",
+      "type": "泰国本地猎头",
+      "evidence": [
+        "官网声明泰国本土高端猎头|官网|TMA Group|https://www.tmathaigroup.com/|2026-05-26"
+      ],
+      "serves_companies": "未确认服务12家中任何一家",
+      "note": "泰国本地猎头，可作为泰国工厂反向触达渠道"
+    }
+  ],
+  "hit_rate": "1/12 命中, 7/12 部分, 4/12 未命中",
+  "channel_verdict": "招聘通道能部分替代冷邮件，但价值有限。12家中仅保隆科技1家明确招了MES实施方向海外岗（且已关闭），其余11家在公开招聘平台上没有发布海外IT/MES专项岗位。关键发现：(1)几乎所有岗位都是公司自发布，而非猎头代发——这意味着通过招聘渠道只能拿到HR邮箱投简历，无法反向触达用人经理；(2)锐仕方达等猎头确实在做汽车零部件出海墨西哥的IT/MES岗位，但客户全部匿名发布，无法通过公开搜索确认服务哪家；(3)中文招聘平台对欧洲（德国/塞尔维亚/匈牙利/摩洛哥）本地岗位覆盖极差，这些区域需用当地语言在当地平台搜索；(4)猎聘公司职位页按公司x城市筛选的方法有效（如银轮31个墨西哥岗、瑞玛46个墨西哥岗），但这些岗位全是生产/工艺/财务类，不含IT/MES。",
+  "cost": "时间成本：每家企业需检索猎聘/BOSS/51job/企查查/官网/本地平台，约15-20分钟/家，12家约3-4小时。是否需登录：猎聘公司职位页无需登录即可浏览职位列表；BOSS直聘职位详情部分需登录；企查查职位详情可公开查看；均胜/格拉默/BOGE全球招聘门户需JS交互或登录；泰国JobsDB/JobThai和墨西哥OCC/Computrabajo未深入检索（公开搜索结果有限）。时效性：岗位发布日期跨度从2024-12到2026-11，部分岗位已挂6-10个月仍在招（祥鑫电气设备工程师2026-01至今、瑞玛财务经理2025-11至今），证明驻海外技术岗招聘困难——这对卖SaaS免运维是有利论据。"
+}

@@ -1,0 +1,333 @@
+{
+  "channel": "endorsement",
+  "channel_name": "老客户背书/共同联系人结构性推断",
+  "methodology_note": "外部数据无法证明'某人认识某人'。本文件只做'存在背书路径的结构性判断'：同一主机厂客户、同一ERP生态、同一地理园区/产业带、同一SI/服务商。同客户/同园区只说明有场合遇见，不等于有人愿意替你说话；每条均标注需用户自有网络确认的具体问题。",
+  "anchor_customers": {
+    "stanley_electric": {
+      "customers": ["丰田", "本田", "日产", "三菱", "马自达", "保时捷", "雅马哈(摩托)", "通用(部分美系)"],
+      "mexico_plant": "Stanley Electric Manufacturing Mexico S.A. de C.V., Parque Industrial Colinas de Lagos, Lagos de Moreno, Jalisco, Mexico (CP 47515)",
+      "thailand_plant": "Thai Stanley Electric PCL, 29/3 Moo 1, Bangpoon-Rangsit Rd., Banklang, Muang, Pathumthani 12000; Asian Stanley International, Ladlumkaew, Pathumthani",
+      "europe_plant": "Stanley Electric Hungary Kft., Gabor Denes ut 1, Gyongyos 3200, Hungary (生产基地); 德国 Mörfelden-Walldorf / 法国 Courbevoie / 英国 Berkshire 仅销售",
+      "source": "https://www.stanley-electric.com/en/about/locations/"
+    },
+    "wanli_tire": {
+      "overseas_plants": ["柬埔寨柴桢省新巴域特区(2025-01奠基,规划1200万条半钢)", "马来西亚雪兰莪州(2026-07签约,与成功产业合资3.2亿美元)"],
+      "note": "海外基地不在泰国罗勇/大城,不在墨西哥。与12家目标公司无地理重叠。且轮胎属流程型制造,与PLEX离散MES适配度不同,仅作跨行业叙事,不构成背书路径。",
+      "source": "https://www.wanlitire.cn/about ; http://gzw.gz.gov.cn/qy/qydt/content/post_10948736.html"
+    },
+    "roechling": {
+      "chinese_name_correction": "用户所称'罗森博格'对应德国 Röchling,其中文官方名为'劳士领'(roechling.com.cn),非'罗森博格'。",
+      "mexico_plant": "Röchling Automotive Mexico S. de R.L. de C.V., Mina de Calderones No.200 Int.1, Puerto Interior, Silao, Guanajuato, Mexico",
+      "thailand_plant": "未查到生产基地",
+      "china_plants": "多座(官网 roechling.com.cn)",
+      "source": "https://www.roechling.com/automotive/about/locations/silao/contact ; https://www.roechling.com/sg/newsroom/detail/roechling-automotive-commissions-first-plant-in-mexico"
+    },
+    "cumulus": {
+      "fact": "Rockwell Automation 金牌系统集成商(PartnerNetwork gold-level SI)。2026-06 官方新闻稿:瑞典 Tier2 锌压铸商 Zinkteknik 在墨西哥蒙特雷新建 greenfield 工厂,选择 Plex MES/QMS/EDI/A&O,由 Cumulus 交付。",
+      "implication": "Cumulus 在蒙特雷有交付团队与汽车 Tier2 客户关系;若目标公司在蒙特雷用 Rockwell PLC/变频器,Cumulus 是现成的本地 SI 接触点。",
+      "source": "https://www.rockwellautomation.com/en-gb/company/news/press-releases/zinkteknik-selects-plex-to-standardize-operations.html"
+    },
+    "pet_china_etex": {
+      "note": "中宠股份(宠物食品)与 Etex(建材)与汽车零部件无客户交集,其价值仅在于'PLEX 已跨非汽车行业落地'的叙事,不构成对12家的背书路径。",
+      "source": "无(用户背景陈述)"
+    }
+  },
+  "per_company": [
+    {
+      "id": "T-02",
+      "company": "中原内配",
+      "code": "002448.SZ",
+      "base": "泰国罗勇府 Ban Khai 县 Highway 3143",
+      "endorsement_paths": [
+        "同主机厂客户:泰国基地已批量供货通用、康明斯、戴姆勒、约翰迪尔(2026-08中报/证券日报2026-07-28)",
+        "与M-03银轮存在至少3家共同主机厂客户:康明斯、戴姆勒、约翰迪尔(银轮官网商用车事业部客户页)",
+        "同罗勇园区:与T-01飞龙(Ban Khai县)、T-03科达利(罗勇府)同处EEC汽车产业带"
+      ],
+      "evidence": [
+        "中原内配泰国基地已稳定批量供货通用、康明斯、戴姆勒、约翰迪尔|年报|中原内配2026半年报摘要|http://paper.cnstock.com/html/2026-08/27/content_2261032.htm|2026-08-27",
+        "银轮商用车和非道路热交换事业部主要客户:康明斯、卡特、戴姆勒、约翰迪尔、曼胡默尔、珀金斯、采埃孚、沃尔沃、久保田、MTU、DEUTZ、CNH|官网|银轮产品与服务页|https://www.yinlun.cn/Products-and-Service|2026-11-04",
+        "飞龙海外主要客户:博格华纳、盖瑞特、康明斯、通用、福特、丰沃、戴姆勒、VINFAST|权威媒体|证券日报2026-06-03|http://m.zqrb.cn/gscy/ggkx/2026-06-03/A1780473133025.html|2026-06-03"
+      ],
+      "needs_user_confirm": [
+        "你与中原内配(泰国或总部)是否已有接触?若有,请他们向银轮(蒙特雷或天台总部)采购/质量负责人引荐——两家在康明斯、戴姆勒、约翰迪尔的供应商会议上必然碰面",
+        "中原内配泰国厂是否用 Rockwell PLC/变频器?若是,其本地自动化服务商是谁?是否已接触过 PLEX?",
+        "罗勇府中资汽车零部件圈子(飞龙、科达利、中原内配)在EEC园区是否有定期行业活动?你是否已通过广州工控/苏州商务局渠道进入?"
+      ],
+      "strength": "强",
+      "strength_reason": "有公开年报直接列出与银轮重合的3家主机厂客户,且两家同在本轮目标名单内,存在'先签一家再背书另一家'的可执行路径。"
+    },
+    {
+      "id": "M-03",
+      "company": "浙江银轮股份",
+      "code": "002126.SZ",
+      "base": "墨西哥新设子公司;现有蒙特雷厂(YINLUN TDI, LLC, Monterrey)",
+      "endorsement_paths": [
+        "同主机厂客户:商用车端康明斯、卡特、戴姆勒、约翰迪尔、采埃孚、沃尔沃;乘用车端福特、通用(官网)",
+        "与T-02中原内配共同客户:康明斯、戴姆勒、约翰迪尔(可互背书)",
+        "同SI生态:蒙特雷是Cumulus(Zinkteknik PLEX交付方)所在地;银轮蒙特雷厂若用Rockwell自动化,Cumulus是现成本地接触点"
+      ],
+      "evidence": [
+        "银轮商用车客户:康明斯、卡特、戴姆勒、约翰迪尔、曼胡默尔、珀金斯、采埃孚、沃尔沃、久保田、MTU、DEUTZ、CNH;乘用车客户:福特、通用、长城、吉利、宁德时代、广汽、上汽|官网|https://www.yinlun.cn/Products-and-Service|2026-11-04",
+        "银轮蒙特雷工厂2026-03获北美客户定点,年销售额预计1.31亿美元|权威媒体|新浪财经/证券时报|https://finance.sina.com.cn/stock/relnews/cn/2026-03-05/doc-inhpxwvp3173407.shtml|2026-03-05",
+        "Cumulus在蒙特雷为Zinkteknik交付Plex MES/QMS/EDI|官网|Rockwell新闻稿|https://www.rockwellautomation.com/en-gb/company/news/press-releases/zinkteknik-selects-plex-to-standardize-operations.html|2026-06-15"
+      ],
+      "needs_user_confirm": [
+        "银轮蒙特雷厂(YINLUN TDI)的运营总监/IT负责人是谁?他们是否已被Cumulus或Rockwell墨西哥团队接触过?",
+        "银轮总部(浙江天台)的CIO/数字化负责人是否已在你的雷达上?银轮全球扩张(美国、德国、广西、山东、湖北、墨西哥)是否需要统一MES平台?",
+        "银轮与中原内配之间是否有直接业务往来(即便都供康明斯,也可能在供应商大会外不认识)?若你能从Stanley或Cumulus一侧先破冰,再问银轮'是否认识中原内配泰国厂的人'会更顺。"
+      ],
+      "strength": "强",
+      "strength_reason": "客户名单公开可查且与中原内配强重合;蒙特雷有Cumulus真实交付案例,地理与SI生态双重重叠。"
+    },
+    {
+      "id": "M-02",
+      "company": "苏州瑞玛精密",
+      "code": "002976.SZ",
+      "base": "墨西哥瓜纳华托州 Apaseo El Grande 工业园",
+      "endorsement_paths": [
+        "同地理产业带:Apaseo El Grande(GTO)与Röchling劳士领Silao厂(GTO,Puerto Interior)同州相距约50km;与Stanley墨西哥厂Lagos de Moreno(JAL,紧邻GTO边界)约100km,同属墨西哥中部Bajío汽车产业带",
+        "同Tier1客户:采埃孚天合、麦格纳、博格华纳、大陆、博世、法雷奥、哈曼——这些Tier1在Bajío地区均有工厂",
+        "Röchling劳士领是你的现有客户(用户背景),其Silao厂与瑞玛Apaseo El Grande厂同州"
+      ],
+      "evidence": [
+        "瑞玛主要客户:延锋国际、佛吉亚、安道拓、李尔、拓普、采埃孚天合、麦格纳、哈曼、博格华纳、法雷奥、大陆、博世、敏实、施耐德、艾默生|官网|https://www.cheersson.com/article_category.php?id=7|2026-11-04",
+        "瑞玛墨西哥子公司Cheersson Queretaro Precision Metal Forming(2016设立,历史沿革);本轮基地为Apaseo El Grande|官网|https://www.cheersson.com/article_category.php?page=7|2021",
+        "Röchling Automotive Mexico地址:Mina de Calderones No.200 Int.1, Puerto Interior, Silao, Guanajuato|官网|https://www.roechling.com/automotive/about/locations/silao/contact|2026-11-04",
+        "Stanley墨西哥厂:Lagos de Moreno, Jalisco(紧邻GTO边界)|官网|https://www.stanley-electric.com/en/about/locations/|2026-11-04"
+      ],
+      "needs_user_confirm": [
+        "你在Röchling劳士领的联系人(总部或中国厂)是否认识其Silao厂厂长Jorge Navarrete或运营负责人?能否请他们向瑞玛Apaseo El Grande厂引荐?——两家同在GTO州,同一批汽车园区服务商、报关行、设备商都重叠",
+        "瑞玛墨西哥厂是否已用Rockwell PLC/变频器?Bajío地区Rockwell本地团队(Leon/GTO办公室)是否已接触过?",
+        "Stanley墨西哥厂(Lagos de Moreno)的车灯主要供本田/丰田北美工厂;瑞玛供Tier1(延锋/佛吉亚/安道拓)——两家在丰田/本田供应链体系内是否有间接交集?"
+      ],
+      "strength": "中",
+      "strength_reason": "地理同州+现有客户Röchling Silao厂同园区是硬证据,但瑞玛客户以Tier1为主,与Stanley主机厂客户不直接重合。"
+    },
+    {
+      "id": "M-04",
+      "company": "祥鑫科技",
+      "code": "002965.SZ",
+      "base": "墨西哥新莱昂州蒙特雷",
+      "endorsement_paths": [
+        "同城市:与M-03银轮蒙特雷厂同城;Cumulus在蒙特雷交付Zinkteknik PLEX项目",
+        "同Tier1客户:延锋、佛吉亚(与瑞玛、永茂泰共享)",
+        "终端客户:T客户(特斯拉)、福特;目标客户通用、奔驰、宝马"
+      ],
+      "evidence": [
+        "祥鑫墨西哥工厂位于蒙特雷,已为延锋、佛吉亚、恺博配套,终端T客户、福特|权威媒体|新浪财经/格隆汇2024-01-24|https://cj.sina.cn/article/norm_detail?finpagefr=w_110&url=https%3A%2F%2Ffinance.sina.com.cn%2Fstock%2Frelnews%2Fcn%2F2024-01-24%2Fdoc-inaervuw1979526.shtml|2024-01-24",
+        "祥鑫未来目标战略客户:T客户、通用、奔驰、宝马、博泽|交易所互动易|https://stock.stockstar.com/QA/companyto_1603017799382867968.html|2023-12-01",
+        "Cumulus在蒙特雷交付Zinkteknik PLEX|Rockwell新闻稿|https://www.rockwellautomation.com/en-gb/company/news/press-releases/zinkteknik-selects-plex-to-standardize-operations.html|2026-06-15"
+      ],
+      "needs_user_confirm": [
+        "银轮蒙特雷厂与祥鑫蒙特雷厂同在新莱昂州,是否参加同一批中资商会/园区活动?你能否通过银轮一侧引荐祥鑫?",
+        "Cumulus在蒙特雷的客户名单除Zinkteknik外还有谁?祥鑫蒙特雷厂是否已被Cumulus或Rockwell新莱昂团队接触?",
+        "祥鑫供特斯拉/福特的车身结构件,其墨西哥厂是否已上MES?还是仍在Excel/本地系统?"
+      ],
+      "strength": "中",
+      "strength_reason": "同城+同SI生态是硬证据,但祥鑫终端客户(特斯拉/福特)与Stanley(日系为主)不重合。"
+    },
+    {
+      "id": "T-01",
+      "company": "飞龙股份",
+      "code": "002536.SZ",
+      "base": "泰国罗勇府 Ban Khai 县 Nong Lalok (EEC)",
+      "endorsement_paths": [
+        "同县园区:与T-02中原内配泰国基地同在罗勇府Ban Khai县",
+        "同主机厂客户:海外客户含康明斯、通用、福特、戴姆勒、博格华纳、盖瑞特、VINFAST——与中原内配(通用/康明斯/戴姆勒/约翰迪尔)重合3家,与银轮(康明斯/戴姆勒/福特/通用)重合4家",
+        "同罗勇府:与T-03科达利同府"
+      ],
+      "evidence": [
+        "飞龙海外主要客户:博格华纳、盖瑞特、康明斯、通用、福特、丰沃、戴姆勒、VINFAST等50多家|权威媒体|证券日报2026-06-03/天眼查公告|http://m.zqrb.cn/gscy/ggkx/2026-06-03/A1780473133025.html|2026-06-03",
+        "飞龙泰国龙泰公司已与通用、福特、康明斯建立合作|权威媒体|新浪财经2025-07-30|https://finance.sina.com.cn/stock/relnews/cn/2025-07-30/doc-infifzsr3730132.shtml|2025-07-30"
+      ],
+      "needs_user_confirm": [
+        "飞龙泰国厂(龙泰汽车部件)与中原内配泰国厂同在Ban Khai县,两厂相距可能仅几公里——你是否已通过罗勇EEC中资企业商会建立接触?",
+        "飞龙供博格华纳/盖瑞特的涡壳,而永茂泰也供博格华纳(墨西哥)、瑞玛也供博格华纳——博格华纳全球供应商体系内,飞龙/永茂泰/瑞玛是否参加同一批博格华纳供应商质量会议?",
+        "Stanley泰国厂在Pathumthani(曼谷北部),飞龙在罗勇(曼谷东南EEC),两家不在同一园区;但飞龙供本田/丰田体系(国内客户含东风日产),是否在泰国本田/丰田二级供应商体系内有间接交集?"
+      ],
+      "strength": "中-强",
+      "strength_reason": "与中原内配同县+客户强重合,但地理上与Stanley泰国厂不重叠(罗勇 vs Pathumthani)。"
+    },
+    {
+      "id": "T-04",
+      "company": "斯菱智驱",
+      "code": "301550.SZ",
+      "base": "泰国大城府 洛加纳工业园",
+      "endorsement_paths": [
+        "同地理集群:大城府(Ayutthaya)与Stanley泰国厂所在Pathumthani(巴吞他尼府)接壤,相距约30-50km,同属曼谷北部汽车零部件产业带",
+        "客户覆盖东南亚、欧洲、北美(年报),但未点名主机厂"
+      ],
+      "evidence": [
+        "Thai Stanley Electric PCL地址:29/3 Moo 1, Bangpoon-Rangsit Rd., Banklang, Muang, Pathumthani 12000;Asian Stanley International:Ladlumkaew, Pathumthani|官网|https://www.stanley-electric.com/en/about/locations/|2026-11-04",
+        "斯菱泰国工厂服务东南亚、欧洲、北美客户,已获IATF16949与E-Ruling认证|年报|深交所2025年报|http://disc.static.szse.cn/download/disc/disk03/finalpage/2026-04-22/b3c2aeb0-e433-490f-805a-fd91f81c38f5.PDF|2026-04-22"
+      ],
+      "needs_user_confirm": [
+        "你在Stanley中国(天津/武汉/广州/上海)或Stanley泰国的联系人,是否知道大城府洛加纳工业园有一家中国轮毂轴承厂?能否请Stanley泰国厂的人引荐斯菱智驱泰国厂的运营负责人?",
+        "斯菱泰国厂的轮毂轴承供哪些主机厂(年报未点名)?若供日系(丰田/本田/五十铃),则与Stanley泰国厂(供本田/丰田车灯)在同一日系供应链体系内",
+        "洛加纳工业园(WHA/洛加纳集团)在泰国有多座园区,斯菱所在园区内是否还有其他中资汽车零部件企业?"
+      ],
+      "strength": "中",
+      "strength_reason": "地理相邻是硬证据,但斯菱客户未公开点名,无法确认与Stanley主机厂客户重合。"
+    },
+    {
+      "id": "E-03",
+      "company": "保隆科技",
+      "code": "603197.SH",
+      "base": "匈牙利 Érd(2018收购PEX,2023欧洲研发制造中心开园,二期2026H1建成)",
+      "endorsement_paths": [
+        "同国家:Stanley欧洲生产基地Stanley Electric Hungary Kft.在Gyöngyös(匈牙利北部),保隆在Érd(布达佩斯西南),相距约100km,同国",
+        "同客户:PEX(保隆匈牙利子公司)客户为奔驰、大众、奥迪、保时捷、宾利、布加迪;Stanley欧洲车灯供保时捷等豪华品牌",
+        "同ERP生态:上一轮已查证保隆年报有SAP升级;PLEX与SAP有官方集成(产品层背书,非人的背书)"
+      ],
+      "evidence": [
+        "Stanley Electric Hungary Kft., Gabor Denes ut 1, Gyongyos 3200, Hungary(生产)|官网|https://www.stanley-electric.com/en/about/locations/|2026-11-04",
+        "保隆2018收购PEX匈牙利Érd基地,PEX客户:奔驰、大众、奥迪、保时捷、宾利、布加迪|官网|https://www.baolong.biz/news/info/17|2019-11-29",
+        "保隆欧洲研发制造中心2023开园,二期2026H1建成|官网|https://www.baolong.biz/news/info/124|2023-09-13"
+      ],
+      "needs_user_confirm": [
+        "你在Stanley的联系人(日本总部或中国厂)是否认识Stanley匈牙利厂(Gyöngyös)的IT/运营负责人?匈牙利汽车产业圈较小,Érd与Gyöngyös相距100km,工程师圈子重叠概率高",
+        "保隆匈牙利厂是否仍在用SAP?PLEX与SAP的官方集成方案是否已向保隆CIO演示过?",
+        "保隆在泰国也有园区(官网全球布局列出泰国),与T系列(飞龙/中原内配/科达利/斯菱)是否在同一泰国园区?"
+      ],
+      "strength": "中",
+      "strength_reason": "同国+同豪华品牌客户+SAP生态是硬证据,但Érd与Gyöngyös相距100km不算同园区。"
+    },
+    {
+      "id": "T-03",
+      "company": "科达利",
+      "code": "002850.SZ",
+      "base": "泰国罗勇府(注册地曼谷)",
+      "endorsement_paths": [
+        "同罗勇府:与飞龙、中原内配同处EEC",
+        "同ERP生态:上一轮已查证科达利明确用SAP;PLEX与SAP有官方集成(产品层背书)",
+        "注意:科达利客户是电池厂(CATL/中创新航/亿纬锂能/欣旺达/LG/松下/特斯拉/ACC/三星),不是汽车主机厂——与Stanley(车灯供日系车企)无客户交集"
+      ],
+      "evidence": [
+        "科达利客户:CATL、中创新航、亿纬锂能、欣旺达、力神、楚能、瑞浦兰钧、远景动力、因湃、LG、松下、特斯拉、ACC、三星|年报|科达利2026半年报|https://4g.stockstar.com/detail/SN2026081400024107|2026-08-14",
+        "科达利泰国项目建设地点:泰国罗勇府|交易所公告|深交所2025-08-29|https://disc.static.szse.cn/disc/disk03/finalpage/2025-08-29/da2b39d1-56d3-4c1d-8d1f-26e286bffe33.PDF|2025-08-29"
+      ],
+      "needs_user_confirm": [
+        "科达利泰国厂是绿色新建,其MES选型是否已启动?CATL泰国厂(罗勇)的供应链体系内,科达利是否跟随CATL的IT标准?",
+        "科达利用SAP到什么程度?PLEX-SAP集成方案对其电池结构件产线(冲压/注塑/检测)是否适用?",
+        "罗勇府中资圈(飞龙/中原内配/科达利)是否有月度/季度联谊活动?你是否已进入?"
+      ],
+      "strength": "中",
+      "strength_reason": "SAP生态+同园区是硬证据,但客户是电池行业,与Stanley无主机厂交集。"
+    },
+    {
+      "id": "M-01",
+      "company": "上海永茂泰",
+      "code": "605208.SH",
+      "base": "墨西哥(州未披露,2026H1已签厂房租赁)",
+      "endorsement_paths": [
+        "同Tier1客户:博格华纳(与瑞玛、飞龙共享)、博马科技;博格华纳、博马科技已在墨西哥布局产能",
+        "同主机厂:上汽通用(与银轮乘用车客户、飞龙国内客户共享)"
+      ],
+      "evidence": [
+        "永茂泰主要客户:上汽通用、上汽大众、上海汽车、一汽大众、华域三电、联合汽车电子、博格华纳、大陆制动、华域麦格纳、伊控动力、博马科技;博格华纳、博马科技已在墨西哥布局|年报/再融资预案|东方财富2026半年报/新浪财经|https://pdf.dfcfw.com/pdf/H2_AN202608201828207754_1.pdf|2026-08-20",
+        "永茂泰墨西哥基地已签厂房租赁,推进改造|权威媒体|上海证券报2026-08-21|http://paper.cnstock.com/html/2026-08/21/content_2257352.htm|2026-08-21"
+      ],
+      "needs_user_confirm": [
+        "永茂泰墨西哥厂房具体在哪个州/城市?这决定它与Stanley(Lagos de Moreno, JAL)、Röchling(Silao, GTO)、瑞玛(Apaseo, GTO)、银轮/祥鑫(蒙特雷, NLE)的距离",
+        "博格华纳在墨西哥的工厂位置(可能在Mexico州或GTO),永茂泰是否贴近博格华纳工厂选址?你在博格华纳的联系人能否引荐永茂泰?",
+        "永茂泰是新建greenfield,其MES选型是否尚未锁定?这是最佳切入窗口。"
+      ],
+      "strength": "弱",
+      "strength_reason": "墨西哥州未披露,无法判断地理重叠;客户以上汽合资体系为主,与Stanley日系客户不重合。"
+    },
+    {
+      "id": "E-01",
+      "company": "继峰股份",
+      "code": "603997.SH",
+      "base": "德国 Ursensollen(欧洲整椅新厂)",
+      "endorsement_paths": [
+        "注意:这是销售切入机会,不是背书路径。继峰模具车间已用益模科技MES,支杆车间用益模MOM(公开案例)",
+        "客户:宝马(2024获整椅定点)、奥迪、大众、戴姆勒、特斯拉;2025-12再获某欧洲豪华品牌整椅98亿元项目",
+        "地理:Stanley德国销售办公室在Mörfelden-Walldorf(黑森州),距Ursensollen(巴伐利亚州)约300km,不算同园区"
+      ],
+      "evidence": [
+        "继峰与益模科技合作:模具车间引入模具MES(自动排产/扫码报工/工时成本);支杆车间近300台设备用益模MOM|官网案例|https://www.oureman.com/view_505.html|2026-09",
+        "继峰客户:宝马、奥迪、大众、戴姆勒、特斯拉;与江森、李尔、佛吉亚合作|官网案例|同上",
+        "格拉默继峰(德国)2024-04获宝马乘用车座椅总成定点;2025-12获某欧洲豪华品牌整椅项目,生命周期98亿元|权威媒体|中证网2025-12-22|https://www.cs.com.cn/ssgs/gsxw/202512/t20251222_6529396.html|2025-12-22"
+      ],
+      "needs_user_confirm": [
+        "继峰德国Ursensollen整椅新厂是否继承宁波总部的益模MES/MOM?还是要另选一套全球平台?这是首轮接触必须问清的问题",
+        "继峰集团CIO是谁?格拉默(德国)原有IT体系是什么?整椅总装产线(区别于模具车间/支杆车间)是否已有MES?",
+        "你在Stanley德国(Mörfelden-Walldorf销售办公室)或斯坦雷中国的联系人,是否认识格拉默/继峰德国的人?两家都供宝马,在宝马供应商大会上可能碰面,但这需要你自己验证。"
+      ],
+      "strength": "弱(背书路径),但销售切入价值高",
+      "strength_reason": "地理不与Stanley欧洲生产基地(匈牙利)重叠;已有局部MES是切入话题而非背书。"
+    },
+    {
+      "id": "E-02",
+      "company": "时代新材",
+      "code": "600458.SH",
+      "base": "塞尔维亚 Niš(BOGE绿地)",
+      "endorsement_paths": [
+        "客户:大众、福特、戴姆勒、通用、宝马、菲亚特克莱斯勒、吉利沃尔沃、塔塔、VOLVO、NAVISTAR(BOGE历史客户)",
+        "地理:Stanley欧洲生产基地在匈牙利Gyöngyös,距Niš约700km;无老客户在塞尔维亚"
+      ],
+      "evidence": [
+        "BOGE主要客户:大众、福特、戴姆勒、通用、宝马、菲亚特克莱斯勒、吉利(沃尔沃)、塔塔;商用车客户VOLVO、NAVISTAR|公告|时代新材收购BOGE重大资产购买报告书|https://paper.cnstock.com/html/2014-05/22/content_409232.htm|2014-05-22",
+        "时代新材2026半年报:轨道交通客户覆盖全球90%车辆主机企业;BOGE欧洲汽车减振业务|权威媒体|证券之星2026-08-20|https://wap.stockstar.com/detail/RB2026082000019750|2026-08-20"
+      ],
+      "needs_user_confirm": [
+        "BOGE塞尔维亚Niš绿地厂的IT规划由德国总部(BOGE Riedlingen)还是株洲总部主导?若由德国主导,你在Stanley德国销售办公室的联系人是否认识BOGE德国IT?",
+        "时代新材旗下BOGE在欧洲多国(德国、罗马尼亚、波兰等)有厂,PLEX是否有欧洲汽车Tier2/3客户案例可参考?马恒达Accelo印度案例(罗克韦尔官方刊物)是否适合?",
+        "你是否有任何老客户(Stanley/万力/劳士领/中宠/Etex)在塞尔维亚或巴尔干有业务?"
+      ],
+      "strength": "弱",
+      "strength_reason": "地理偏远,无老客户覆盖;客户虽与Stanley部分重合(戴姆勒/通用),但欧洲生产基地不重叠。"
+    },
+    {
+      "id": "E-04",
+      "company": "均胜电子",
+      "code": "600699.SH",
+      "base": "摩洛哥(方向盘厂扩建,2026投产)",
+      "endorsement_paths": [
+        "客户:宝马、奔驰、奥迪、大众、通用、福特、本田、丰田",
+        "地理:无老客户在摩洛哥或北非;Stanley欧洲生产基地在匈牙利,距摩洛哥约2000km"
+      ],
+      "evidence": [
+        "均胜客户:宝马、奔驰、奥迪、大众、通用、福特、本田、丰田;子公司普瑞供保时捷/奔驰/宝马方向盘开关|官网|https://www.joyson.com/index.php/about.html|2026-11-04",
+        "均胜摩洛哥方向盘工厂扩建项目预计2026年投产,承接欧洲转移产能|年报|上海证券报2026-03-31|https://paper.cnstock.com/html/2026-03/31/content_2194001.htm|2026-03-31"
+      ],
+      "needs_user_confirm": [
+        "均胜摩洛哥厂的IT团队是欧洲派驻还是本地招聘?PLEX在北非是否有任何客户或SI伙伴?",
+        "均胜旗下普瑞(Preh,德国)、Quin(美国)、Key safety systems原有MES体系是什么?摩洛哥厂是否继承?",
+        "你是否有任何老客户在摩洛哥或北非有工厂?(Stanley/Röchling/万力/中宠/Etex均无)"
+      ],
+      "strength": "弱",
+      "strength_reason": "地理上无任何老客户覆盖,客户虽与Stanley重合(本田/丰田/宝马),但无同园区/同SI路径。"
+    }
+  ],
+  "ranking_by_endorsement_likelihood": [
+    {"rank": 1, "id": "T-02", "company": "中原内配", "one_line": "走'与银轮同主机厂客户(康明斯/戴姆勒/约翰迪尔)+罗勇中资圈'路径"},
+    {"rank": 2, "id": "M-03", "company": "银轮股份", "one_line": "走'与中原内配同客户互背书+蒙特雷Cumulus已交付Zinkteknik PLEX'路径"},
+    {"rank": 3, "id": "M-02", "company": "瑞玛精密", "one_line": "走'与现有客户Röchling劳士领Silao厂同GTO州+Bajío汽车带'路径"},
+    {"rank": 4, "id": "M-04", "company": "祥鑫科技", "one_line": "走'蒙特雷同城银轮+Cumulus蒙特雷SI生态'路径"},
+    {"rank": 5, "id": "T-01", "company": "飞龙股份", "one_line": "走'与中原内配同罗勇Ban Khai县+客户重合康明斯/通用/戴姆勒'路径"},
+    {"rank": 6, "id": "T-04", "company": "斯菱智驱", "one_line": "走'与Stanley泰国厂Pathumthani相邻30-50km的曼谷北部汽车带'路径"},
+    {"rank": 7, "id": "E-03", "company": "保隆科技", "one_line": "走'与Stanley匈牙利厂Gyöngyös同国+SAP生态集成'路径"},
+    {"rank": 8, "id": "T-03", "company": "科达利", "one_line": "走'SAP官方集成+罗勇园区(但客户是电池厂,无主机厂交集)'路径"},
+    {"rank": 9, "id": "M-01", "company": "永茂泰", "one_line": "走'博格华纳客户交集+墨西哥greenfield MES未锁定窗口'(州未披露,地理无法判断)"},
+    {"rank": 10, "id": "E-01", "company": "继峰股份", "one_line": "背书路径弱,但'模具车间已有益模MES、整椅新厂是否统一平台'是销售切入话题"},
+    {"rank": 11, "id": "E-02", "company": "时代新材", "one_line": "塞尔维亚Niš远离所有老客户,客户虽重合但无地理/SI交集"},
+    {"rank": 12, "id": "E-04", "company": "均胜电子", "one_line": "摩洛哥无任何老客户覆盖,背书路径最弱"}
+  ],
+  "anchor_geographic_summary": {
+    "stanley_mexico": "Lagos de Moreno, Jalisco(紧邻GTO边界)→ 与瑞玛(Apaseo, GTO)、Röchling(Silao, GTO)同Bajío带;与银轮/祥鑫(蒙特雷, NLE)相距约600km",
+    "stanley_thailand": "Pathumthani(曼谷北部)→ 与斯菱(大城府)相邻;与飞龙/中原内配/科达利(罗勇EEC)相距约150km",
+    "stanley_europe": "Gyöngyös, Hungary(唯一欧洲生产基地)→ 与保隆(Érd, Hungary)同国相距约100km;与继峰(德国Ursensollen)、时代新材(塞尔维亚Niš)、均胜(摩洛哥)无地理重叠",
+    "wanli_overseas": "柬埔寨+马来西亚,与12家目标公司无地理重叠",
+    "roechling_mexico": "Silao, GTO → 与瑞玛Apaseo同州约50km"
+  },
+  "top_3_questions_for_user": [
+    "你在Röchling劳士领(德国总部或中国厂)的联系人,能否向其墨西哥Silao厂厂长Jorge Navarrete或运营负责人,以及瑞玛Apaseo El Grande厂的运营负责人同时引荐?这是M-02瑞玛最强的一条背书路径。",
+    "银轮蒙特雷厂(YINLUN TDI)与中原内配泰国厂之间是否已有任何业务或人员往来?若你先签下其中一家,请他们向另一家的采购/质量负责人引荐——两家在康明斯/戴姆勒/约翰迪尔供应商大会上必然碰面,这是T-02与M-03互背书的关键。",
+    "你在Stanley Electric中国(天津/武汉/广州)或泰国(Pathumthani)的联系人,是否知道斯菱智驱在大城府洛加纳工业园、保隆在匈牙利Érd?能否请Stanley泰国厂或匈牙利厂的人向这两家的本地运营团队引荐?这是T-04与E-03最弱但最具体的地理背书路径。"
+  ],
+  "hit_rate": "强2/中4/中-强1/弱-中(销售切入)1/弱4",
+  "channel_verdict": "老客户背书路径在墨西哥Bajío带(瑞玛/Röchling/Stanley)、墨西哥蒙特雷带(银轮/祥鑫/Cumulus)、泰国罗勇EEC(飞龙/中原内配/科达利)、泰国曼谷北部(斯菱/Stanley)、匈牙利(保隆/Stanley)五个地理集群内有结构性机会;摩洛哥/塞尔维亚/德国Ursensollen几乎无背书路径。最强的不是外部老客户,而是12家目标公司之间(银轮↔中原内配)的同主机厂客户互背书。所有路径均需用户自有网络确认'是否有人愿意替你说话'。",
+  "cost": "公开检索约2小时;所有'需用户确认'项均无法通过公开渠道验证,需用户通过自有商务网络逐一询问。"
+}

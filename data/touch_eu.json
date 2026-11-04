@@ -1,0 +1,226 @@
+[
+  {
+    "id": "E-01",
+    "company": "宁波继峰汽车零部件股份有限公司 / Ningbo Jifeng Auto Parts Co., Ltd.（控股子公司 Grammer AG / Grammer Jifeng Automotive Seating GmbH）",
+    "code": "603997.SH",
+    "base": "德国巴伐利亚 Ursensollen / Amberg 欧洲整椅新建扩建工厂（2024-02 新设合资公司，2026-04 增资 8,500 万欧元，宝马及豪华品牌 2028-09 SOP）",
+    "stage_summary": "已公告未动工，增资刚获批待 ODI 备案，距 2028-09 SOP 还有 18-24 个月，正处 MES 选型（T-18）黄金窗。打法定位：增量切入——目标是 2024-02 新设的合资法人主体及其整椅新线，不是替换 Grammer 德国老厂（Amberg/Ursensollen）已运行的那套重型 MES；首触即问清新厂是否复用 Grammer 集团 MES 标准，若复用则转为集团层面替换机会。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "继峰股份集团 CIO / 分管制造副总裁（宁波总部，北仑区育王山路 388 号）",
+        "name": "集团 CIO／信息化部部长（姓名待验证）",
+        "source": "年报与董监高公告未公开 CIO/信息化负责人姓名；可公开实名：董事长王义平、董秘刘杰（董事/董秘/副总经理）、财务总监张思俊（来源：2025 年报、2026-05 业绩说明会公告）",
+        "status": "待验证/需人工（CIO 无公开档案；走脉脉人工按公司+职位查在职）",
+        "channel": "脉脉（宁波中方决策层，中国境内收件人不受 GDPR 约束）"
+      },
+      {
+        "layer": "影响层",
+        "role": "Grammer Jifeng Automotive Seating GmbH 董事总经理 / Grammer AG 派驻的中国籍 CFO",
+        "name": "格拉默继峰（德国）董事总经理（姓名待验证）",
+        "source": "第一阶段档案：继峰 2025 年已向 Grammer 派驻中国籍 CFO 与监事会成员；具体姓名未在公开公告中列名",
+        "status": "待验证/需人工（需登录领英人工查看，未采集）",
+        "channel": "领英 InMail（德国本地管理层，走平台 ToS，不做冷邮件）"
+      },
+      {
+        "layer": "执行层",
+        "role": "继峰海外 IT 总监 / 欧洲制造 IT 经理",
+        "name": "海外 IT 负责人（姓名待验证）",
+        "source": "公开渠道无该岗位实名",
+        "status": "待验证/需人工",
+        "channel": "脉脉（中方派驻 IT）+ 领英（欧洲本地制造 IT）"
+      }
+    ],
+    "decision_note": "三层决策核心在宁波总部，不在 Ursensollen 本地。欧洲厂长只有业务否决权（上线时间、产线适配），没有预算权与立项权——预算与系统标准化由中方集团 CIO/制造副总主导。首触对象应为宁波总部决策层，德国厂长仅作影响层与 InMail 触达，不写成'触达德国工厂厂长'。",
+    "email_intel": {
+      "real_sample": "ir@nb-jf.com（继峰官网投资者关系页 + 2026-05 业绩说明会公告原文印'电子邮箱：ir@nb-jf.com'）｜来源：https://www.nb-jf.com/index/resource.html 及上海证券报 2026-03-28 业绩说明会公告",
+      "pattern_inference": "样本为职能前缀型（IR=投资者关系），域名 nb-jf.com；据此推断内部个人邮箱大概率为 pinyin@nb-jf.com 或 first.last@nb-jf.com（推断）。注意：leads_eu.json 中曾写'603997@joyson.com 形态'系误植，继峰域名是 nb-jf.com，不沿用均胜 joyson 域名。",
+      "candidates": [
+        "pinyin@nb-jf.com（如 liujie@nb-jf.com，董秘刘杰）——待验证，未经 NeverBounce/Hunter 验证",
+        "first.last@nb-jf.com（如 jie.liu@nb-jf.com）——待验证，未经 NeverBounce/Hunter 验证"
+      ],
+      "fallback": "董秘办中转：首封发 ir@nb-jf.com 并在正文请其转集团 CIO/海外 IT 负责人；同时走官网投资者留言板。"
+    },
+    "channel_priority": "决策层（宁波 CIO/制造副总）→ 脉脉优先，可附合规冷邮件至 ir@nb-jf.com 董办中转；影响层（德国 Grammer 管理层）→ 领英 InMail，不做德国冷邮件；执行层 → 脉脉中方派驻 + 领英欧洲本地。德国本地冷邮件因 UWG §7 风险高，明确不建议，替代路径为 IAA Mobility / Automechanika Frankfurt 展会现场名片 + 领英 InMail。",
+    "first_email": {
+      "subject": "继峰股份｜格拉默继峰欧洲整椅新厂的 MES 选型时间窗",
+      "body": "您好，我是罗克韦尔PLEX出海制造团队。贵司2026-04向格拉默继峰（德国）增资8,500万欧元建欧洲整椅新厂，宝马及豪华品牌2028-09 SOP——这条新线不必继承Grammer老厂重型MES。面向新法人主体的云MES：免在德建机房、免本地运维、数周上线、与SAP并行不换ERP、满足宝马与IATF16949审核、宁波总部实时看产线。能否给15分钟，我把同规模在德中资整椅新厂上线周期表发您？",
+      "word_count": 198,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 出海制造团队；来源：贵司公开公告。如不希望接收，回复'退订'即可停止。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {"day": "Day3", "channel": "脉脉", "purpose": "不提方案，补一条与投产节点相关的行业排期信息", "body": "补一条：在德中资整椅新厂MES从选型到试产约6-9个月，晚于2027Q4会被宝马审核倒逼，供您排期参考。", "if_no_response": "若 48 小时无回应，不再连发，转入 Day7 收尾。"},
+      {"day": "Day7", "channel": "邮件（董办中转 ir@nb-jf.com）", "purpose": "退出型收尾，留资料、保持门口开着", "body": "先不打扰。留一份《欧洲绿地新厂MES选型时间窗checklist》，需要时回我邮件即可，门口一直开着。", "if_no_response": "无回应则归档为培育线索，下一个触达点放在 IAA Mobility 展会现场。"}
+    ],
+    "compliance": "对宁波总部收件人：适用中国《个人信息保护法》（PIPL）——仅处理公开渠道职务信息，首封即告知身份与来源、提供退订；同时遵守脉脉平台 ToS（仅人工查看公开公司/职位，不批量爬取）。对德国本地（Grammer AG / Ursensollen）：适用 GDPR，且德国 UWG §7 对未经事先同意的 B2B 冷邮件限制最严（司法实践已扩张到 B2B，违规可被竞争对手或工会主张停止与赔偿）——故德国本地明确不做冷邮件，改走领英 InMail（受领英 ToS 约束）与 IAA Mobility / Automechanika Frankfurt 展会现场。欧洲老厂员工数据若后续涉及迁移，另需符合 GDPR Art.28/44 跨境传输。",
+    "confidence": "已查证：增资额、SOP 日期、董秘姓名与 ir@nb-jf.com 邮箱（公告/年报/官网原文）。强推断：Grammer 老厂跑 SAP 与某套重型 MES（行业惯例，无原文）。待验证：CIO 实名、新厂是否复用 Grammer 集团 MES 标准、内部个人邮箱命名规则（未经 NeverBounce/Hunter 验证）。"
+  },
+  {
+    "id": "E-02",
+    "company": "株洲时代新材料科技股份有限公司 / Zhuzhou Times New Material Technology Co., Ltd.（控股子公司 CRRC New Material Technologies GmbH / BOGE）",
+    "code": "600458.SH",
+    "base": "塞尔维亚 Niš 市 Čamurlijski put，博戈橡胶塑料塞尔维亚有限责任公司（BOGE Rubber & Plastic Serbia doo，2025-11 新设全资，注册资本 600 万欧元）",
+    "stage_summary": "已公告未动工，子公司刚获批尚处注册/选址阶段，是绿地建厂前夜。打法定位：增量切入——塞尔维亚 Niš 是全新绿地厂，不是替换 BOGE 德国（Lohr am Main）老厂那套 MES；首触即问清新厂是否直接复制德国 MES 模板，若复制则转为新材德国集团层面机会。注意中车系央企背景，对方合规部门对供应商数据出境审查会较严。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "时代新材集团 CIO / 制造副总裁（株洲总部，天元区黑龙江路 639 号）",
+        "name": "集团 CIO／信息化部部长（姓名待验证）",
+        "source": "可公开实名：总经理杨治国、财务总监卢雄文、董秘夏智（来源：2026Q3 业绩说明会公告）；CIO/信息化负责人未在公开公告列名",
+        "status": "待验证/需人工（走脉脉人工查在职）",
+        "channel": "脉脉（株洲中方决策层，中国境内不受 GDPR 约束）"
+      },
+      {
+        "layer": "影响层",
+        "role": "新材德国 CRRC New Material Technologies GmbH 管理层（德国 Lohr am Main）",
+        "name": "新材德国管理层（姓名待验证）",
+        "source": "BOGE 德国为 ZF 出身老厂，管理团队在领英活跃；具体决策人姓名未公开",
+        "status": "待验证/需人工（需登录领英，未采集）",
+        "channel": "领英 InMail（德国本地，不做冷邮件）"
+      },
+      {
+        "layer": "执行层",
+        "role": "塞尔维亚子公司未来工厂厂长（待招）/ 新材德国 IT 经理",
+        "name": "塞尔维亚未来厂长（岗位待招，姓名待验证）",
+        "source": "2025-11 刚新设，厂长岗位尚未公开招聘",
+        "status": "待验证/需人工",
+        "channel": "领英（德国新材德国 IT）+ 塞尔维亚本地招聘平台观察"
+      }
+    ],
+    "decision_note": "并购型项目决策在中方集团总部（株洲）+ 新材德国管理层联合决策；塞尔维亚未来厂长尚未到位，只有业务否决权、没有预算权。首触对象应为株洲总部决策层，不写成'触达塞尔维亚工厂厂长'。",
+    "email_intel": {
+      "real_sample": "tmtir@csrzic.com（时代新材 2026-10-31 关于变更公司邮箱的公告：变更前 tmt@csrzic.com 停用，启用 tmtir@csrzic.com）｜来源：上海证券报 2026-10-31、中国金融信息网公告",
+      "pattern_inference": "样本为职能前缀型（TMT=时代新材 Times New Material，IR=投资者关系），域名 csrzic.com（中车时代）；据此推断内部个人邮箱大概率为 pinyin@csrzic.com（推断）。",
+      "candidates": [
+        "pinyin@csrzic.com（如 xiazhi@csrzic.com，董秘夏智）——待验证，未经 NeverBounce/Hunter 验证",
+        "guojx@csrzic.com（2026Q3 业绩说明会联系人公开邮箱，可作中转样本）——待验证，未经 NeverBounce/Hunter 验证"
+      ],
+      "fallback": "董办/IR 中转：首封发 tmtir@csrzic.com 请其转集团 CIO/海外（新材德国）IT 负责人。"
+    },
+    "channel_priority": "决策层（株洲 CIO/制造副总）→ 脉脉优先，可附合规冷邮件至 tmtir@csrzic.com 董办中转；影响层（新材德国 Lohr am Main）→ 领英 InMail，德国冷邮件同 E-01 风险不做；执行层 → 领英观察新材德国 IT 与未来塞尔维亚厂长。塞尔维亚本地冷邮件风险中等（非欧盟但已入盟谈判），替代路径为 IAA / 塞尔维亚汽车工业协会活动。",
+    "first_email": {
+      "subject": "时代新材｜塞尔维亚 Niš 新厂的 MES 蓝图",
+      "body": "您好，我是罗克韦尔PLEX出海制造团队。贵司2025-11由新材德国在塞尔维亚Niš新设BOGE全资工厂、注册资本600万欧元——这是绿地新线，不必照搬BOGE德国老厂的MES。面向新厂的云MES：免当地建机房、免本地运维、数周上线、与SAP并行不换ERP、满足主机厂与IATF16949审核、株洲总部实时看塞尔维亚数据。能否给15分钟对齐新厂MES蓝图？",
+      "word_count": 178,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 出海制造团队；来源：贵司公开公告。如不希望接收，回复'退订'即可停止。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {"day": "Day3", "channel": "脉脉", "purpose": "补一条绿地厂时序信息，不提方案", "body": "补一条：中东欧绿地厂MES蓝图宜在厂房动工前定，否则会被本地EPC总包绑定，供您参考。", "if_no_response": "48 小时无回应则不再连发，转 Day7。"},
+      {"day": "Day7", "channel": "邮件（董办 tmtir@csrzic.com）", "purpose": "退出型收尾，留自查清单", "body": "先不打扰。留一份《东欧绿地厂MES蓝图自查清单》，需要时回我即可，不再群发。", "if_no_response": "无回应归档培育，下个触达点在 IAA 或中车系供应商大会。"}
+    ],
+    "compliance": "株洲总部：适用 PIPL + 脉脉 ToS（仅人工查公开信息）。新材德国总部在德国：适用 GDPR，德国 UWG §7 对未经同意 B2B 冷邮件限制最严——德国本地不做冷邮件，走领英 InMail 与展会。塞尔维亚：非欧盟成员国但已启动入盟谈判，GDPR 实质约束正在接入，本地冷邮件风险中等，仍须告知与退订机制。中车系央企背景：注意对方合规部门对供应商数据出境与供应商准入的审查，首封需备齐资质。",
+    "confidence": "已查证：塞尔维亚新设子公司、注册资本、董秘姓名与 tmtir@csrzic.com 邮箱（公告原文）。强推断：BOGE 德国跑 SAP 与某套 MES（ZF 出身行业惯例，无原文）。待验证：CIO 实名、新厂是否复制德国 MES 模板、内部个人邮箱命名（未验证）。"
+  },
+  {
+    "id": "E-03",
+    "company": "上海保隆汽车科技股份有限公司 / Baolong Automotive Technologies Co., Ltd.",
+    "code": "603197.SH",
+    "base": "匈牙利欧洲研发制造中心（一期 2023-09 投产；二期 2026H1 空悬产线安装调试完成，2026H2 随蔚来/小鹏车型 SOP 爬坡）",
+    "stage_summary": "设备调试完成/投产爬坡初期，正同步推进欧洲子公司 SAP 升级，是 MES 与 ERP 集成设计的最后窗口。打法定位：增量切入——空悬这条新线是增量制造层，不必继承一期老产线的既有系统；我们与 SAP 并行落地、不动 ERP，只补制造层，首触即问一期匈牙利厂是否已上重型 MES。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "保隆科技集团 CIO / 分管制造副总裁（上海松江，沈砖公路 5500 号）",
+        "name": "集团 CIO／信息化部部长（姓名待验证）",
+        "source": "可公开实名：董秘文剑峰、证代张红梅（来源：2025 年报、2026 半年报）；CIO/数字化负责人未在公开公告列名",
+        "status": "待验证/需人工（走脉脉人工查在职）",
+        "channel": "脉脉（上海中方决策层，中国境内不受 GDPR 约束）"
+      },
+      {
+        "layer": "影响层",
+        "role": "匈牙利子公司总经理（欧洲本地）",
+        "name": "匈牙利子公司总经理（姓名待验证）",
+        "source": "保隆匈牙利欧洲研发制造中心 2023-09 开园，本地总经理在领英活跃；具体姓名未公开",
+        "status": "待验证/需人工（需登录领英，未采集）",
+        "channel": "领英 InMail（匈牙利本地，欧盟 GDPR）"
+      },
+      {
+        "layer": "执行层",
+        "role": "保隆 IT 部数字化负责人 / 匈牙利工厂制造 IT",
+        "name": "IT 部数字化负责人（姓名待验证）",
+        "source": "年报仅提'推进欧洲子公司 SAP 系统升级建设'，未列个人",
+        "status": "待验证/需人工",
+        "channel": "脉脉（上海 IT 部）+ 领英（匈牙利制造 IT）"
+      }
+    ],
+    "decision_note": "绿地建厂阶段决策核心在上海松江总部；匈牙利子公司总经理对 MES 上线时间有强话语权（业务否决权），但预算与立项仍归集团 CIO/制造副总。首触对象为上海总部决策层，不写成'触达匈牙利工厂厂长'。",
+    "email_intel": {
+      "real_sample": "sbac@baolong.biz（保隆 2026 年半年度报告摘要原文印'电子信箱 sbac@baolong.biz'，证券部/董办职能邮箱）｜来源：证券之星转载 2026 半年报摘要、上交所公告",
+      "pattern_inference": "样本为职能前缀型（sbac=证券部），域名 baolong.biz；据此推断内部个人邮箱大概率为 pinyin@baolong.biz 或 first.last@baolong.biz（推断）。",
+      "candidates": [
+        "pinyin@baolong.biz（如 wenjianfeng@baolong.biz，董秘文剑峰）——待验证，未经 NeverBounce/Hunter 验证",
+        "first.last@baolong.biz（如 jianfeng.wen@baolong.biz）——待验证，未经 NeverBounce/Hunter 验证"
+      ],
+      "fallback": "董办中转：首封发 sbac@baolong.biz 请其转集团 CIO/IT 部数字化负责人。"
+    },
+    "channel_priority": "决策层（上海 CIO/制造副总）→ 脉脉优先，可附合规冷邮件至 sbac@baolong.biz 董办中转；影响层（匈牙利子公司总经理）→ 领英 InMail；执行层 → 脉脉上海 IT 部 + 领英匈牙利制造 IT。匈牙利为欧盟成员国适用 GDPR，冷邮件相对德奥宽松但仍须 Art.14 合法利益评估与退订；建议以领英 InMail 与 IAA / Automotive Supplier Expo 展会为主。",
+    "first_email": {
+      "subject": "保隆科技｜匈牙利二期空悬产线的 MES 与 SAP 集成",
+      "body": "您好，我是罗克韦尔PLEX出海制造团队。贵司匈牙利二期空悬产线2026H1调试完成、正同步推进欧洲子公司SAP升级——空悬这条新线不必继承一期老产线的制造层。云MES与SAP并行：免在匈建机房、免本地运维、数周上线、不动ERP、满足主机厂与IATF16949审核、上海总部实时看匈牙利产线。能否给15分钟，我把空悬产线MES蓝图对齐清单发您？",
+      "word_count": 171,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 出海制造团队；来源：贵司公开年报/公告。如不希望接收，回复'退订'即可停止。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {"day": "Day3", "channel": "脉脉", "purpose": "补一条 SAP 升级时序信息，不提方案", "body": "补一条：匈牙利二期空悬线若随SAP升级同步定MES，集成设计窗口只剩2-3个季度，供您排期。", "if_no_response": "48 小时无回应则不再连发，转 Day7。"},
+      {"day": "Day7", "channel": "邮件（董办 sbac@baolong.biz）", "purpose": "退出型收尾，留集成自查清单", "body": "先不打扰。留一份《SAP升级与MES集成自查清单》，需要时回我即可，不再群发。", "if_no_response": "无回应归档培育，下个触达点在 IAA 或供应商博览会。"}
+    ],
+    "compliance": "上海总部：适用 PIPL + 脉脉 ToS。匈牙利：欧盟成员国，适用 GDPR；冷邮件在匈牙利相对德奥宽松，但仍须 Art.14 合法利益基础评估 + 退订机制；不做无差别批量冷邮件，以领英 InMail（平台 ToS）与展会为主。摩洛哥园区规划中，后续若启动需覆盖摩洛哥 Law 09-08 数据本地化要求。",
+    "confidence": "已查证：匈牙利二期进度、'SAP 系统升级'年报原文、董秘姓名与 sbac@baolong.biz 邮箱（公告/年报原文）。待验证：CIO 实名、一期匈牙利厂是否已上重型 MES、内部个人邮箱命名（未验证）。"
+  },
+  {
+    "id": "E-04",
+    "company": "宁波均胜电子股份有限公司 / Joyson Electronics Co., Ltd.（全球并购 Preh、Quin、Key Safety Systems、TechniSat 等）",
+    "code": "600699.SH（A+H，H 股 0699.HK）",
+    "base": "摩洛哥方向盘工厂扩建（承接欧洲关停工厂转移产能，2026 年投产）",
+    "stage_summary": "在建/设备安装调试，2026 年投产，是欧洲→北非产线迁移的 MES 标准化与数据迁移决策窗。打法定位：增量切入——摩洛哥这条北非新线不一定要复制 Preh/Quin 德国老厂那套重型 MES；首触即问清新厂是否复用欧洲 MES 模板，若复用则转为欧洲老厂 MES 替换/升级机会。注意均胜全球 IT 团队庞大，V2 字面命中风险高，决策必须落到集团 CIO 主导的标准化项目上。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "均胜电子集团 CIO / 制造副总裁（宁波总部，高新区清逸路 99 号）",
+        "name": "集团 CIO／信息化负责人（姓名待验证）",
+        "source": "可公开实名：董秘俞朝辉；实际控制人王剑峰（来源：2025 年报摘要）；集团 CIO 未在公开公告列名",
+        "status": "待验证/需人工（走脉脉人工查在职）",
+        "channel": "脉脉（宁波中方决策层，中国境内不受 GDPR 约束）"
+      },
+      {
+        "layer": "影响层",
+        "role": "汽车安全事业部 IT 总监 / 摩洛哥工厂厂长",
+        "name": "汽车安全事业部 IT 总监、摩洛哥厂长（姓名待验证）",
+        "source": "均胜全球并购型 Tier1，欧洲转移产线项目经理与摩洛哥厂长在领英活跃；具体姓名未公开",
+        "status": "待验证/需人工（需登录领英，未采集）",
+        "channel": "领英 InMail（摩洛哥厂长 + 欧洲转移产线项目经理）"
+      },
+      {
+        "layer": "执行层",
+        "role": "海外制造 IT 经理",
+        "name": "海外制造 IT 经理（姓名待验证）",
+        "source": "公开渠道无该岗位实名",
+        "status": "待验证/需人工",
+        "channel": "脉脉（中方派驻）+ 领英（摩洛哥本地）"
+      }
+    ],
+    "decision_note": "并购型项目决策在宁波集团总部；摩洛哥厂长只有业务否决权，没有预算权——预算与全球 MES 标准化由集团 CIO 主导。首触对象为宁波总部决策层，不写成'触达摩洛哥工厂厂长'。",
+    "email_intel": {
+      "real_sample": "600699@joyson.com（均胜电子 2025 年年度报告摘要原文印'电子信箱 600699@joyson.com'，董秘俞朝辉）｜来源：上交所 2026-03-31 年报摘要 PDF，已在原文核实",
+      "pattern_inference": "样本为代码型前缀（600699=证券代码），域名 joyson.com；据此推断集团内部个人邮箱大概率为 first.last@joyson.com 或 pinyin@joyson.com（推断）。",
+      "candidates": [
+        "first.last@joyson.com（如 zhaohui.yu@joyson.com，董秘俞朝辉）——待验证，未经 NeverBounce/Hunter 验证",
+        "pinyin@joyson.com（如 yuzhaohui@joyson.com）——待验证，未经 NeverBounce/Hunter 验证"
+      ],
+      "fallback": "董办中转：首封发 600699@joyson.com 请其转集团 CIO/汽车安全事业部 IT 总监。"
+    },
+    "channel_priority": "决策层（宁波集团 CIO/制造副总）→ 脉脉优先，可附合规冷邮件至 600699@joyson.com 董办中转；影响层（摩洛哥厂长、欧洲转移产线项目经理）→ 领英 InMail；执行层 → 脉脉中方派驻 + 领英摩洛哥本地。摩洛哥非欧盟，冷邮件风险显著低于欧盟（适用 Law 09-08，仍须告知与数据本地化），欧洲转移产线涉及的德国/波兰老厂员工数据迁移另须符合 GDPR。",
+    "first_email": {
+      "subject": "均胜电子｜摩洛哥方向盘扩建厂的 MES 标准化",
+      "body": "您好，我是罗克韦尔PLEX出海制造团队。贵司摩洛哥方向盘扩建厂2026年投产、承接欧洲关停产线转移——这条北非新线不一定要复制Preh/Quin德国老厂那套重型MES。面向新厂的云MES：免当地建机房、免本地运维、数周上线、与SAP并行不换ERP、满足主机厂与IATF16949审核、宁波总部实时看摩洛哥产线与迁移数据。能否给15分钟，我把产线迁移MES标准化要点发您？",
+      "word_count": 185,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 出海制造团队；来源：贵司公开年报。如不希望接收，回复'退订'即可停止。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {"day": "Day3", "channel": "脉脉", "purpose": "补一条产线迁移时序信息，不提方案", "body": "补一条：北非产线迁移若不先定MES模板，欧洲老厂数据会成为迁移包袱，供您参考。", "if_no_response": "48 小时无回应则不再连发，转 Day7。"},
+      {"day": "Day7", "channel": "邮件（董办 600699@joyson.com）", "purpose": "退出型收尾，留迁移自查清单", "body": "先不打扰。留一份《欧洲→北非产线迁移MES自查清单》，需要时回我即可。", "if_no_response": "无回应归档培育，下个触达点在摩洛哥 Automotive Industry Meetings（AIM）展会。"}
+    ],
+    "compliance": "宁波总部：适用 PIPL + 脉脉 ToS。摩洛哥：非欧盟，适用摩洛哥 Law 09-08（2009 颁布、近年严格执行），冷邮件风险低于欧盟，但须遵守数据本地化与告知/退订机制。欧洲转移产线涉及德国/波兰老厂：员工数据与产线数据迁移须符合 GDPR Art.28/44 跨境传输；德国本地冷邮件同 E-01 风险（UWG §7）不做。平台：领英 InMail 受平台 ToS 约束。",
+    "confidence": "已查证：摩洛哥扩建 2026 投产、董秘姓名与 600699@joyson.com 邮箱（年报原文核实）。强推断：均胜全球用 SAP/Oracle 体系、欧洲老厂跑重型 MES（并购传承，无原文）。待验证：CIO 实名、摩洛哥厂是否复用欧洲 MES 模板、内部个人邮箱命名（未验证）；V2 字面命中风险需人工判断。"
+  }
+]

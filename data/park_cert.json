@@ -1,0 +1,174 @@
+{
+  "channel": "park_cert",
+  "channel_name": "园区/商会 + IATF认证机构/行业协会",
+  "per_company": [
+    {
+      "id": "M-01",
+      "company": "上海永茂泰",
+      "hit": "未命中",
+      "evidence": [
+        "检索式：永茂泰 墨西哥 工厂 园区 地址；2026H1已签厂房租赁公告；未披露州与园区名|交易所公告|永茂泰2025半年报|https://static.cninfo.com.cn/finalpage/2025-08-20/1224519297.PDF|2025-08-20",
+        "检索式：JLB Parques / Colinas de Apaseo / INA asociados；永茂泰未出现在Colinas de Apaseo公开租户名单(Collini/Nippon Express/Mitsui High-tec等)|政府或园区官网|Promexico Industry Colinas de Apaseo|https://www.promexicoindustry.com/parks/en/mexico/guanajuato/apaseo-el-grande/colinas-de-apaseo-industrial-park-1|2025-11-01",
+        "IATF：集团层面通过IATF16949，上海零部件/安徽/山东/辽宁子公司分别持证；墨西哥新厂为2026H1新签租赁，按IATF规则新site需单独审核，公开渠道无该site证书|年报|永茂泰2023半年报|http://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2023-08-26/605208_20230826_9S9T.pdf|2023-08-25"
+      ],
+      "note": "墨西哥基地州与园区未披露，园区通道无法定位；认证通道只知道集团持证，不知道墨西哥新site是否在认证覆盖内（大概率不在，需单独做）。",
+      "lead": "无公开园区/商会入口；墨西哥新厂site级IATF状态需向客户或TÜV/SGS/DQS等CB核实"
+    },
+    {
+      "id": "M-02",
+      "company": "苏州瑞玛精密",
+      "hit": "命中",
+      "evidence": [
+        "墨西哥瑞玛2025-09-03完成交割，购入瓜纳华托Apaseo el Grande的Colinas de Apaseo Industrial Park 52,297.33平米土地；出让方JLB PARQUES INDUSTRIALES S.A. DE C.V.|交易所公告|瑞玛精密墨西哥购地进展暨交割完成公告|http://disc.static.szse.cn/download/disc/disk03/finalpage/2025-09-03/51bc21a7-3509-4551-99d8-b8257a08885b.PDF|2025-09-03",
+        "JLB为墨西哥真实园区运营商，曾在Coahuila Saltillo等项目出现|政府或园区官网|Coahuila环境影响评估文件|https://sma.gob.mx/wp-content/uploads/2023/09/2023_impacto.pdf|2023-09",
+        "Colinas de Apaseo公开租户含Collini/Nippon Express Apaseo/Ohtli/Sarrel/Vynmsa/Mitsui High-tec等，紧邻Toyota|政府或园区官网|Promexico Industry|https://www.promexicoindustry.com/parks/en/mexico/guanajuato/apaseo-el-grande/colinas-de-apaseo-industrial-park-1|2025-11-01",
+        "IATF：集团IATF16949:2016有效(2024-08-02更新)，墨西哥新厂为购地刚交割，尚未建厂，公开渠道无site级证书|官网|瑞玛精密资质荣誉|https://www.cheersson.com/article.php?id=891|2024-08-02"
+      ],
+      "note": "园区通道硬命中：瑞玛=JLB/Colinas de Apaseo租户，可通过JLB或Guanajuato州投资促进机构对接。INA会员身份未在公开asociados名单中检出。",
+      "lead": "JLB Parques Industriales（土地出让方/园区运营方）；Colinas de Apaseo园区管理处"
+    },
+    {
+      "id": "M-03",
+      "company": "浙江银轮股份",
+      "hit": "部分",
+      "evidence": [
+        "现有蒙特雷厂+新设墨西哥子公司；公开报道未披露新厂所在园区|交易所公告|银轮股份历年年报|https://disc.static.szse.cn/download/disc/disk02/finalpage/2021-08-28/e37f6bc8-54c4-4189-b622-70c65d724a21.PDF|2021-08-28",
+        "IATF历史：早期由Perry Johnson认证QS-9000/VDA6.1，2017年通过IATF16949换证审核；当前发证机构未在公开材料中具名|年报|银轮2018年报|http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=5181682|2019-04-13",
+        "INA为墨西哥700+汽车零部件工厂行业协会，公开asociados页展示APTIV/ARMOR等头部，但无全文检索会员名录|认证机构官网/行业协会|INA官网|https://ina.com.mx/beneficios/|2026-10-29"
+      ],
+      "note": "墨西哥新子公司园区未披露，无法落到具体园区；认证机构历史为Perry Johnson，当前CB需在iatf-customerportal按site名反查。",
+      "lead": "无具体园区入口；可经INA(ina.com.mx)会员目录或蒙特雷当地工业园(PARC/Finamex等，未证实)触达"
+    },
+    {
+      "id": "M-04",
+      "company": "祥鑫科技",
+      "hit": "未命中",
+      "evidence": [
+        "检索式：祥鑫 墨西哥 新莱昂 蒙特雷 工业园；公开材料仅披露到州，未披露园区名|公开检索|无|无|2026-11-04",
+        "IATF16949:2016有效(通过东莞本特勒祥鑫合资主体持证，天眼查/启信宝公示)，墨西哥site级证书未公开|权威媒体|天眼查本特勒祥鑫资质|https://www.tianyancha.com/company/5544980445/jingzhuang|2026-10-03"
+      ],
+      "note": "蒙特雷基地未公开园区名，园区通道无法定位；INA会员身份未证实。",
+      "lead": "无"
+    },
+    {
+      "id": "T-01",
+      "company": "飞龙股份",
+      "hit": "命中",
+      "evidence": [
+        "龙泰汽车部件(泰国)有限公司位于泰中罗勇工业园二区，占地8万平米，2025-06-26投产|官网|飞龙官网生产基地页|https://www.flacc.com/about/41.html|2026-10-20",
+        "注册地址299 Moo.4, Nong Lalok, Ban Khai, Rayong 21120|交易所公告|飞龙2026-02-12增资公告|http://paper.cnstock.com/html/2026-02/12/content_2180747.htm|2026-02-12",
+        "泰中罗勇工业园由华立集团与Amata合资(TCR Company, 2012成立)运营，位于Amata City Rayong内，入驻中资企业约170-250家|政府或园区官网|AMATA官网Thai-Chinese Industrial Zone|https://amata.com/services?view=article&id=387&catid=84|2026-09-07",
+        "IATF：飞龙2020年IATF16949年度审核由德国莱茵(TÜV Rheinland)审核组执行，审核组长刘涛|官网|飞龙公司新闻|https://www.flacc.com/news/42.html|2020-08-07"
+      ],
+      "note": "园区通道硬命中：飞龙=泰中罗勇工业园二区租户；认证机构=TÜV Rheinland，可经TÜV莱茵汽车业务线横向触达。泰国新厂龙泰的site级IATF状态未在公开材料中具名(集团2018年通过IATF，新site需单独审核)。",
+      "lead": "泰中罗勇工业园开发有限公司(运营方)；泰国中国企业总商会罗勇园区分会；TÜV Rheinland中国/IATF审核组"
+    },
+    {
+      "id": "T-02",
+      "company": "中原内配",
+      "hit": "命中",
+      "evidence": [
+        "2024-01-02与泰中罗勇工业园开发有限公司签署土地购买意向协议，购118.32亩|交易所公告|中原内配第十届董事会第十三次会议决议公告|https://paper.cnstock.com/html/2024-01/03/content_1862677.htm|2024-01-03",
+        "泰国孙公司飞德利特汽车零部件(泰国)设立地址Highway 3143, Tambol Nong Lalok, Ban Khai, Rayong 21120；气缸套产线2025年底建成投产|交易所公告|中原内配泰国投资进展公告|http://file.finance.sina.com.cn/211.154.219.97:9494/MRGG/CNSESZ_STOCK/2024/2024-2/2024-02-19/9833124.PDF|2024-02-18",
+        "新华财经2024-03-12明确报道：中原内配泰国工厂选址泰中罗勇工业园|权威媒体|新浪财经转新华财经|https://finance.sina.com.cn/jjxw/2024-03-12/doc-inamzrzs2927926.shtml|2024-03-12"
+      ],
+      "note": "园区通道硬命中：中原内配=泰中罗勇工业园租户(与飞龙同园区)。认证机构未在公开材料中具名。",
+      "lead": "泰中罗勇工业园开发有限公司；泰国中国企业总商会罗勇园区分会"
+    },
+    {
+      "id": "T-03",
+      "company": "科达利",
+      "hit": "未命中",
+      "evidence": [
+        "2025-08-29董事会公告：泰国项目建设地点泰国罗勇府，'以最终确定的地址为准'；实施主体科达利(泰国)责任有限公司|交易所公告|科达利第五届董事会第二十二次会议决议公告|http://paper.cnstock.com/html/2025-08/29/content_2113172.htm|2025-08-29",
+        "2026-06-17公告：泰国谐波减速机基地仍在罗勇府，地址未定|交易所公告|科达利第五届董事会第三十一次会议决议公告|http://paper.cnstock.com/html/2026-06/17/content_2232380.htm|2026-06-17",
+        "官网全球16大制造基地含德国/瑞典/匈牙利/新加坡/泰国/美国，但泰国具体园区未披露|官网|科达利关于我们|https://www.kedali.com.cn/about/|2026-10-15"
+      ],
+      "note": "泰国基地尚在选址/注册阶段，园区未具名，无法确认是否落在泰中罗勇或Amata其他区块；不能仅凭'罗勇府'推断。",
+      "lead": "无具体园区入口；待科达利泰国公司工商注册地址披露后再定位"
+    },
+    {
+      "id": "T-04",
+      "company": "斯菱智驱",
+      "hit": "命中",
+      "evidence": [
+        "公司官网明确：第四工厂位于泰国大城洛加纳工业园，面积10000平米|官网|斯菱智驱企业环境|https://www.slingbearings.com/equipment.html|2026-10-23",
+        "2026-02-09公告：新增斯菱泰国(大城府洛加纳工业园)作为募投项目共同实施主体|交易所公告|斯菱智驱募投项目延期公告|https://disc.static.szse.cn/download/disc/disk03/finalpage/2026-02-09/7302c6ff-998c-4519-8a54-e0dbb0173522.PDF|2026-02-09",
+        "洛加纳工业园集团：900+企业落户，中资逾300家，官网公开标杆租户含深南电路/沪士电子/中际旭创/颐海食品/洽洽/中粮包装等(汽车零部件类未在标杆列表具名)|官网|洛加纳工业园走进洛加纳|http://www.rojanachina.com/company|2026-10-20",
+        "斯菱泰国工厂已获得IATF16949体系证书(E-Ruling原产地证、ISO14001、ISO45001)，但发证机构未在年报摘要中具名|交易所公告|斯菱智驱2025年报摘要|http://infonotice.sylapp.cn/LC_NotTextAnnouncement/2026/04/22/830137985314.PDF|2025-12-26"
+      ],
+      "note": "园区通道硬命中：斯菱=洛加纳工业园(大城府)租户，且泰国site已持IATF16949。CB未具名，需在iatf-customerportal按'Siling Thailand / Ayutthaya'反查。",
+      "lead": "洛加纳工业园集团(rojanachina.com)；斯菱泰国site IATF证书可经客户门户反查发证机构"
+    },
+    {
+      "id": "E-01",
+      "company": "继峰股份",
+      "hit": "部分",
+      "evidence": [
+        "Grammer Jifeng Automotive Seating GmbH地址Grammer-Allee 2, 92289 Ursensollen，为继峰2019年收购德国Grammer后主体|官网|继峰座椅About Us|https://www.jfseat.com/en/about/|2026-07-16",
+        "Ursensollen为Grammer总部所在地，德国传统汽车零部件集群(Amberg-Sulzbach工业区)；未检索到该园区单独的中资企业名录|公开检索|无|无|2026-11-04",
+        "Grammer作为百年Tier-1，体系内IATF16949必然有效，但具体发证机构(TÜV/DQS/LR等)未在公开材料具名|公开检索|无|无|2026-11-04"
+      ],
+      "note": "德国Ursensollen是Grammer存量基地而非新建绿地，园区通道不适用；认证通道需在iatf-customerportal按'Grammer Ursensollen'反查。",
+      "lead": "Grammer AG内部质量/IT体系(已被继峰控股)；德国汽车零部件行业协会VDA(可经VDA QMC渠道)"
+    },
+    {
+      "id": "E-02",
+      "company": "时代新材",
+      "hit": "命中",
+      "evidence": [
+        "BOGE Rubber & Plastics(时代新材全资德国子公司)2025-03-21访问Niš并宣布建设4万平米绿地工厂|权威媒体|MarkLines|https://www.marklines.com/en/news/323833|2025-03-24",
+        "塞尔维亚投资促进机构RAS(ras.gov.rs)公开报道Niš工业区已入驻中资汽车零部件企业Xingyu Automotive(星宇车灯)，并与Minth/SHAC/BMTS等签约|政府或园区官网|RAS官网|https://ras.gov.rs/en/xingyu-automotive-is-building-a-60-million-facility-in-nis|2020-06-09",
+        "驻塞使馆经商处：中国对塞投资覆盖汽车零部件制造，玲珑轮胎/河钢/紫金等项目|政府或园区官网|驻塞使馆经商处|https://rs.mofcom.gov.cn/zshz/art/2024/art_b742695381164bb2ad59e14610377583.html|2025-07-30",
+        "时代新材集团持有IATF16949认证(公开年报提及)，BOGE德国体系继承；Niš新厂site级IATF状态未公开|官网|中车时代新材公司简介|https://www.crrcgc.cc/sdxc/304_20944/304_20955/index.html|2026-09-18"
+      ],
+      "note": "塞尔维亚RAS是真实投资促进机构，且Niš工业区已有中资汽车零部件集聚(星宇)，BOGE Niš绿地项目有公开报道。",
+      "lead": "Razvojna agencija Srbije (RAS)；Niš工业区管理处；BOGE集团内部质量体系"
+    },
+    {
+      "id": "E-03",
+      "company": "保隆科技",
+      "hit": "命中",
+      "evidence": [
+        "HIPA(匈牙利投资促进局)2023-09-11公开新闻：Shanghai Baolong Automotive在匈牙利新工厂揭幕，称其为中国领先汽车供应商之一，在中国/美国/匈牙利/德国均有基地|政府或园区官网|HIPA官网|https://www.hipa.hu/hir/felavattak-a-vezeto-kinai-autopari-beszallito-uj-strategiai-fontossagu-uzemet/|2023-09-11",
+        "保隆全球生产基地：上海松江/浦东/安徽宁国/合肥/湖北武汉/美国/德国/波兰/匈牙利/奥地利|官网|保隆产品册|https://www.baolong.biz/upload/files/ARM%20-%20%E5%82%A8%E6%B0%94%E7%BD%90%E5%92%8C%E9%93%9D%E5%88%B6%E9%85%8D%E4%BB%B6AIR%20RESERVOIR%20%26%20ALUMINUM%20PARTS_20240117_%E5%8E%8B%E7%BC%A9%E7%89%88.pdf|2024-01-17",
+        "保隆集团IATF16949覆盖上海/宁国等主体，匈牙利site的IATF证书状态未在公开材料具名|官网|保隆体系认证|https://www.baolong.biz/product?id=1|2026-10-16"
+      ],
+      "note": "HIPA是真实机构且公开报道保隆匈牙利基地，可经HIPA Automotive Desk触达；二期2026H1建成，匈牙利site IATF覆盖需在客户门户反查。",
+      "lead": "HIPA (hipa.hu) Automotive Desk；保隆匈牙利子公司(已揭幕)"
+    },
+    {
+      "id": "E-04",
+      "company": "均胜电子",
+      "hit": "命中",
+      "evidence": [
+        "DQS客户数据库直接列出AUMOVIO Systems Morocco S.A.R.L.持有IATF 16949:2016证书(基于第6版IATF Rules)，证书可下载，最近发证2026-09-04|认证机构官网|DQS customer database|https://www.dqsglobal.com/en/customer-database/aumovio-systems-morocco-s.a.r.l|2026-10-05",
+        "AUMOVIO为均胜汽车安全系统(原Joyson Safety Systems，收购高田/KSS后整合)全球品牌名，摩洛哥为其方向盘厂扩建基地|官网|均胜ESG报告：近100%生产基地通过ISO9001或IATF16949|https://www.joyson.com/index.php/esg/info/1411.html|2026-04-21",
+        "摩洛哥投资促进机构AMDIE设有Automotive Desk，全国270家汽车供应商；公开报道提及凌云/保隆/坤泰等中资零部件企业在摩|政府或园区官网|Doing Business in Morocco/AMDIE|https://doingbusinessinmorocco.com/automotive-ev/|2026-05-09"
+      ],
+      "note": "认证通道硬命中：均胜摩洛哥site(AUMOVIO)由DQS发证，IATF16949覆盖该site；AMDIE是真实投资促进机构。DQS作为CB可横向触达。",
+      "lead": "DQS(德国体系认证)汽车业务线；AMDIE摩洛哥汽车桌；AUMOVIO Systems Morocco S.A.R.L."
+    }
+  ],
+  "cross_table_park_x_company": {
+    "泰中罗勇工业园(TCR, Amata City Rayong内, 华立+Amata运营)": ["T-01 飞龙股份(龙泰泰国, 二区)", "T-02 中原内配(飞德利特泰国, Highway3143/Nong Lalok)"],
+    "洛加纳工业园(Rojana, 大城府为主)": ["T-04 斯菱智驱(斯菱泰国, 大城府)"],
+    "泰国中国企业总商会(含罗勇园区分会/制造业分会)": ["T-01 飞龙(园区分会活跃)", "T-02 中原内配(同园区)"],
+    "Colinas de Apaseo Industrial Park / JLB Parques Industriales (Apaseo el Grande, GTO)": ["M-02 瑞玛精密(墨西哥瑞玛, 已交割)"],
+    "INA (Industria Nacional de Autopartes, 墨西哥)": [],
+    "RAS / Niš Industrial Zone (塞尔维亚)": ["E-02 时代新材(BOGE Niš绿地, 规划中)"],
+    "HIPA (匈牙利投资促进局)": ["E-03 保隆科技(匈牙利工厂, 2023揭幕)"],
+    "AMDIE (摩洛哥投资促进局)": ["E-04 均胜电子(AUMOVIO Morocco)"],
+    "未落到具体园区": ["M-01 永茂泰(墨西哥, 州未披露)", "M-03 银轮(墨西哥新子公司, 园区未披露)", "M-04 祥鑫(蒙特雷, 园区未披露)", "T-03 科达利(泰国罗勇, 地址未定)", "E-01 继峰(德国Ursensollen, Grammer存量基地, 非绿地园区)"]
+  },
+  "cross_table_certbody_x_company": {
+    "TÜV Rheinland (德国莱茵)": ["T-01 飞龙股份(2020年度审核, 公开新闻具名)"],
+    "DQS (德国体系认证)": ["E-04 均胜电子/AUMOVIO Morocco(DQS客户数据库直接列出)"],
+    "Perry Johnson (历史, QS-9000/VDA6.1时代)": ["M-03 银轮股份(2018年报披露, 当前CB未证实)"],
+    "未具名(集团持证但CB未公开)": ["M-01 永茂泰", "M-02 瑞玛精密", "M-04 祥鑫", "T-02 中原内配", "T-03 科达利", "T-04 斯菱(泰国site已持证, CB未具名)", "E-01 继峰/Grammer", "E-02 时代新材/BOGE", "E-03 保隆"]
+  },
+  "certbody_covering_2plus": "公开证据下无一家认证机构被证实覆盖2家及以上目标公司。TÜV Rheinland仅具名于飞龙；DQS仅具名于均胜/AUMOVIO Morocco；Perry Johnson仅见于银轮历史年报。要验证≥2家覆盖，需在iatf-customerportal.org按每家site名逐一反查CB后聚合，本轮未做(门户被安全策略拦截, 无法直接查询)。",
+  "hit_rate": "命中7/12 (M-02瑞玛, T-01飞龙, T-02中原内配, T-04斯菱, E-02时代新材, E-03保隆, E-04均胜)；部分2/12 (M-03银轮, E-01继峰)；未命中3/12 (M-01永茂泰, M-04祥鑫, T-03科达利)",
+  "channel_verdict": "园区/商会通道：在泰国罗勇与大城、墨西哥Apaseo el Grande、塞尔维亚Niš、匈牙利、摩洛哥这5个落点上，园区运营方/投资促进机构是真实存在的，且其中7家公司被公开公告或官网直接落到具体园区/site，可作为引荐入口；但'存在覆盖'不等于'愿意引荐'——外部无法验证运营方是否会替销售对接客户，这一步仍需BD亲自上门/经熟人介绍。IATF认证通道：iatf-customerportal.org是真实可用的官方校验入口(可按证书号/USI/site名+城市反查)，cx.cnca.cn是国内认e云但IATF 16949主要走IATF全球门户；本轮仅DQS(均胜摩洛哥)和TÜV Rheinland(飞龙)被公开证据具名，'认证机构横向关系链'的价值判断成立(审核员比销售更懂现场)，但要落地必须拿到每家site的IATF USI后在客户门户反查CB——这是销售在首次接触客户时就能开口要的东西。",
+  "cost": "时间成本：每家公司10-20分钟检索；不需要登录即可拿到园区/协会公开新闻；iatf-customerportal.org免费公开查询但需知道site名；cx.cnca.cn免费；认证机构客户数据库(如DQS customer database)免费公开证书下载。关键时效风险：新厂(永茂泰墨西哥/瑞玛墨西哥/科达利泰国/时代新材Niš)的site级IATF证书通常在投产后6-18个月才发，现在查不到是正常的，反而是MES需求的触发器。"
+}

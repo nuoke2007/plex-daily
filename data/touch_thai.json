@@ -1,0 +1,268 @@
+[
+  {
+    "id": "T-01",
+    "company": "飞龙汽车部件股份有限公司（泰国实施主体：龙泰汽车部件（泰国）有限公司）",
+    "code": "002536.SZ",
+    "base": "泰国罗勇府 Ban Khai 县 Nong Lalok 镇，EEC 核心区，泰中罗勇工业园二区",
+    "stage_summary": "2025-06-26 竣工试生产、总投资提至 9 亿元、龙泰注册资本增至 40 亿泰铢，正处投产爬坡 + 二期增资窗口；国内已与华为云签数字化合作，MES 制造层仍未点名供应商。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "集团副董事长、总经理（兼龙泰执行董事，已被董事会全权授权代表公司签署对外投资文件）",
+        "name": "孙耀忠",
+        "source": "http://paper.cnstock.com/html/2026-05/23/content_2221006.htm（2026 第二次临时股东会决议公告·第九届董事会名单）；https://paper.cnstock.com/html/2023-12/02/content_1849141.htm（境外投资公告授权条款）",
+        "status": "已查证",
+        "channel": "脉脉优先（中文实名率高，命中在职信息）；冷邮件抄送董秘办中转"
+      },
+      {
+        "layer": "影响层",
+        "role": "龙泰（泰国）厂长 / 海外事业部总经理",
+        "name": "（姓名待验证）",
+        "source": "官网生产基地页 https://www.flacc.com/about/41.html 未列厂长姓名；2025-07-30 投资者关系记录仅披露投产事实、未点名出席高管",
+        "status": "待验证/需人工",
+        "channel": "领英优先（泰籍/华裔厂长英文档案为主，JobsDB 泰国站可辅助；需人工登录领英核实，未批量采集）"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团信息化部长 / 龙泰 IT 经理（国内已与华为云签数字化合作，应在国内总部）",
+        "name": "（姓名待验证）",
+        "source": "https://www.flacc.com/news/1776911883401175040-15-5.html 签约新闻稿未列 IT 负责人姓名",
+        "status": "待验证/需人工",
+        "channel": "脉脉优先（国内 IT 中层中文简历完整率高于领英）"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "dmb@flacc.com（董秘公开邮箱）｜出处：http://epaper.stcn.com/att/202603/20/ZQ20B039-QX_eBook.pdf（飞龙股份 2025 年度报告摘要）及 https://disc.static.szse.cn/disc/disk03/finalpage/2025-07-22/a203642d-111c-4890-bbc5-8c862e9b46ee.PDF（2025 半年报全文）",
+      "pattern_inference": "样本为职能前缀 dmb@（董秘办公开邮箱），域名 flacc.com。集团未公开任何个人名前缀样本；按国内同类 A 股零部件企业惯例推断，员工个人邮箱大概率为姓名全拼或首字母，但本次无样本反证，仅做弱推断。",
+      "candidates": [
+        "sunyaozhong@flacc.com（弱推断，待验证，未经 NeverBounce/Hunter 验证）",
+        "dmb@flacc.com（已公开样本，可作董秘办中转，非个人邮箱）"
+      ],
+      "fallback": "未取得个人名前缀公开样本，禁止硬编。建议首触邮件统一发 dmb@flacc.com 请董秘办转信息化负责人，同时辅以董秘办电话 0377-69662536 人工确认转介。"
+    },
+    "channel_priority": "决策层（孙耀忠）走脉脉 + 董秘办中转邮件；影响层（龙泰厂长）走领英 + JobsDB Thailand 人工核实，泰籍厂长在领英中文档案覆盖率低、英文档案为主，脉脉基本无覆盖；执行层（信息化部长）走脉脉。补充：飞龙已与华为云签约，可借华为云生态 SI 引荐一条路。",
+    "first_email": {
+      "subject": "飞龙股份·龙泰泰国罗勇基地｜MES 制造层补位与上线周期",
+      "body": "孙总／信息化负责人：龙泰泰国厂 2025 年 6 月竣工试生产、注册资本已增至 40 亿泰铢，二期爬坡叠加热管理扩线。贵司与华为云已签数字化合作，PLEX 云 MES 可在既有云底座上补制造层：免建机房、免本地 IT 运维、数周上线，工单追溯与 SPC 与集团 ERP 打通，满足主机厂二方审核；国内总部可实时看到泰国产线。能否给 15 分钟，我把同规模罗勇厂的实际上线周期表发您？",
+      "word_count": 174,
+      "disclosure": "我是【PLEX 售前顾问】，来自罗克韦尔 PLEX 中国团队；如不希望继续沟通，回复‘退订’即可。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "脉脉私信（不提方案）",
+        "purpose": "补一条与其投产节点相关的行业信息，建立专业印象",
+        "body": "孙总，补充一条：罗勇 EEC 区今年下半年已有两家 Tier1 因二方审核前缺工单追溯被要求整改，周期约 6–8 周。供参考。",
+        "word_count": 57
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（退出型收尾）",
+        "purpose": "明确不打扰、留资料、给可自查 checklist",
+        "body": "孙总，此前提的罗勇 MES 上线一事先不打扰。附一份《海外 Tier1 二方审核工单追溯自查 8 条 checklist》，您内部用得上即可。后续若有兴趣再联系。",
+        "word_count": 74
+      }
+    ],
+    "compliance": "PIPL：仅使用公开披露的董监高职务信息与年报公开邮箱，首封即告知身份、提供退订，不建立个人画像库；泰国 PDPA：对泰国本地收件人（龙泰厂长）首封需告知来源与退订渠道，不批量抓取领英个人数据；平台 ToS：脉脉/领英仅人工查看公开信息，不使用自动化脚本登录采集。",
+    "confidence": "已查证：孙耀忠（董事长/总经理/龙泰授权人）、董秘邮箱 dmb@flacc.com、龙泰投产事实、华为云合作；强推断：员工个人邮箱前缀形态；待验证：龙泰泰国厂长姓名、集团信息化部长姓名、泰籍管理层在领英的实际活跃度。"
+  },
+  {
+    "id": "T-02",
+    "company": "中原内配集团股份有限公司（泰国实施主体：飞德利特汽车零部件（泰国）有限公司）",
+    "code": "002448.SZ",
+    "base": "泰国罗勇府 Ban Khai 县 Nong Lalok 镇 Highway 3143（与 T-01 飞龙龙泰同县同镇）",
+    "stage_summary": "2025 年末竣工投产，2026 上半年已稳定批量供货通用、康明斯、戴姆勒、约翰迪尔，正处四大主机厂二方审核倒逼系统留痕的窗口；总投资已提至 5 亿元。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "集团董事长、总经理（2025-05-16 起任总经理，2026 限制性股票激励对象名单中排第一）",
+        "name": "薛亚辉",
+        "source": "https://stockpage.10jqka.com.cn/002448/company/；http://www.cnfin.com/announ/detail/index.html?announ=lc&code=002448&dannoun=lcdetail&id=841077956601（2026 限制性股票激励计划授予日名单）；https://disc.static.szse.cn/disc/disk03/finalpage/2026-04-24/f8141286-a86e-4c13-a47d-9c8fe181cfb5.PDF",
+        "status": "已查证",
+        "channel": "脉脉优先 + 董秘办中转邮件；薛亚辉为一把手，冷邮件需抄送董秘办"
+      },
+      {
+        "layer": "影响层",
+        "role": "飞德利特泰国厂长 / 海外事业部总经理",
+        "name": "（姓名待验证）",
+        "source": "2026-07-28 证券日报报道与 2026 半年报摘要仅披露‘泰国基地气缸套产线’，未点名厂长出席高管",
+        "status": "待验证/需人工",
+        "channel": "领英优先（泰籍/华裔厂长为主）；可通过罗勇府中资企业商会（中方会长）间接引荐"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团信息化部长 / 泰国厂制造 IT 经理",
+        "name": "（姓名待验证）",
+        "source": "年报‘董监高’章节未列 CIO/信息化负责人",
+        "status": "待验证/需人工",
+        "channel": "脉脉优先（焦作/郑州总部 IT 中层）"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "zhengquan@hnzynp.com（董秘办公开邮箱）+ zhuhuizhen@hnzynp.com（现任董秘朱会珍个人名前缀邮箱）｜出处：http://paper.cnstock.com/html/2026-09/30/content_2273994.htm（2026-09-30 公告会议联系方式）；https://stock.stockstar.com/notice/SN2026082600041661.shtml（2026 半年报披露）",
+      "pattern_inference": "两条真实样本并列出现：一是职能前缀 zhengquan@（证券部），二是个人名前缀 zhuhuizhen@（董秘本人拼音全拼）。强推断：该公司允许个人邮箱采用‘姓名全拼（小写无点）@hnzynp.com’格式；域名 hnzynp.com。",
+      "candidates": [
+        "xueyahui@hnzynp.com（强推断，按 zhuhuizhen 样本格式推出，待验证，未经 NeverBounce/Hunter 验证）",
+        "zhengquan@hnzynp.com（已公开样本，董秘办中转）"
+      ],
+      "fallback": "首触邮件先发 zhengquan@hnzynp.com 请董秘办转信息化负责人，再试 xueyahui@hnzynp.com（抄送），两发退回即改走电话 0371-65325188 人工转介。"
+    },
+    "channel_priority": "决策层（薛亚辉）走脉脉 + 董秘办邮件双轨；影响层（飞德利特泰国厂长）走领英 + 罗勇中资商会引荐；执行层（信息化部长）走脉脉。泰籍厂长在领英的英文档案覆盖率高于脉脉，JobsDB Thailand 可作为反向核实用人需求的辅助渠道。",
+    "first_email": {
+      "subject": "中原内配·飞德利特泰国罗勇基地｜二方审核前的工单追溯与 SPC",
+      "body": "薛总／信息化负责人：飞德利特泰国厂 2025 年末竣工投产，2026 上半年已批量供货通用、康明斯、戴姆勒、约翰迪尔，正是主机厂二方审核倒做工单留痕的窗口。PLEX 云 MES 在罗勇厂本地免建机房、免本地 IT 运维，数周上线即可补全工单、追溯、SPC 与闭环纠正，与集团 ERP 并行不替换，国内总部实时看泰国产线数据。能否给 15 分钟，我把同规模铸造+机加厂的审核应对清单发您？",
+      "word_count": 180,
+      "disclosure": "我是【PLEX 售前顾问】，来自罗克韦尔 PLEX 中国团队；如不希望继续沟通，回复‘退订’即可。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "脉脉私信（不提方案）",
+        "purpose": "补一条与其客户结构强相关的审核信息",
+        "body": "薛总，补充：通用/康明斯对 Tier1 新工厂的二方审核，普遍在量产后 6–12 个月集中安排，工单追溯与 SPC 记录是必查项。供参考。",
+        "word_count": 63
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（退出型收尾）",
+        "purpose": "明确不打扰、留 checklist",
+        "body": "薛总，此前提的二方审核 MES 一事先不打扰。附《发动机缸套 Tier1 二方审核工单追溯自查 8 条》，内部用得上即可。后续若有兴趣再联系。",
+        "word_count": 65
+      }
+    ],
+    "compliance": "PIPL：仅用公开董监高与年报邮箱；泰国 PDPA：对泰国本地厂长首封告知来源与退订；不批量爬取脉脉/领英；董秘办邮箱为公司公开披露的证券部邮箱，属正当 B2B 沟通。",
+    "confidence": "已查证：薛亚辉（董事长/总经理）、董秘朱会珍、两条邮箱样本（zhengquan + zhuhuizhen）、泰国厂投产与四大主机厂供货事实；强推断：xueyahui@ 个人邮箱格式由 zhuhuizhen 样本反推；待验证：飞德利特泰国厂长姓名、集团信息化部长姓名。"
+  },
+  {
+    "id": "T-03",
+    "company": "深圳市科达利实业股份有限公司（泰国实施主体：Kedali (Thailand) Co., Ltd.）",
+    "code": "002850.SZ",
+    "base": "泰国罗勇府（注册办公地暂在曼谷辉煌区；2026-06-17 另在泰国合资设立‘泰国科盟’做谐波减速机基地）",
+    "stage_summary": "罗勇锂电结构件项目 2026-01 仍处建设阶段、尚未运营，是 12 条商机里唯一一条集团层面公开声明‘核心业务全面集成 SAP’的标的；最佳切入窗在设备安装调试期。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "集团董事长、法定代表人（SAP Owner 体系的最终拍板人）",
+        "name": "励建立",
+        "source": "http://paper.cnstock.com/html/2026-06/17/content_2232380.htm（第五届董事会第三十一次会议决议，由励建立主持）；https://www.qixin.com/publicly/05e95f71-8beb-421b-b234-7bb44262d288",
+        "status": "已查证",
+        "channel": "冷邮件抄送董秘办 ir@kedali.com.cn 中转；董事长本人不适合直接冷邮件，走 SI/SAP 生态引荐更稳"
+      },
+      {
+        "layer": "影响层",
+        "role": "集团总经理（与励建立为兄弟搭档，分管日常经营与海外项目推进）",
+        "name": "励建炬",
+        "source": "https://www.qixin.com/publicly/05e95f71-8beb-421b-b234-7bb44262d288；https://paper.cnstock.com/html/2020-06/24/content_1336729.htm（董事会换届非独立董事名单）",
+        "status": "已查证",
+        "channel": "脉脉优先（深圳总部中高层）；SAP 实施商生态（IBM/德勤/汉得）引荐"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团 CIO / 信息化总监 / 泰国科达利 IT 经理",
+        "name": "（姓名待验证）",
+        "source": "年报‘董监高’章节未列 CIO；2020 年报曾披露国内厂 MES 与 SAP 衔接，但未点名 IT 负责人",
+        "status": "待验证/需人工",
+        "channel": "脉脉优先；可通过 SAP User Group 华南分会触点"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "ir@kedali.com.cn（投资者关系公开邮箱）｜出处：https://disc.static.szse.cn/disc/disk03/finalpage/2026-03-28/fa698b1e-6f1c-4857-8646-be7cf69c8999.PDF（2025 年报）；http://m.epaper.zqrb.cn/html/2026-05/22/content_1245127.htm（权益分派实施公告咨询方式）",
+      "pattern_inference": "唯一公开样本为职能前缀 ir@kedali.com.cn，注意域名为 kedali.com.cn（.com.cn 而非 .com）。无任何个人名前缀样本，禁止反推个人邮箱格式。",
+      "candidates": [
+        "ir@kedali.com.cn（已公开样本，董秘办中转，非个人邮箱）"
+      ],
+      "fallback": "未取得个人邮箱样本，禁止硬编 lilih@ 之类。首触统一发 ir@kedali.com.cn 请董秘办转信息化负责人/泰国项目组，同时电话 0755-26400270 人工确认；可借 SAP 实施商（如汉得、德勤）做非邮件引荐。"
+    },
+    "channel_priority": "决策层（励建立/励建炬）：不直发冷邮件，走董秘办 ir@ 中转 + SAP 生态实施商引荐；执行层（CIO/信息化总监）走脉脉；影响层（泰国科达利厂长/建设总指挥）走领英。泰国本地管理层在领英有英文档案，但科达利泰国项目由中方派驻为主，中方派驻干部走脉脉覆盖更好。",
+    "first_email": {
+      "subject": "科达利·泰国罗勇项目｜SAP 已就位，制造层 MES 如何补",
+      "body": "励总／信息化负责人：科达利泰国罗勇项目目前仍在建设阶段，集团 SAP 核心业务已全面集成。我们观察到制造层工单/追溯/SPC 在 SAP 之外仍常缺一块。PLEX 云 MES 与 SAP 无缝对接，不替换 ERP：泰国厂免建机房、免本地 IT 运维、数周上线，SPC 与追溯直连 SAP，满足 CATL/特斯拉供应链审核；深圳总部实时看罗勇数据。能否给 15 分钟，我把 SAP 周边制造层对接的同规模案例清单发您？",
+      "word_count": 188,
+      "disclosure": "我是【PLEX 售前顾问】，来自罗克韦尔 PLEX 中国团队；如不希望继续沟通，回复‘退订’即可。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "脉脉私信（找集团 CIO 而非董事长）",
+        "purpose": "补一条与 SAP 周边 MES 相关的中立信息",
+        "body": "信息化负责人您好，补充：SAP 周边 MES 选型常见两条路——自研定制或云 MES，前者在海外厂复制时二开成本通常被低估。供参考。",
+        "word_count": 62
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（退出型收尾，仍发 ir@）",
+        "purpose": "留 SAP 周边 MES 选型 checklist",
+        "body": "此前提的泰国厂 SAP 周边制造层 MES 一事先不打扰。附《新建工厂 MES 选型 10 条自查表》（含与 SAP 对接项），请转信息化负责人即可。后续若有兴趣再联系。",
+        "word_count": 75
+      }
+    ],
+    "compliance": "PIPL：仅用公开董监高与 ir@ 邮箱；泰国 PDPA：泰国项目组中方派驻人员在境内通讯，PDPA 主要约束本地员工数据回流；不承诺‘SAP 已就位’之外的效果，邮件中不写任何未验证的 OEE/良率数字；不批量爬取领英。",
+    "confidence": "已查证：励建立（董事长）、励建炬（总经理）、董秘罗丽娇、ir@kedali.com.cn、集团 2019 年起 SAP 核心业务集成（证据链[3]）；强推断：泰国项目由中方派驻为主；待验证：集团 CIO/信息化总监姓名、泰国科达利厂长姓名、国内 MES 供应商身份（V1 待观察）。"
+  },
+  {
+    "id": "T-04",
+    "company": "浙江斯菱智能驱动集团股份有限公司（泰国实施主体：Sling Automobile Bearing (Thailand) Co., Ltd.）",
+    "code": "301550.SZ",
+    "base": "泰国大城府洛加纳工业园（Ayutthaya）",
+    "stage_summary": "轮毂轴承泰国厂已量产多年（2019 设厂），2026 年新增谐波减速器产线在建、磨装自动产线刚升级；切入窗口在谐波减速器新线投产前统一部署。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "集团董事长、总经理、法定代表人（一人兼任一把手，决策链路最短）",
+        "name": "姜岭",
+        "source": "https://irm.cninfo.com.cn/ircs/company/companyDetail?stockcode=301550&orgId=gfbj0832147；https://www.qixin.com/publicly/ff55fe13-4c9f-4447-a9e7-fd03644d855b",
+        "status": "已查证",
+        "channel": "脉脉优先（新昌总部民营一把手，决策链短）；冷邮件抄送董秘办 stock@ 中转"
+      },
+      {
+        "layer": "影响层",
+        "role": "斯菱泰国厂长（大城府洛加纳）",
+        "name": "（姓名待验证）",
+        "source": "官网 https://www.slingbearings.com/equipment.html 仅列园区与面积，未列厂长姓名",
+        "status": "待验证/需人工",
+        "channel": "领英优先（泰籍/华裔厂长英文档案）；洛加纳工业园中资企业协会可引荐"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团制造 IT / 自动化经理（谐波减速器新线设备导入负责人）",
+        "name": "（姓名待验证）",
+        "source": "年报未列 CIO/IT 负责人",
+        "status": "待验证/需人工",
+        "channel": "脉脉优先（新昌/杭州总部）；谐波减速器赛道可借机器人行业会议触达"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "stock@bbsbearing.com（证券部公开邮箱）｜出处：https://disc.static.szse.cn/disc/disk03/finalpage/2025-04-23/c687b62f-b37d-4535-bdde-bb0b5161a186.PDF（2024 年报摘要）；http://emweb.eastmoney.com/PC_HSF10/CompanySurvey/Index?type=web&code=SZ301550",
+      "pattern_inference": "唯一公开样本为职能前缀 stock@bbsbearing.com，注意域名为 bbsbearing.com（BBS = 新昌轴承 / 原 BBS 拼音缩写），而非 leads_sea.md 中推断的 sling.cn。无任何个人名前缀样本，禁止硬编。",
+      "candidates": [
+        "stock@bbsbearing.com（已公开样本，证券部中转）"
+      ],
+      "fallback": "未取得个人邮箱样本，禁止硬编 jiangling@。首卷发 stock@bbsbearing.com 请证券部转姜岭总/信息化负责人，电话 0575-86031996 人工确认；可借机器人/谐波减速器行业会议（如 IROS 中国分会、中国机器人产业联盟）触达新线项目组。"
+    },
+    "channel_priority": "决策层（姜岭一人兼任）走脉脉 + 证券部邮件；影响层（大城府厂长）走领英 + 洛加纳中资协会；执行层（自动化经理）走脉脉 + 机器人行业会议。泰籍厂长在领英的英文档案覆盖率高于脉脉；新线项目组是机器人行业背景，脉脉机器人/自动化圈覆盖较好。",
+    "first_email": {
+      "subject": "斯菱智驱·泰国大城洛加纳基地｜谐波减速器新线投产前的统一 MES",
+      "body": "姜总／信息化负责人：斯菱泰国大城洛加纳基地，轮毂轴承已量产，谐波减速器新线正在推进。新线投产前是统一制造层系统的最后窗口：PLEX 云 MES 免建机房、免本地 IT 运维、数周上线，轴承与减速器共用一套工单/追溯/SPC，与集团 ERP 并行不替换，新昌总部实时看大城产线。能否给 15 分钟，我把同规模双产线离散工厂的实际上线周期表发您？",
+      "word_count": 162,
+      "disclosure": "我是【PLEX 售前顾问】，来自罗克韦尔 PLEX 中国团队；如不希望继续沟通，回复‘退订’即可。【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "脉脉私信（不提方案）",
+        "purpose": "补一条与新线投产相关的中立信息",
+        "body": "姜总，补充：谐波减速器新线投产前若与轴承线各上一套 MES，后续换型/追溯统一成本通常远高于一开始就一套系统。供参考。",
+        "word_count": 58
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（退出型收尾）",
+        "purpose": "留双产线 MES 选型 checklist",
+        "body": "姜总，此前提的谐波减速器新线 MES 一事先不打扰。附《双产线离散工厂 MES 选型 8 条自查表》，内部用得上即可。后续若有兴趣再联系。",
+        "word_count": 63
+      }
+    ],
+    "compliance": "PIPL：仅用公开董监高与 stock@ 邮箱；泰国 PDPA：对大城府泰籍厂长首封告知来源与退订；不批量爬取领英；新线项目组涉机器人行业，不记录个人手机号。",
+    "confidence": "已查证：姜岭（董事长/总经理/法定代表人）、stock@bbsbearing.com、泰国基地位置与谐波减速器新线在建事实；强推断：个人邮箱格式不可推断；待验证：大城府泰国厂长姓名、集团自动化经理姓名、国内 ERP 品牌（D2=1）。"
+  }
+]

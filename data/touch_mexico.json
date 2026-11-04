@@ -1,0 +1,286 @@
+[
+  {
+    "id": "M-01",
+    "company": "上海永茂泰汽车科技股份有限公司",
+    "code": "605208.SH",
+    "base": "墨西哥智能制造基地（州未披露，2026H1 已签厂房租赁、设备采购前期）",
+    "stage_summary": "4.5 亿元 Greenfield 已过董事会、厂房租赁已签，处改造与设备采购前期；MES 立项窗口就在未来 6-9 个月，晚于设备到货则预算被动。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "董事长、法定代表人、创始人",
+        "name": "徐宏（董事长）",
+        "source": "上海证券交易所《第四届董事会第一次会议决议公告》2026-05-12 http://www.sse.com.cn/disclosure/listedinfo/announcement/c/new/2026-05-12/605208_20260512_7Q6L.pdf ；上证路演中心 2025 年度业绩说明会嘉宾页 https://roadshow.sseinfo.com/activityDetails/38293",
+        "status": "已查证",
+        "why_now": "民营创始人型决策，4.5 亿元新基地投资已过董事会，新厂 MES 预算与品牌选型需董事长拍板；公司当前阶段无 CIO 公开职位，信息化投入最终由一把手定。",
+        "channel": "脉脉（创始人级中文实名档案概率高，需登录核实；本阶段未登录采集）"
+      },
+      {
+        "layer": "影响层",
+        "role": "墨西哥项目筹备组组长 / 海外事业部总经理",
+        "name": "角色占位（姓名待验证）",
+        "source": "2026 半年报仅披露'已组建专业团队赴墨'，未具名；半年报原文 https://pdf.dfcfw.com/pdf/H2_AN202608201828207754_1.pdf",
+        "status": "待验证/需人工",
+        "why_now": "厂房改造与智能化产线设备采购由该筹备组直接推进，对 MES 上线时间与设备点位预留有一票否决权；此人一旦在公司新闻稿或奠基仪式露面即应补录。",
+        "channel": "脉脉（中方派赴团队，领英覆盖率低）；后续若公开亮相再补领英"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团信息化负责人 / IT 经理",
+        "name": "角色占位（姓名待验证）",
+        "source": "2025 年报摘要仅写'深化制造执行系统（MES）在生产核心环节应用'，未具名信息化负责人 http://dataclouds.cninfo.com.cn/shgonggao/hsomarket/2026/20260410/e9b584f02b244e0f9484b1d33ece7adc.PDF",
+        "status": "待验证/需人工",
+        "why_now": "国内已有 MES 在运行（品牌不明），新厂是否复制、重新选型由集团 IT 牵头评估；这是销售动作前必须先访谈的一环。",
+        "channel": "脉脉为主、领英为辅（IT 岗双语档案概率高于一把手）"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "ymtauto@ymtauto.com —— 来源：2025 年年度报告摘要（证券时报电子报 PDF http://epaper.stcn.com/att/202604/11/ZQ11B057-SS_eBook.pdf）+ 2026-06-02《关于董事会秘书正式履职的公告》（上海证券报 http://paper.cnstock.com/html/2026-06/02/content_2225787.htm）两度公开披露。现任董秘：2025 年报摘要署王光普，2026-06 起由杨跃正式履职（上交所公司概况页 http://www.sse.com.cn/assortment/stock/list/info/company/index.shtml?COMPANY_CODE=605208 ），邮箱不变。",
+      "pattern_inference": "样本为公司简称做前缀（ymtauto@），既非纯职能型也非代码型，属品牌/简称型；据此强推断内部个人邮箱为 pinyin@ymtauto.com（推断，未经 NeverBounce/Hunter 验证）。",
+      "candidates": [
+        "xuhong@ymtauto.com（待验证，未经 NeverBounce/Hunter 验证，董事长徐宏拼音首字母+姓）",
+        "yangyue@ymtauto.com（待验证，未经 NeverBounce/Hunter 验证，现任董秘杨跃）"
+      ],
+      "fallback": "首选走董秘办公开邮箱 ymtauto@ymtauto.com 中转，正文注明'烦请转呈墨西哥项目筹备组/信息化负责人'；次选官网联系表单。不向未验证候选邮箱直接群发。"
+    },
+    "channel_priority": "决策层徐宏 → 脉脉（创始人在领英无完整英文档案，脉脉中文实名命中率高）；影响层筹备组 → 脉脉（中方派赴团队）；执行层集团 IT → 脉脉为主、领英为辅。墨西哥本地后续一旦公开招聘厂长，立即转领英/OCC Mundial。",
+    "first_email": {
+      "subject": "永茂泰墨西哥智能制造基地｜MES 上线周期与 TCO",
+      "body": "您好：\n贵司墨西哥基地已签厂房租赁协议、即将进入设备采购与智能化产线改造（2026半年报）。我们为汽车零部件海外厂提供云原生MES：免在墨建机房，免本地IT运维，数周上线；不替换国内SAP、只补制造层；追溯与SPC满足主机厂及IATF16949审核；中国总部实时看到海外厂数据。\n能否给我15分钟，把同规模墨西哥厂从改造到SOP的上线周期表发您参考？",
+      "word_count": 175,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 工业软件团队（职务冷邮件，信息来源为贵司上交所/深交所公开披露文件）。如不希望继续收到此类邮件，回复'退订'即可。",
+      "draft_label": "【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "脉脉（决策层徐宏/影响层筹备组组长）",
+        "purpose": "不提方案，只补一条与该厂阶段相关的时间线信息，建立'有用的陌生人'印象",
+        "body": "徐董您好，补一条信息：在墨Greenfield从签租赁到SOP通常14-18个月，MES立项建议在设备到货前6-9个月。需要时我把时间线整理成一页发您。",
+        "if_no_response": "不追问；转入 Day7 退出型收尾。"
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（发至董秘办 ymtauto@ymtauto.com，转呈决策层）",
+        "purpose": "退出型收尾，明确不打扰，留自查清单，保持门口开着",
+        "body": "徐董您好，本封不再打扰。附一份《墨西哥新建厂MES立项自查清单》（10项），您可自行对照内部进度；如未来需要，随时回邮即可。【草稿】",
+        "if_no_response": "本轮触达结束，转入季度性行业动态推送（INA展会/IATF审核变化），不再每周跟进。"
+      }
+    ],
+    "compliance": "PIPL：仅使用上交所/年报公开披露的职务信息，不建立个人画像；首封即披露发件人身份与信息来源，提供回复'退订'退出方式。墨西哥 LFPDPPP：本阶段首触收件人为中国总部决策人，暂不触发；若后续转领英触达墨西哥本地厂长，须在邮件中提供退订方式并避免批量抓取。平台 ToS：脉脉仅人工查看徐宏等公开职位页与公司页，不批量下载个人资料、不使用自动化脚本。",
+    "confidence": "已查证：徐宏任董事长（交易所决议公告）、董秘邮箱 ymtauto@ymtauto.com（年报+履职公告双源）、墨西哥基地已签租赁（半年报）。强推断：个人邮箱 pinyin@ymtauto.com 形态。待验证：筹备组组长姓名、集团信息化负责人姓名、国内在用 MES 品牌与是否复制到新厂、脉脉/领英登录态下的实名档案（需人工）。"
+  },
+  {
+    "id": "M-02",
+    "company": "苏州瑞玛精密工业集团股份有限公司",
+    "code": "002976.SZ",
+    "base": "墨西哥瓜纳华托州 Apaseo El Grande 工业园（JLB 园区），用地 52,297㎡，2025-09 土地永久所有权交割完成，待建厂",
+    "stage_summary": "地块已交割、厂房未开工，处 Greenfield 前奏；总建厂投资未披露，董事长层面尚未立项，正是在厂房设计阶段嵌入 MES 点位预留的最佳窗口。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "董事长、总经理、法定代表人、实控人",
+        "name": "陈晓敏（董事长、总经理）",
+        "source": "深交所《2025 年度股东会会议材料》高管薪酬表 https://disc.static.szse.cn/disc/disk03/finalpage/2026-05-16/114628b7-8a9e-48cd-95a2-e78a8eb1fcb3.PDF ；2025 年报'公司负责人陈晓敏' http://xinpi.zqrb.cn/pdf/SZ/002976/2026/0427/6e5d9e0cfb9424e8e89ada936ede8841.pdf",
+        "status": "已查证",
+        "why_now": "购地已过董事会但建厂投资尚未公告（总投资未披露），立项决策仍在董事长/实控人层面；民营企业家族决策（陈晓敏、翁荣荣夫妇为实控人），MES 预算需一把手点头。",
+        "channel": "脉脉（苏州工业园区制造业中高层在脉脉活跃，需登录核实）"
+      },
+      {
+        "layer": "影响层",
+        "role": "墨西哥瑞玛总经理 / Apaseo 新厂筹建负责人",
+        "name": "角色占位（姓名待验证）",
+        "source": "墨西哥瑞玛成立于 2016-08-22、注册地克雷塔罗，2024-12 成为全资孙公司（公告 https://disc.static.szse.cn/download/disc/disk03/finalpage/2024-12-04/926cc2bb-595e-4f74-ae66-b402e1fe67fb.PDF ），本地管理团队姓名未在公开披露",
+        "status": "待验证/需人工",
+        "why_now": "新地块厂房设计与产线规划大概率由现有墨西哥瑞玛团队承接，本地总经理对设备选型与产线节拍有实操话语权；购地后建厂阶段此人权重上升。",
+        "channel": "领英优先（克雷塔罗/Apaseo El Grande 制造业本地管理者普遍用领英，脉脉无覆盖；需登录核实，本阶段未采集）"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团制造 IT / 信息化经理",
+        "name": "角色占位（姓名待验证）",
+        "source": "公开渠道未检索到该公司信息化负责人具名信息",
+        "status": "待验证/需人工",
+        "why_now": "建厂阶段尚未公开招聘 IT 岗，MES 接口需求需在厂房设计阶段由集团 IT 与工艺部门对齐。",
+        "channel": "脉脉为主（中方 IT 岗中文实名率高）"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "stock@cheersson.com —— 来源：2025 年年度报告摘要（深交所 https://disc.static.szse.cn/download/disc/disk03/finalpage/2026-04-27/6d621365-8ee1-4471-b696-da30b0ac7f8c.PDF ）+ 公司官网咨询方式页 https://www.cheersson.com/article_category.php?id=27 双源一致。董秘谭才年、证代程雅。",
+      "pattern_inference": "样本为职能型前缀（stock=证券事务），域名 cheersson.com；强推断内部个人邮箱为 pinyin@cheersson.com（推断，未经 NeverBounce/Hunter 验证）。",
+      "candidates": [
+        "chenxiaomin@cheersson.com（待验证，未经 NeverBounce/Hunter 验证，董事长陈晓敏拼音）",
+        "tancainian@cheersson.com（待验证，未经 NeverBounce/Hunter 验证，董秘谭才年）"
+      ],
+      "fallback": "首选 stock@cheersson.com 董秘/证券法务部中转，注明'转呈墨西哥项目/信息化负责人'；次选官网咨询页表单。不向未验证候选邮箱直接群发。"
+    },
+    "channel_priority": "决策层陈晓敏 → 脉脉（苏州本地企业家）；影响层墨西哥瑞玛总经理 → 领英优先（瓜纳华托/克雷塔罗本地管理团队）；执行层集团 IT → 脉脉。三层不混用同一渠道。",
+    "first_email": {
+      "subject": "瑞玛精密墨西哥 Apaseo El Grande 基地｜厂房设计阶段 MES 接口预留",
+      "body": "陈总您好：\n贵司瓜纳华托Apaseo El Grande地块已于2025-09完成交割，进入厂房设计与产线规划阶段。我们为新建汽车零部件厂提供云原生MES：免建机房、免本地运维、数周上线；不替换SAP、只补制造层；追溯与SPC满足主机厂及IATF16949审核；中国总部实时看到海外厂数据。\n能否给我15分钟，把厂房设计阶段MES接口与点位预留清单发您参考？",
+      "word_count": 179,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 工业软件团队（职务冷邮件，信息来源为贵司深交所公开披露文件）。如不希望继续收到此类邮件，回复'退订'即可。",
+      "draft_label": "【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "脉脉（决策层陈晓敏）",
+        "purpose": "不提方案，只补一条与该园区产业聚集相关的有用信息",
+        "body": "陈总您好，补一条信息：Apaseo El Grande园区周边中资冲压件厂近年集中落地，厂房设计阶段预留MES点位可省后期返工。需要时我把点位清单发您。",
+        "if_no_response": "不追问；转入 Day7 退出型收尾。"
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（stock@cheersson.com 中转）",
+        "purpose": "退出型收尾，留自查清单",
+        "body": "陈总您好，本封不再打扰。附一份《绿地建厂MES接口预留自查清单》（8项），供厂房设计阶段内部对照；如后续需要，随时回邮即可。【草稿】",
+        "if_no_response": "本轮结束；后续跟踪建厂投资公告（一旦总投资披露即重启触达）。"
+      }
+    ],
+    "compliance": "PIPL：仅使用深交所年报/股东会材料公开的职务信息，首封披露身份与来源、提供退订。墨西哥 LFPDPPP：本阶段首触苏州总部决策人；若后续通过领英触达墨西哥瑞玛本地总经理，须遵守 LFPDPPP 商业营销邮件告知与退出要求，InMail 不采集个人资料。平台 ToS：脉脉/领英仅人工查看公开公司页与职位页，不批量抓取。",
+    "confidence": "已查证：陈晓敏任董事长/总经理（股东会材料+年报）、stock@cheersson.com（年报+官网双源）、地块 2025-09 交割（交割公告）。强推断：个人邮箱 pinyin@cheersson.com。待验证：墨西哥瑞玛本地总经理姓名、总建厂投资、集团 IT 负责人、脉脉/领英登录态下实名档案。"
+  },
+  {
+    "id": "M-03",
+    "company": "浙江银轮机械股份有限公司",
+    "code": "002126.SZ",
+    "base": "墨西哥蒙特雷（现有工厂 2023Q2 投产）+ 新设全资子公司华鼎控股墨西哥（2025-12 董事会通过，建设期 2026-01 至 2027-07）",
+    "stage_summary": "新设子公司刚过董事会，叠加 6,134 万美元北美客户定点 2027 SOP；MES 立项倒推必须在 2026Q4 前完成，否则赶不上客户 PPAP 数据采集要求。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "董事长 / 分管海外制造副总裁",
+        "name": "徐小敏（董事长）",
+        "source": "2025 年年度报告'公司负责人徐小敏'（新浪财经公告页 http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12089841&stockid=002126 ；深交所年报摘要 http://disc.static.szse.cn/download/disc/disk03/finalpage/2026-04-15/c18767fe-062a-496f-ae56-3867c61cb417.pdf ）",
+        "status": "已查证",
+        "why_now": "3,837 万美元增资已过董事会，新子公司 IT 架构与 MES 预算属集团级决策；现有蒙特雷厂已运营 3 年，新厂是否复制现有 MES 需集团层面拍板。",
+        "channel": "脉脉（浙江天台制造业上市公司一把手在脉脉有公开档案概率较高，需登录核实）"
+      },
+      {
+        "layer": "影响层",
+        "role": "墨西哥蒙特雷工厂厂长 / 北美区总经理",
+        "name": "角色占位（姓名待验证）",
+        "source": "现有蒙特雷厂 2023Q2 投产（券商研报 https://pdf.dfcfw.com/pdf/H3_AP202605151822355281_1.pdf ），本地厂长姓名未在公开公告具名",
+        "status": "待验证/需人工",
+        "why_now": "新子公司选址与产线规划大概率由现有蒙特雷管理团队承接，本地厂长对新厂产线节拍、数据采集点位、与现有厂数据打通有一票否决权；现有厂在用 MES 是否复制由此人最清楚。",
+        "channel": "领英优先（蒙特雷制造业本地管理者普遍使用领英；需登录核实，本阶段未采集）"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团 IT 经理 / 海外 IT 项目经理",
+        "name": "角色占位（姓名待验证）",
+        "source": "公开渠道未具名",
+        "status": "待验证/需人工",
+        "why_now": "新设子公司 IT 架构搭建由集团 IT 牵头，是否沿用集团 ERP/MES 体系在此层完成技术评估。",
+        "channel": "脉脉为主、领英为辅"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "002126@yinlun.cn —— 来源：2024 年年度报告摘要（深交所 https://disc.static.szse.cn/disc/disk03/finalpage/2025-04-18/952bd223-4b3b-410e-84f5-a1a9470b423d.PDF ）+ 2026 半年报（证券之星 https://stock.stockstar.com/SN2026082600049483.shtml ）持续披露。董秘陈敏、证代徐丽芬。注意域名为 yinlun.cn（.cn 而非 .com）。",
+      "pattern_inference": "样本为代码型前缀（股票代码 002126@），与均胜电子 600699@joyson.com 同型；强推断内部个人邮箱为 pinyin@yinlun.cn 或 firstname.last@yinlun.cn（推断，未经 NeverBounce/Hunter 验证）。",
+      "candidates": [
+        "chenmin@yinlun.cn（待验证，未经 NeverBounce/Hunter 验证，董秘陈敏）",
+        "xuxiaomin@yinlun.cn（待验证，未经 NeverBounce/Hunter 验证，董事长徐小敏）"
+      ],
+      "fallback": "首选 002126@yinlun.cn 董秘办中转，注明'转呈墨西哥项目/集团信息化负责人'；次选官网投资者关系页。不向未验证候选邮箱直接群发。"
+    },
+    "channel_priority": "决策层徐小敏 → 脉脉；影响层蒙特雷厂长 → 领英优先（hint 既定判断：海外本地厂长领英更活跃）；执行层集团 IT → 脉脉+领英双渠道并行。",
+    "first_email": {
+      "subject": "银轮股份华鼎控股墨西哥新子公司｜2027 SOP 倒推 MES 立项节奏",
+      "body": "徐董您好：\n贵司华鼎控股墨西哥新设子公司已过董事会（2025-12），叠加获北美客户6,134万美元散热器定点、2027年SOP。我们为热管理海外厂提供云原生MES：免建机房、免本地运维、数周上线；不替换SAP、只补制造层；追溯与SPC满足客户PPAP与IATF16949审核；总部实时看到蒙特雷与新厂数据。\n能否给我15分钟，把2027 SOP倒推的MES立项时间表发您参考？",
+      "word_count": 189,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 工业软件团队（职务冷邮件，信息来源为贵司深交所公开披露文件）。如不希望继续收到此类邮件，回复'退订'即可。",
+      "draft_label": "【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "领英 InMail（蒙特雷厂长/北美区总经理）",
+        "purpose": "不提方案，只补一条与 2027 SOP 倒推相关的时间线信息",
+        "body": "您好，补一条信息：2027年SOP倒推，新厂MES需在2026Q4前完成立项才能赶上客户PPAP数据采集要求。需要时我把倒推时间表发您。",
+        "if_no_response": "不追问；转入 Day7 退出型收尾。"
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（002126@yinlun.cn 中转）",
+        "purpose": "退出型收尾，留倒推自查清单",
+        "body": "徐董您好，本封不再打扰。附一份《2027 SOP倒推MES立项自查清单》（10项），供项目组内部对照；如未来需要，随时回邮即可。【草稿】",
+        "if_no_response": "本轮结束；后续若现有蒙特雷厂 MES 品牌公开（招标/反馈意见回复），再重启。"
+      }
+    ],
+    "compliance": "PIPL：仅使用深交所年报公开的职务信息，首封披露身份、来源、退订。墨西哥 LFPDPPP：Day3 走领英 InMail 触达蒙特雷本地厂长，属墨西哥本地收件人，须按 LFPDPPP 在 InMail 与后续邮件中提供明确退订方式，且不批量下载员工资料；中国总部决策人邮件不触发 LFPDPPP。平台 ToS：领英仅人工个案查看公开职位页，不用自动化脚本。",
+    "confidence": "已查证：徐小敏任董事长（年报）、002126@yinlun.cn（年报+半年报）、新设子公司 2025-12 过董事会（增资公告）、6,134 万美元定点（定点公告）。强推断：个人邮箱 pinyin@yinlun.cn。待验证：蒙特雷厂长姓名、现有蒙特雷厂在用 MES 品牌、集团 IT 负责人、领英登录态下本地团队实名档案。"
+  },
+  {
+    "id": "M-04",
+    "company": "祥鑫科技股份有限公司",
+    "code": "002965.SZ",
+    "base": "墨西哥新莱昂州蒙特雷市（解放路里卡多科瓦吕比大街 2703-2 号），2021-08 设立，2025-06 增资 1,500 万美元购设备",
+    "stage_summary": "墨西哥子公司 2024 年仍亏损 425 万元、本轮增资明确用于购置设备，处设备到货/调试前窗口；本地厂长对设备数据采集接口与 MES 上线时间权重上升。",
+    "decision_makers": [
+      {
+        "layer": "决策层",
+        "role": "董事长",
+        "name": "谢祥娃（董事长）",
+        "source": "2025 年年度报告'公司负责人谢祥娃'（深交所 https://disc.static.szse.cn/download/disc/disk03/finalpage/2026-04-23/25f6e877-87db-4a49-8f06-9870e2d7721d.PDF ）+ 2025-12-04 董事会换届公告提名谢祥娃为第五届董事会非独立董事候选人（上海证券报 https://paper.cnstock.com/html/2025-12/04/content_2153912.htm ）",
+        "status": "已查证",
+        "why_now": "1,500 万美元增资已过董事会，墨西哥厂处亏损爬坡期，IT 投入需董事长层面拍板；本轮增资明确用于设备，MES 接口预算随设备采购一同审批。",
+        "channel": "脉脉（东莞长安镇零部件制造业中高层在脉脉活跃，需登录核实）"
+      },
+      {
+        "layer": "影响层",
+        "role": "墨西哥祥鑫总经理 / 蒙特雷工厂厂长",
+        "name": "角色占位（姓名待验证）",
+        "source": "墨西哥祥鑫 2021-08 成立于蒙特雷（公告 https://disc.static.szse.cn/disc/disk03/finalpage/2025-06-20/18a324f6-c59f-4bd7-91a1-18984e805177.PDF ），本地总经理姓名未在公开披露",
+        "status": "待验证/需人工",
+        "why_now": "设备调试前窗口，厂长对新设备数据采集接口、上线节奏有直接话语权；hint 明确此阶段厂长权重上升。亏损爬坡期，厂长同时对 IT 投入 ROI 敏感。",
+        "channel": "领英优先（蒙特雷本地管理层普遍用领英；需登录核实，本阶段未采集）"
+      },
+      {
+        "layer": "执行层",
+        "role": "集团制造 IT / 设备工程部经理",
+        "name": "角色占位（姓名待验证）",
+        "source": "公开渠道未具名",
+        "status": "待验证/需人工",
+        "why_now": "本轮增资用于设备购置，设备选型与 MES/PLC 数据采集接口由设备工程部与集团 IT 共同推动。",
+        "channel": "脉脉为主"
+      }
+    ],
+    "email_intel": {
+      "real_sample": "ir@luckyharvest.cn（董秘陈振海）+ LHA057@luckyharvest.cn（证券事务代表廖世福）—— 来源：2023/2024 年年度报告摘要（深交所 https://disc.static.szse.cn/disc/disk03/finalpage/2024-04-24/af641f81-53a3-4382-be73-5cf73490f45c.PDF ）。域名 luckyharvest.cn（Lucky Harvest 为祥鑫英文商号，非 xiangxin.com）。",
+      "pattern_inference": "双形态样本：董秘用职能前缀 ir@，证代用商号缩写+数字 LHA057@；强推断内部个人邮箱为 pinyin@luckyharvest.cn（推断，未经 NeverBounce/Hunter 验证）。",
+      "candidates": [
+        "xiexiangwa@luckyharvest.cn（待验证，未经 NeverBounce/Hunter 验证，董事长谢祥娃）",
+        "chenzhenhai@luckyharvest.cn（待验证，未经 NeverBounce/Hunter 验证，董秘/董事陈振海）"
+      ],
+      "fallback": "首选 ir@luckyharvest.cn 董秘办中转，注明'转呈墨西哥项目/设备工程部'；次选官网联系表单。不向未验证候选邮箱直接群发。"
+    },
+    "channel_priority": "决策层谢祥娃 → 脉脉；影响层墨西哥祥鑫总经理 → 领英优先（蒙特雷本地，hint 明确设备调试前厂长权重上升）；执行层集团设备工程/IT → 脉脉。",
+    "first_email": {
+      "subject": "祥鑫科技墨西哥祥鑫设备采购｜到货前 MES 接口预留",
+      "body": "谢董您好：\n贵司墨西哥祥鑫2025-06增资1,500万美元用于购置设备，正处设备调试前窗口。我们为冲压钣金海外厂提供云原生MES：免建机房、免本地运维、数周上线；不替换SAP、只补制造层；追溯与SPC满足主机厂及IATF16949审核；东莞总部实时看到蒙特雷数据。\n能否给我15分钟，把新设备到货前MES接口预留清单发您参考？",
+      "word_count": 164,
+      "compliance_tail": "发件人身份：罗克韦尔 PLEX 工业软件团队（职务冷邮件，信息来源为贵司深交所公开披露文件）。如不希望继续收到此类邮件，回复'退订'即可。",
+      "draft_label": "【草稿，需销售人工定稿】"
+    },
+    "followup": [
+      {
+        "day": "Day3",
+        "channel": "领英 InMail（墨西哥祥鑫总经理/蒙特雷厂长）",
+        "purpose": "不提方案，只补一条与设备到货前接口预留相关的有用信息",
+        "body": "您好，补一条信息：新冲压/焊接设备到货前预留数据采集接口，可避免投产后停机改造。需要时我把接口预留清单发您。",
+        "if_no_response": "不追问；转入 Day7 退出型收尾。"
+      },
+      {
+        "day": "Day7",
+        "channel": "邮件（ir@luckyharvest.cn 中转）",
+        "purpose": "退出型收尾，留接口自查清单",
+        "body": "谢董您好，本封不再打扰。附一份《设备调试前MES数据采集接口自查清单》（8项），供项目组内部对照；如后续需要，随时回邮即可。【草稿】",
+        "if_no_response": "本轮结束；后续若墨西哥祥鑫扭亏公告或新客户定点公告披露，再重启触达。"
+      }
+    ],
+    "compliance": "PIPL：仅使用深交所年报/换届公告公开的职务信息，首封披露身份、来源、退订。墨西哥 LFPDPPP：Day3 走领英 InMail 触达蒙特雷本地总经理，须按 LFPDPPP 提供退订方式，不批量抓取员工资料；中国总部邮件不触发 LFPDPPP。平台 ToS：领英仅人工个案查看公开公司页与职位页，不使用自动化脚本。",
+    "confidence": "已查证：谢祥娃任董事长（年报+换届公告双源）、ir@luckyharvest.cn 与 LHA057@luckyharvest.cn（年报摘要）、增资 1,500 万美元购设备（增资公告）、2024 年墨西哥祥鑫亏损 425 万（担保公告）。强推断：个人邮箱 pinyin@luckyharvest.cn。待验证：墨西哥祥鑫本地总经理姓名、在用 MES/ERP 品牌、领英登录态下本地团队档案。"
+  }
+]
