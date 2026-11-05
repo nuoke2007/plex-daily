@@ -405,6 +405,14 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 .sighit{font-size:12px;padding:5px 0;border-bottom:1px dashed #e8eef5}
 .sighit a{font-weight:600}
 .sighit .nm{color:#8494a4;font-size:11px}
+.lead{border:1px solid #e3ebf3;border-radius:9px;padding:11px 13px;margin-bottom:9px;background:#fff}
+.lead-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.lead-top .lc{color:#8494a4;font-size:11px}
+.badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;color:#fff}
+.badge.gh{background:#0a7f3f}.badge.gm{background:#b26a00}.badge.gl{background:#9aa7b4}
+.lead-t{display:block;font-size:13px;font-weight:600;color:#003DA5;margin:3px 0}
+.why{font-size:12px;color:#33475b;margin:2px 0}
+.nxt{font-size:12px;color:#b26a00;margin:3px 0 7px}
 """
 
 def card(c):
@@ -433,32 +441,75 @@ def card(c):
   </div>
 </div>"""
 
+def analyze(key, title):
+    t = title
+    if key=="FTPC":
+        if any(w in t for w in ["新建","投产","生产基地","募投","扩产","奠基","建设项目","试生产","项目备案"]):
+            return "高","新建生产基地/产线 = MES 选型窗口期","问该基地 MES 是否已选型、现用哪家"
+        if any(w in t for w in ["技改","升级","改造","数字化车间","智能工厂","换型","产线调整"]):
+            return "中","产线改造/数字化升级 = 旧 MES 换代窗口","问现有 MES 用哪家、要不要统一升级"
+        return "低","制造业相关动态，需人工判断 MES 需求","点开公告看正文是否提到产线/基地"
+    if key=="TWX":
+        if any(w in t for w in ["预测性维护","OEE","设备联网","智能工厂","灯塔","数字车间","设备数据","能耗"]):
+            return "高","明确做设备/OEE 智能化 = ThingWorx 窗口","问 OEE 是否还靠人工统计、多品牌设备数据怎么抓"
+        return "中","工业互联网相关动态","看正文是否涉及设备数据采集/能耗管理"
+    if key=="WIND":
+        if any(w in t for w in ["研发中心","技术中心","创新中心","实验室","研究院","募投"]):
+            return "高","新建研发中心 = PLM/BOM 统一窗口","问多地研发 BOM 是否人工转换、工程变更怎么管"
+        return "中","产品数据/PLM 相关动态","看正文是否提到多研发中心协同"
+    if key=="DMX":
+        if any(w in t for w in ["数据中台","工业大数据","数字孪生","数据治理","工业互联网平台","数据平台","数据湖"]):
+            return "高","明确建数据平台 = DataMosaix 窗口","找 CDO/数字化负责人，问是否卡在单点 POC 推不开"
+        return "中","数据/数字化相关动态","看正文是否涉及多站点数据整合"
+    return "低","",""
+
+GRADE_CLS={"高":"gh","中":"gm","低":"gl"}
+
 def render_product(p):
-    hits = product_findings.get(p["key"], [])[:6]
-    if hits:
-        sig = "".join(
-            f'<div class="sighit"><a href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
-            f'<div class="nm">{esc(h["sec"])} {esc(h["name"])} · 信号词「{esc(h["kw"])}」</div></div>'
-            for h in hits)
-    else:
-        sig = '<div class="empty" style="padding:10px;font-size:12px">今日该产品关键词无新公告命中（雷达持续监听中）</div>'
-    qs = "".join(f'<div class="q">问{i+1}：{esc(q)}</div>' for i,q in enumerate(p["three"]))
-    man = "".join(f'<div class="row">· {esc(m)}</div>' for m in p["manual"])
+    raw = product_findings.get(p["key"], [])
+    _seen=set(); _raw=[]
+    for h in raw:
+        k=(h.get("sec"),h.get("title"))
+        if k in _seen: continue
+        _seen.add(k); _raw.append(h)
+    raw=_raw
+    leads=[]
+    for h in raw:
+        g,why,nxt = analyze(p["key"], h["title"])
+        leads.append((g,why,nxt,h))
+    order={"高":0,"中":1,"低":2}
+    leads.sort(key=lambda x: order[x[0]])
+    leads=leads[:8]
+    total=len(raw)
+    cards=""
+    for g,why,nxt,h in leads:
+        nm=(h["name"] or h["sec"] or "").strip()
+        import urllib.parse as _up
+        sq="https://www.google.com/search?q="+_up.quote(nm+" 数字化 信息化 负责人 MES")
+        cards+=('<div class="lead">'
+          f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(h["sec"] or "")}</span></div>'
+          f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
+          f'<div class="why">为什么是线索：{esc(why)}</div>'
+          f'<div class="nxt">👉 下一步：{esc(nxt)}</div>'
+          f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 搜该公司数字化/IT 负责人</a>'
+          '</div>')
+    if not cards:
+        cards='<div class="empty" style="padding:14px;font-size:12.5px;color:#8494a4">今日无新公告线索（雷达每天自动扫，命中即推）</div>'
+    qs="".join(f'<div class="q">问{i+1}：{esc(q)}</div>' for i,q in enumerate(p["three"]))
     return f"""
 <div class="prod" id="{p['key']}">
   <div class="prod-h">{p['emoji']} {esc(p['name'])}<small>{esc(p['pos'])}</small></div>
-  <div class="prod-b">
-    <div class="prod-sop">
-      <div class="row"><b>打谁：</b>{esc(p['who'])}</div>
-      <div style="margin:6px 0 2px;font-size:12px;color:#5a6b7d"><b>首聊三问（过滤伪需求）：</b></div>
-      {qs}
-      <div class="hook"><b>破冰钩子：</b>{esc(p['hook'])}</div>
-      <div style="margin:8px 0 2px;font-size:12px;color:#5a6b7d"><b>人工动作：</b></div>
-      {man}
-    </div>
-    <div class="prod-signal">
-      <h5>📡 今日自动信号（{len(product_findings.get(p['key'],[]))} 条）</h5>
-      {sig}
+  <div class="prod-b" style="grid-template-columns:1fr">
+    <div>
+      <div style="font-size:12.5px;color:#33475b;margin:2px 0 10px">🆕 今日自动线索 <b style="color:#003DA5">{total}</b> 条 · 已按优先级排序（高在前）</div>
+      {cards}
+      <details style="margin-top:12px"><summary style="font-size:12px;color:#8494a4">📖 这款产品的打法参考（打谁/三问/钩子，平时不用看）</summary>
+        <div class="prod-sop" style="margin-top:8px">
+          <div class="row"><b>打谁：</b>{esc(p['who'])}</div>
+          {qs}
+          <div class="hook" style="margin-top:6px"><b>钩子：</b>{esc(p['hook'])}</div>
+        </div>
+      </details>
     </div>
   </div>
 </div>"""
