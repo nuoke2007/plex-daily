@@ -422,7 +422,7 @@ def notify():
     if sc:
         try:
             data = urllib.parse.urlencode({"title": title, "desp": body}).encode("utf-8")
-            req = urllib.request.Request(f"https://sctapi.ftqq.com/{sc}.send", data=data, timeout=8)
+            req = urllib.request.Request(f"https://sctapi.ftqq.com/{sc}.send", data=data)
             urllib.request.urlopen(req, timeout=8).read()
             log("Server酱推送成功")
         except Exception as e:
