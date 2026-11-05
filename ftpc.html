@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FTPC 企业级 MES/MOM</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#fff;color:#1a1a1a;font-size:13.5px;line-height:1.6}
+.wrap{max-width:1280px;margin:0 auto;padding:32px 36px 60px}
+.top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+h1{font-size:24px;color:#003DA5;letter-spacing:-.3px}
+.sub{color:#5a6b7d;font-size:12.5px;margin-bottom:20px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px}
+.kpi{border:1px solid #e3ebf3;border-radius:8px;padding:12px 16px;background:#fafcfe}
+.kpi .n{font-size:22px;font-weight:700;color:#003DA5}
+.kpi .l{font-size:11.5px;color:#5a6b7d;margin-top:2px}
+.sec{margin-bottom:30px}
+.sec-h{font-size:16px;color:#003DA5;border-bottom:2px solid #003DA5;padding-bottom:7px;margin-bottom:14px;font-weight:700}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-right:4px}
+.tag-seed{background:#e8f0fa;color:#0059b3}
+.tag-auto{background:#e8f6ee;color:#0a7f3f}
+.tag-manual{background:#fdf3e3;color:#b26a00}
+.card{border:1px solid #e3ebf3;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.card-h{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#f7fafd;cursor:pointer}
+.card-h .cid{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:#00B5E2;font-weight:700;min-width:38px}
+.card-h .nm{font-size:14px;font-weight:700;color:#003DA5}
+.card-h .code{font-size:11px;color:#8494a4}
+.card-h .base{font-size:12px;color:#5a6b7d;margin-left:4px}
+.card-h .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.feas{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:5px}
+.feas-高{background:#e8f6ee;color:#0a7f3f}
+.feas-中{background:#fdf3e3;color:#b26a00}
+.feas-低{background:#fdeaea;color:#b02a2a}
+.grade{font-size:11px;color:#8494a4}
+.card-b{padding:14px 16px;display:none}
+.card.open .card-b{display:block}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col{border-radius:8px;padding:12px 14px}
+.col-auto{background:#f4faf6;border-left:3px solid #0a7f3f}
+.col-manual{background:#fff9ec;border-left:3px solid #b26a00}
+.col h4{font-size:12.5px;margin-bottom:8px}
+.col-auto h4{color:#0a7f3f}
+.col-manual h4{color:#b26a00}
+.col ul{margin-left:18px;font-size:12.5px}
+.col li{margin-bottom:5px}
+.row{padding:4px 0;font-size:12.5px;color:#33475b}
+.row b{color:#1f2d3d}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px}
+th{background:#003DA5;color:#fff;padding:7px 9px;text-align:left;font-weight:600}
+td{padding:7px 9px;border-bottom:1px solid #e8eef5;vertical-align:top}
+tr:nth-child(even) td{background:#fafcfe}
+.empty{background:#f5f7fa;border:1px dashed #cdd9e5;border-radius:8px;padding:16px;color:#5a6b7d;font-size:12.5px}
+a{color:#0059b3;text-decoration:none}
+.foot{font-size:11.5px;color:#8494a4;border-top:1px solid #e8eef5;padding-top:12px;margin-top:20px}
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.lg{border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.55}
+.lg-h{background:#e8f6ee;border-left:3px solid #0a7f3f}
+.lg-m{background:#fdf3e3;border-left:3px solid #b26a00}
+.lg-l{background:#fdeaea;border-left:3px solid #b02a2a}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.btn{display:inline-block;padding:9px 14px;border-radius:7px;font-size:12.5px;font-weight:600;text-decoration:none;border:1px solid transparent}
+.btn-mail{background:#003DA5;color:#fff}
+.btn-link{background:#eef4fb;color:#003DA5;border-color:#c5d8ee}
+.step{margin:5px 0;font-size:12.5px;line-height:1.55}
+.step b{color:#003DA5;margin-right:4px}
+.ev{margin-top:6px;font-size:11.5px;color:#6b7d90;line-height:1.5}
+details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
+.navchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{display:inline-block;padding:7px 13px;border-radius:18px;background:#003DA5;color:#fff;font-size:12.5px;font-weight:600;text-decoration:none}
+.chip.alt{background:#eef4fb;color:#003DA5;border:1px solid #c5d8ee}
+.prod{border:1px solid #e3ebf3;border-radius:12px;margin-bottom:18px;overflow:hidden}
+.prod-h{padding:12px 16px;background:#003DA5;color:#fff;font-size:15px;font-weight:700}
+.prod-h small{font-weight:400;font-size:12px;opacity:.85;margin-left:8px}
+.prod-b{padding:14px 16px;display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+@media(max-width:760px){.prod-b{grid-template-columns:1fr}}
+.prod-sop .row{margin-bottom:7px;font-size:12.5px}
+.prod-sop .row b{color:#003DA5}
+.q{background:#f7fafd;border-radius:6px;padding:7px 10px;margin:4px 0;font-size:12px;color:#33475b}
+.hook{background:#fff9ec;border-left:3px solid #b26a00;border-radius:6px;padding:8px 11px;font-size:12.5px;margin-top:6px}
+.prod-signal{background:#fafcfe;border-radius:8px;padding:10px 12px;border:1px solid #e8eef5}
+.prod-signal h5{font-size:12.5px;color:#0a7f3f;margin-bottom:6px}
+.sighit{font-size:12px;padding:5px 0;border-bottom:1px dashed #e8eef5}
+.sighit a{font-weight:600}
+.sighit .nm{color:#8494a4;font-size:11px}
+.lead{border:1px solid #e3ebf3;border-radius:9px;padding:11px 13px;margin-bottom:9px;background:#fff}
+.lead-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.lead-top .lc{color:#8494a4;font-size:11px}
+.badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;color:#fff}
+.badge.gh{background:#0a7f3f}.badge.gm{background:#b26a00}.badge.gl{background:#9aa7b4}
+.lead-t{display:block;font-size:13px;font-weight:600;color:#003DA5;margin:3px 0}
+.why{font-size:12px;color:#33475b;margin:2px 0}
+.nxt{font-size:12px;color:#b26a00;margin:3px 0 7px}
+</style></head><body>
+<div class="wrap">
+<div class="navchips"><a class="chip alt" href="dashboard.html">🚀 PLEX</a><a class="chip" href="ftpc.html">🏭 FTPC</a><a class="chip alt" href="twx.html">📡 PTC</a><a class="chip alt" href="wind.html">📐 PTC</a><a class="chip alt" href="dmx.html">📊 FactoryTalk</a></div>
+
+<div class="top"><h1>🏭 FTPC 企业级 MES/MOM</h1></div>
+<div class="sub">新基地投产 + 旧基地升级；离散·流程·混合全行业，对标西门子 Opcenter 的企业级 MOM 平台</div>
+
+<div class="prod" id="FTPC">
+  <div class="prod-h">🏭 FTPC 企业级 MES/MOM<small>新基地投产 + 旧基地升级；离散·流程·混合全行业，对标西门子 Opcenter 的企业级 MOM 平台</small></div>
+  <div class="prod-b" style="grid-template-columns:1fr">
+    <div>
+      <div style="font-size:12.5px;color:#33475b;margin:2px 0 10px">🆕 今日自动线索 <b style="color:#003DA5">2</b> 条 · 已按优先级排序（高在前）</div>
+      <div class="lead"><div class="lead-top"><span class="badge gh">高</span><b>恩捷股份</b><span class="lc">002812</span></div><a class="lead-t" href="http://www.cninfo.com.cn/new/disclosure/detail?stockCode=002812&announcementId=1225652289" target="_blank">关于收购爱思开电池材料科技（江苏）有限公司100%股权的进展暨交割完成的公告</a><div class="why">🧠 判断：电池/储能企业刚完成并购/交割，新厂要并入集团体系——多厂 MES 统一或替换的天然窗口。</div><div class="nxt">杠杆：对标孚能60GWh、巨湾南沙、格力钛4厂；找制造副总/数字化总监——电池新厂 MES 选型窗口，问设备进场节奏</div><a class="btn btn-link" href="http://www.cninfo.com.cn/new/disclosure/detail?stockCode=002812&announcementId=1225652289" target="_blank">📄 看公告原文</a> <a class="btn btn-link" href="https://www.google.com/search?q=%E6%81%A9%E6%8D%B7%E8%82%A1%E4%BB%BD%20%E6%95%B0%E5%AD%97%E5%8C%96%20%E4%BF%A1%E6%81%AF%E5%8C%96%20%E8%B4%9F%E8%B4%A3%E4%BA%BA%20MES" target="_blank">🔍 找联系人</a></div><div class="lead"><div class="lead-top"><span class="badge gm">中</span><b>博雅生物</b><span class="lc">300294</span></div><a class="lead-t" href="http://www.cninfo.com.cn/new/disclosure/detail?stockCode=300294&announcementId=1225640493" target="_blank">公司关于智能工厂建设项目工期调整事项的公告</a><div class="why">🧠 判断：制药企业在做智能工厂/技改，旧 MES 可能要换代升级——趁改造期切入。</div><div class="nxt">杠杆：用 FTPC 合规优势（偏差调查-50%、审核时间-80%）；找QA/IT——电子批记录</div><a class="btn btn-link" href="http://www.cninfo.com.cn/new/disclosure/detail?stockCode=300294&announcementId=1225640493" target="_blank">📄 看公告原文</a> <a class="btn btn-link" href="https://www.google.com/search?q=%E5%8D%9A%E9%9B%85%E7%94%9F%E7%89%A9%20%E6%95%B0%E5%AD%97%E5%8C%96%20%E4%BF%A1%E6%81%AF%E5%8C%96%20%E8%B4%9F%E8%B4%A3%E4%BA%BA%20MES" target="_blank">🔍 找联系人</a></div>
+      <details style="margin-top:12px"><summary style="font-size:12px;color:#8494a4">📖 这款产品的打法参考（打谁/三问/钩子，平时不用看）</summary>
+        <div class="prod-sop" style="margin-top:8px">
+          <div class="row"><b>打谁：</b>多基地集团要统一标准 / 新基地投产 / 旧产线升级改造；头部制造与多工厂案例密集（整车·电池·轮胎·电子·流程工业）</div>
+          <div class="q">问1：集团几个基地的 MES 是一套标准吗？新厂能否直接复制？</div><div class="q">问2：ERP 与车间执行层是自动集成，还是人工对账？</div><div class="q">问3：新基地 MES 定了没？旧基地现在的系统是要升级还是替换？</div>
+          <div class="hook" style="margin-top:6px"><b>钩子：</b>孚能科技赣州+广州 60GWh、巨湾技研南沙、格力钛 4 厂、奇瑞芜湖/大连/青岛/鄂尔多斯、长安多工厂、东风日产 7 厂统一平台；出海有玲珑塞尔维亚、长城泰国。实测手工输入-70%、人为记录错误-90%、偏差调查时间-50%。</div>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+<div class="foot">每日自动扫描巨潮公告 · 时间 2026-11-05 15:42</div>
+
+</div></body></html>
