@@ -248,6 +248,75 @@ for kw in AUTO_KEYWORDS:
 
 log(f"今日自动发现：{len(new_findings)} 条（源状态：{source_status}）")
 
+# ---- 多产品信号雷达（FTPC / ThingWorx / Windchill / DataMosaix）----
+PRODUCTS = [
+ dict(key="FTPC", emoji="🏭", name="FTPC 企业级 MES/MOM",
+   pos="新基地投产 + 旧基地升级；离散·流程·混合全行业，对标西门子 Opcenter 的企业级 MOM 平台",
+   who="多基地集团要统一标准 / 新基地投产 / 旧产线升级改造；头部制造与多工厂案例密集（整车·电池·轮胎·电子·流程工业）",
+   three=["集团几个基地的 MES 是一套标准吗？新厂能否直接复制？",
+          "ERP 与车间执行层是自动集成，还是人工对账？",
+          "新基地 MES 定了没？旧基地现在的系统是要升级还是替换？"],
+   hook="孚能科技赣州+广州 60GWh、巨湾技研南沙、格力钛 4 厂、奇瑞芜湖/大连/青岛/鄂尔多斯、长安多工厂、东风日产 7 厂统一平台；出海有玲珑塞尔维亚、长城泰国。实测手工输入-70%、人为记录错误-90%、偏差调查时间-50%。",
+   manual=["查罗克韦尔存量 PLC/DCS 客户（天然 FTPC 客户，新厂/升级都对口）",
+           "通过服务大厂的 SI 引荐",
+           "搜“募投项目/新基地/电池·储能产线/智能工厂验收”"],
+   scan_kw=["电池","储能","轮胎","新基地","智能工厂"]),
+ dict(key="TWX", emoji="📡", name="PTC ThingWorx (IIoT)",
+   pos="设备互联、OEE 透明化、预测性维护，打通 OT→IT 最后一公里",
+   who="已上 MES/FTPC 的集团要做 OEE/预测维护/能耗；设备品牌杂、OEE 靠人工、停机原因不准",
+   three=["OEE 是每厂看 HMI，还是集团有统一实时看板？",
+          "非计划停机损失现在有准确统计吗？",
+          "不同品牌（西门子/三菱/发那科）设备的数据怎么抓？"],
+   hook="长安鱼嘴（冲焊涂总、非计划宕机↓）、中海油（预测性维护模型准确率>90%）、科勒佛山（卫浴行业首个 IIoT，90% 设备接入 ThingWorx）；海外 Falcon Group OEE +160%、单机利用率 8%→57%。",
+   manual=["优先从 FTPC/PLC 存量客户向上卖（长安、奇瑞都是 MES+IIoT 一起上）",
+           "搜“工业互联网/设备数采/OT 网络工程师”在招岗",
+           "展会/论坛找抱怨“设备孤岛”的企业"],
+   scan_kw=["工业互联网","预测性维护","设备联网","OEE"]),
+ dict(key="WIND", emoji="📐", name="PTC Windchill (PLM)",
+   pos="多研发中心协同、设计 BOM 一致、工程变更闭环（数字主线）",
+   who="变型/衍生设计多的汽配、家电、精密模具、工程机械；≥2 个研发中心或多厂各自研发",
+   three=["多地研发中心的产品数据有没有统一源头？",
+          "设计 BOM 到工艺 BOM 是自动传递还是人工整理？",
+          "工程变更闭环率如何？在制品库存有没有因变更损失过？"],
+   hook="Nidec 家电（巴西/墨西哥/中国/欧洲数据孤岛、1.7 万个 BOM 统一）、Vaillant（工程变更周期 -25%、首件返工率从 50% 降下来）、Polaris（Creo→eBOM→mBOM→sBOM 数字主线）。",
+   manual=["优先走 PTC Creo 代理商（CAD 卖进去，PLM 是自然延伸）",
+           "搜“PLM 工程师 / BOM 工程师 / 研发 IT 经理”岗",
+           "领英/脉脉关注研发总监，评论“研发协同”帖"],
+   scan_kw=["研发中心","PLM","产品数据","协同研发"]),
+ dict(key="DMX", emoji="📊", name="FactoryTalk DataMosaix / FTA",
+   pos="工业 DataOps：把 OT/IT/ET 数据上下文化，工艺工程师自己做跨站点分析",
+   who="流程工业（采矿/化工/食饮）或设备密集型离散；已有 Historian/PI/SCADA/MES 但数据分散、单点 POC 推不开",
+   three=["工艺工程师做一次跨站点根因分析，找数据要多久？",
+          "有没有哪个分析项目 POC 跑通了、但全集团推不开？",
+          "能源附加费或废品率，现在有实时监控吗？"],
+   hook="官方实测：维护成本 -20~30%、人工生产率 +50~60%、资产停机 -5~8%。代表客户 Hindalco 铝业（矿业）、Fonterra 恒天然（食饮）。不是建数据湖，而是让工艺工程师自己做跨站点分析。",
+   manual=["从 FactoryTalk Historian / PI 存量客户向上销售（存数据→用数据）",
+           "找 CDO / 数字化转型负责人，不找传统 IT 运维",
+           "参加数据规模 / 数字孪生主题闭门会"],
+   scan_kw=["数据中台","数字孪生","工业大数据","数据治理"]),
+]
+
+product_findings = {}
+for p in PRODUCTS:
+    hits = []
+    for kw in p["scan_kw"]:
+        for col in ("szse", "sse"):
+            try:
+                data = fetch_cninfo(kw, column=col, days=14)
+                anns = data.get("announcements") or []
+                for a in anns:
+                    title = re.sub(r"<[^>]+>", "", a.get("announcementTitle", "") or "")
+                    if not title or title in seen_titles:
+                        continue
+                    if any(b in title for b in ["回购","减持","增持","分红","股东会","法律意见书","评级","股东大会","摘要","反馈","回复","批复","处罚"]):
+                        continue
+                    link = f"http://www.cninfo.com.cn/new/disclosure/detail?stockCode={a.get('secCode')}&announcementId={a.get('announcementId')}"
+                    hits.append(dict(sec=a.get("secCode"), name=a.get("secName"), title=title, url=link, kw=kw))
+            except Exception as e:
+                log(f"{p['key']} 关键词 {kw}({col}) 失败：{e}")
+    product_findings[p["key"]] = hits
+    log(f"{p['name']} 信号命中 {len(hits)} 条")
+
 # ============================================================
 # 3. 生成 dashboard.html
 # ============================================================
@@ -319,6 +388,23 @@ a{color:#0059b3;text-decoration:none}
 .step b{color:#003DA5;margin-right:4px}
 .ev{margin-top:6px;font-size:11.5px;color:#6b7d90;line-height:1.5}
 details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
+.navchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{display:inline-block;padding:7px 13px;border-radius:18px;background:#003DA5;color:#fff;font-size:12.5px;font-weight:600;text-decoration:none}
+.chip.alt{background:#eef4fb;color:#003DA5;border:1px solid #c5d8ee}
+.prod{border:1px solid #e3ebf3;border-radius:12px;margin-bottom:18px;overflow:hidden}
+.prod-h{padding:12px 16px;background:#003DA5;color:#fff;font-size:15px;font-weight:700}
+.prod-h small{font-weight:400;font-size:12px;opacity:.85;margin-left:8px}
+.prod-b{padding:14px 16px;display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+@media(max-width:760px){.prod-b{grid-template-columns:1fr}}
+.prod-sop .row{margin-bottom:7px;font-size:12.5px}
+.prod-sop .row b{color:#003DA5}
+.q{background:#f7fafd;border-radius:6px;padding:7px 10px;margin:4px 0;font-size:12px;color:#33475b}
+.hook{background:#fff9ec;border-left:3px solid #b26a00;border-radius:6px;padding:8px 11px;font-size:12.5px;margin-top:6px}
+.prod-signal{background:#fafcfe;border-radius:8px;padding:10px 12px;border:1px solid #e8eef5}
+.prod-signal h5{font-size:12.5px;color:#0a7f3f;margin-bottom:6px}
+.sighit{font-size:12px;padding:5px 0;border-bottom:1px dashed #e8eef5}
+.sighit a{font-weight:600}
+.sighit .nm{color:#8494a4;font-size:11px}
 """
 
 def card(c):
@@ -346,6 +432,40 @@ def card(c):
     </details>
   </div>
 </div>"""
+
+def render_product(p):
+    hits = product_findings.get(p["key"], [])[:6]
+    if hits:
+        sig = "".join(
+            f'<div class="sighit"><a href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
+            f'<div class="nm">{esc(h["sec"])} {esc(h["name"])} · 信号词「{esc(h["kw"])}」</div></div>'
+            for h in hits)
+    else:
+        sig = '<div class="empty" style="padding:10px;font-size:12px">今日该产品关键词无新公告命中（雷达持续监听中）</div>'
+    qs = "".join(f'<div class="q">问{i+1}：{esc(q)}</div>' for i,q in enumerate(p["three"]))
+    man = "".join(f'<div class="row">· {esc(m)}</div>' for m in p["manual"])
+    return f"""
+<div class="prod" id="{p['key']}">
+  <div class="prod-h">{p['emoji']} {esc(p['name'])}<small>{esc(p['pos'])}</small></div>
+  <div class="prod-b">
+    <div class="prod-sop">
+      <div class="row"><b>打谁：</b>{esc(p['who'])}</div>
+      <div style="margin:6px 0 2px;font-size:12px;color:#5a6b7d"><b>首聊三问（过滤伪需求）：</b></div>
+      {qs}
+      <div class="hook"><b>破冰钩子：</b>{esc(p['hook'])}</div>
+      <div style="margin:8px 0 2px;font-size:12px;color:#5a6b7d"><b>人工动作：</b></div>
+      {man}
+    </div>
+    <div class="prod-signal">
+      <h5>📡 今日自动信号（{len(product_findings.get(p['key'],[]))} 条）</h5>
+      {sig}
+    </div>
+  </div>
+</div>"""
+
+product_html = "".join(render_product(p) for p in PRODUCTS)
+navchips = ('<a class="chip" href="#PLEX">🚀 PLEX 出海 MES</a>' +
+            "".join(f'<a class="chip alt" href="#{p["key"]}">{p["emoji"]} {esc(p["name"].split()[0])}</a>' for p in PRODUCTS))
 
 high = [c for c in CASES if c["feas"] == "高"]
 mid = [c for c in CASES if c["feas"] == "中"]
@@ -384,8 +504,15 @@ HTML = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
   <div class="lg lg-l"><b>🔴 低优先</b>　别找关系：点按钮发封邮件就放下</div>
 </div>
 
+<div class="navchips">{navchips}</div>
+
+<div class="sec" id="PLEX">
+  <div class="sec-h">🚀 产品作战雷达 · 五款产品各自的池塘/鱼竿/鱼饵</div>
+  {product_html}
+</div>
+
 <div class="sec">
-  <div class="sec-h">今日自动发现</div>
+  <div class="sec-h">PLEX 今日自动发现（海外建厂信号）</div>
   {auto_block}
 </div>
 
