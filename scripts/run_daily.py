@@ -444,27 +444,53 @@ def card(c):
   </div>
 </div>"""
 
-def analyze(key, title):
-    t = title
+NOISE=["季度报告","年度报告","半年度报告","报告","董事会","监事会","股东大会","独董","独立董事","候选人","声明","承诺","议案","决议","摘要","法律意见","评级","问询","关注函","担保","质押","回购","减持","增持","分红","利润分配","会计","减值","审计","更正","补充","答复","批复","处罚","提示","召开","通知","换届","选举","聘任","辞职","薪酬","制度","修订","持股","停牌","复牌","龙虎榜","股东会","可转换","债券","票据","授信","银行","贷款","担保"]
+
+def industry_of(nm,t):
+    s=nm+t
+    if any(w in s for w in ["电池","锂电","储能","星源","恩捷","天能","孚能","巨湾","电解液","隔膜","正极","负极","电芯"]): return "电池/储能"
+    if any(w in s for w in ["轮胎","橡胶"]): return "轮胎"
+    if any(w in s for w in ["汽车","整车","奇瑞","长安","长城","比亚迪","零跑","理想","哪吒","乘用车","商用车","汽车零部件"]): return "汽车/整车"
+    if any(w in s for w in ["医药","生物","制药","医疗","药业"]): return "制药"
+    if any(w in s for w in ["电子","半导体","电路","光电","精密","PCB"]): return "电子"
+    return "制造"
+
+LEV={
+ "电池/储能":"对标孚能60GWh、巨湾南沙、格力钛4厂；找制造副总/数字化总监——电池新厂 MES 选型窗口，问设备进场节奏",
+ "轮胎":"对标玲珑塞尔维亚、万力；找制造总监——多厂标准统一+出海复制",
+ "汽车/整车":"对标奇瑞4基地、长安多工厂、东风日产7厂；找集团IT/制造总监——多厂 MES 标准化",
+ "制药":"用 FTPC 合规优势（偏差调查-50%、审核时间-80%）；找QA/IT——电子批记录",
+ "电子":"对标伟创力全球13厂、KLA；找IT——多厂快速复制",
+ "制造":"找集团数字化/IT负责人，用行业头部案例切入",
+}
+
+def analyze(key, nm, title):
+    t=title
+    if any(w in t for w in NOISE):
+        return None
+    ind=industry_of(nm,t)
+    lev=LEV.get(ind,LEV["制造"])
     if key=="FTPC":
-        if any(w in t for w in ["新建","投产","生产基地","募投","扩产","奠基","建设项目","试生产","项目备案"]):
-            return "高","新建生产基地/产线 = MES 选型窗口期","问该基地 MES 是否已选型、现用哪家"
-        if any(w in t for w in ["技改","升级","改造","数字化车间","智能工厂","换型","产线调整"]):
-            return "中","产线改造/数字化升级 = 旧 MES 换代窗口","问现有 MES 用哪家、要不要统一升级"
-        return "低","制造业相关动态，需人工判断 MES 需求","点开公告看正文是否提到产线/基地"
+        if any(w in t for w in ["收购","交割","并购","股权收购","受让"]):
+            return ("高",f"{ind}企业刚完成并购/交割，新厂要并入集团体系——多厂 MES 统一或替换的天然窗口。",f"杠杆：{lev}")
+        if any(w in t for w in ["新建","投产","生产基地","募投","扩产","奠基","开工","试生产","项目备案","扩建","产线","环境影响","环评","项目投资"]):
+            return ("高",f"{ind}企业在建新产能/新基地，按行业惯例 MES/MOM 在设备进场前后 3-6 个月选型——现在提前接触正好卡在选型前。",f"杠杆：{lev}")
+        if any(w in t for w in ["智能工厂","数字化车间","技改","改造升级","灯塔"]):
+            return ("中",f"{ind}企业在做智能工厂/技改，旧 MES 可能要换代升级——趁改造期切入。",f"杠杆：{lev}")
+        return None
     if key=="TWX":
-        if any(w in t for w in ["预测性维护","OEE","设备联网","智能工厂","灯塔","数字车间","设备数据","能耗"]):
-            return "高","明确做设备/OEE 智能化 = ThingWorx 窗口","问 OEE 是否还靠人工统计、多品牌设备数据怎么抓"
-        return "中","工业互联网相关动态","看正文是否涉及设备数据采集/能耗管理"
+        if any(w in t for w in ["智能工厂","数字化车间","灯塔","预测性维护","OEE","设备联网","设备数据","能耗","技改"]):
+            return ("高",f"{ind}企业明确在做设备/OEE/能耗智能化，是 ThingWorx 的对口窗口。","杠杆：对标长安鱼嘴、中海油、科勒佛山；找设备/精益/能源经理")
+        return None
     if key=="WIND":
-        if any(w in t for w in ["研发中心","技术中心","创新中心","实验室","研究院","募投"]):
-            return "高","新建研发中心 = PLM/BOM 统一窗口","问多地研发 BOM 是否人工转换、工程变更怎么管"
-        return "中","产品数据/PLM 相关动态","看正文是否提到多研发中心协同"
+        if any(w in t for w in ["研发中心","技术中心","创新中心","研究院","实验室"]):
+            return ("高",f"{ind}企业新建研发中心，是 PLM/BOM 统一的窗口。","杠杆：走 PTC Creo 渠道引荐；找研发VP/CIO")
+        return None
     if key=="DMX":
-        if any(w in t for w in ["数据中台","工业大数据","数字孪生","数据治理","工业互联网平台","数据平台","数据湖"]):
-            return "高","明确建数据平台 = DataMosaix 窗口","找 CDO/数字化负责人，问是否卡在单点 POC 推不开"
-        return "中","数据/数字化相关动态","看正文是否涉及多站点数据整合"
-    return "低","",""
+        if any(w in t for w in ["数据中台","工业大数据","数字孪生","数据治理","工业互联网平台","数据湖"]):
+            return ("高",f"{ind}企业明确建数据平台，是 DataMosaix 窗口。","杠杆：找 CDO/数字化负责人，问是否卡在单点 POC")
+        return None
+    return None
 
 GRADE_CLS={"高":"gh","中":"gm","低":"gl"}
 
@@ -477,27 +503,32 @@ def render_product(p):
         _seen.add(k); _raw.append(h)
     raw=_raw
     leads=[]
+    dropped=0
     for h in raw:
-        g,why,nxt = analyze(p["key"], h["title"])
-        leads.append((g,why,nxt,h))
+        nm=(h["name"] or h["sec"] or "").strip()
+        r=analyze(p["key"], nm, h["title"])
+        if r is None:
+            dropped+=1; continue
+        g,judge,lev = r
+        leads.append((g,judge,lev,nm,h))
     order={"高":0,"中":1,"低":2}
     leads.sort(key=lambda x: order[x[0]])
+    total=len(leads)
     leads=leads[:8]
-    total=len(raw)
     cards=""
-    for g,why,nxt,h in leads:
-        nm=(h["name"] or h["sec"] or "").strip()
+    for g,judge,lev,nm,h in leads:
         import urllib.parse as _up
         sq="https://www.google.com/search?q="+_up.quote(nm+" 数字化 信息化 负责人 MES")
         cards+=('<div class="lead">'
           f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(h["sec"] or "")}</span></div>'
           f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
-          f'<div class="why">为什么是线索：{esc(why)}</div>'
-          f'<div class="nxt">👉 下一步：{esc(nxt)}</div>'
-          f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 搜该公司数字化/IT 负责人</a>'
+          f'<div class="why">🧠 判断：{esc(judge)}</div>'
+          f'<div class="nxt">{esc(lev)}</div>'
+          f'<a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a> '
+          f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 找联系人</a>'
           '</div>')
     if not cards:
-        cards='<div class="empty" style="padding:14px;font-size:12.5px;color:#8494a4">今日无新公告线索（雷达每天自动扫，命中即推）</div>'
+        cards='<div class="empty" style="padding:14px;font-size:12.5px;color:#8494a4">今日无合格线索（已过滤财报/治理类公告，只留有新产能·并购·技改信号的；雷达每天自动扫）</div>'
     qs="".join(f'<div class="q">问{i+1}：{esc(q)}</div>' for i,q in enumerate(p["three"]))
     return f"""
 <div class="prod" id="{p['key']}">
