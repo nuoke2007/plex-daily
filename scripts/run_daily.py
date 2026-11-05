@@ -413,6 +413,7 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 .lead{border:1px solid #e3ebf3;border-radius:9px;padding:11px 13px;margin-bottom:9px;background:#fff}
 .lead-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .lead-top .lc{color:#8494a4;font-size:11px}
+.lead-top .indtag{margin-left:auto;background:#eef4fb;color:#003DA5;font-size:11px;padding:2px 8px;border-radius:10px;white-space:nowrap}
 .badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;color:#fff}
 .badge.gh{background:#0a7f3f}.badge.gm{background:#b26a00}.badge.gl{background:#9aa7b4}
 .lead-t{display:block;font-size:13px;font-weight:600;color:#003DA5;margin:3px 0}
@@ -520,7 +521,7 @@ def analyze(key, nm, title, ts=None):
         grade="中"; why=f"{sdesc}。📅 公告于 {agelab}——刚起步，先盯 1-2 个月，等设计/设备阶段再切入。"
     else:
         grade="低"; why=f"{sdesc}。📅 公告于 {agelab}——超过 9 个月，大概率已选型，仅作存量向上销售线索。"
-    return (grade, why, f"杠杆：{lev}", agelab)
+    return (grade, why, f"杠杆：{lev}", agelab, ind)
 
 GRADE_CLS={"高":"gh","中":"gm","低":"gl"}
 
@@ -539,21 +540,22 @@ def render_product(p):
         r=analyze(p["key"], nm, h["title"], h.get("ts"))
         if r is None:
             dropped+=1; continue
-        g,judge,lev,agelab = r
-        leads.append((g,judge,lev,agelab,nm,h))
+        g,judge,lev,agelab,ind = r
+        leads.append((g,judge,lev,agelab,ind,nm,h))
     order={"高":0,"中":1,"低":2}
     leads.sort(key=lambda x: order[x[0]])
     total=len(leads)
     leads=leads[:10]
     cards=""
-    for g,judge,lev,agelab,nm,h in leads:
+    for g,judge,lev,agelab,ind,nm,h in leads:
         import urllib.parse as _up
         sq="https://www.google.com/search?q="+_up.quote(nm+" 数字化 信息化 负责人 MES")
         cards+=('<div class="lead">'
-          f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(h["sec"] or "")}</span></div>'
+          f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(h["sec"] or "")}</span>'
+          f'<span class="indtag">🏭 {esc(ind)}</span></div>'
           f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
-          f'<div class="why">🧠 判断：{esc(judge)}</div>'
-          f'<div class="nxt">{esc(lev)}</div>'
+          f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
+          f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
           f'<a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a> '
           f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 找联系人</a>'
           '</div>')
@@ -579,7 +581,7 @@ def render_product(p):
 </div>"""
 
 FILEMAP={"PLEX":"dashboard.html","FTPC":"ftpc.html","TWX":"thingworx.html","WIND":"windchill.html","DMX":"datamosaix.html"}
-NAVITEMS=[("dashboard.html","🚀 PLEX","PLEX")]+[("/".join([]) or f"{p['key'].lower()}.html", f"{p['emoji']} {p['name'].split()[0]}", p["key"]) for p in PRODUCTS]
+NAVITEMS=[(FILEMAP["PLEX"],"🚀 PLEX","PLEX")]+[(FILEMAP[p["key"]], f"{p['emoji']} {p['name'].split()[0]}", p["key"]) for p in PRODUCTS]
 def nav_html(active):
     chips=""
     for f,label,k in NAVITEMS:
