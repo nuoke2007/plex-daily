@@ -548,101 +548,77 @@ def render_product(p):
   </div>
 </div>"""
 
-product_html = "".join(render_product(p) for p in PRODUCTS)
-navchips = ('<a class="chip" href="#PLEX">🚀 PLEX 出海 MES</a>' +
-            "".join(f'<a class="chip alt" href="#{p["key"]}">{p["emoji"]} {esc(p["name"].split()[0])}</a>' for p in PRODUCTS))
+FILEMAP={"PLEX":"dashboard.html","FTPC":"ftpc.html","TWX":"thingworx.html","WIND":"windchill.html","DMX":"datamosaix.html"}
+NAVITEMS=[("dashboard.html","🚀 PLEX","PLEX")]+[("/".join([]) or f"{p['key'].lower()}.html", f"{p['emoji']} {p['name'].split()[0]}", p["key"]) for p in PRODUCTS]
+def nav_html(active):
+    chips=""
+    for f,label,k in NAVITEMS:
+        cls="chip" if k==active else "chip alt"
+        chips+=f'<a class="{cls}" href="{f}">{label}</a>'
+    return f'<div class="navchips">{chips}</div>'
 
-high = [c for c in CASES if c["feas"] == "高"]
-mid = [c for c in CASES if c["feas"] == "中"]
-low = [c for c in CASES if c["feas"] == "低"]
+high=[c for c in CASES if c["feas"]=="高"]
+mid=[c for c in CASES if c["feas"]=="中"]
+low=[c for c in CASES if c["feas"]=="低"]
 
 if new_findings:
-    auto_html = "".join(
+    auto_html="".join(
         f'<tr><td>{esc(f["sec"])} {esc(f["name"])}</td><td>{esc(f["title"])}</td>'
         f'<td>{"<br>".join(esc(x) for x in f["rule"])}</td>'
         f'<td><a href="{esc(f["url"])}" target="_blank">公告原文</a></td></tr>'
         for f in new_findings)
-    auto_block = f'<table><tr><th>代码/公司</th><th>公告标题</th><th>自动判定</th><th>链接</th></tr>{auto_html}</table>'
+    auto_block=f'<table><tr><th>代码/公司</th><th>公告标题</th><th>自动判定</th><th>链接</th></tr>{auto_html}</table>'
 else:
-    note = f"今日自动发现 0 条。" + (f"（{esc(source_note)}）" if source_note else "（近 14 天内未命中“海外建厂+汽车零部件”新公告，或关键词需更新）")
-    auto_block = f'<div class="empty">{note}<br><span class="tag tag-manual">人工</span> 可登录巨潮资讯网手工调整关键词：http://www.cninfo.com.cn</div>'
+    note=f"今日自动发现 0 条。"+(f"（{esc(source_note)}）" if source_note else "（近 14 天内未命中海外建厂新公告）")
+    auto_block=f'<div class="empty">{note}</div>'
 
-reject_html = "".join(f"<tr><td>{r['id']}</td><td>{r['name']} {r['code']}</td><td>{esc(r['why'])}</td></tr>" for r in REJECTED)
+reject_html="".join(f"<tr><td>{r['id']}</td><td>{r['name']} {r['code']}</td><td>{esc(r['why'])}</td></tr>" for r in REJECTED)
 
-HTML = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+def shell(title, active, body):
+    return f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PLEX 每日商机</title><style>{CSS}</style></head><body>
+<title>{esc(title)}</title><style>{CSS}</style></head><body>
 <div class="wrap">
-<div class="top"><h1>PLEX 每日商机 · 今天该干什么</h1></div>
-<div class="sub">全免费本地工具｜数据源：巨潮资讯网免费公告接口 + 已验证研究种子｜猎聘/BOSS/脉脉/领英/IATF 一律不爬，标为人工步骤</div>
-
-<div class="kpis">
-  <div class="kpi"><div class="n">{NOW}</div><div class="l">上次更新时间</div></div>
-  <div class="kpi"><div class="n">{len(new_findings)}</div><div class="l">今日新增线索（自动抓取）</div></div>
-  <div class="kpi"><div class="n">{manual_total}</div><div class="l">待你手动跟进项</div></div>
-  <div class="kpi"><div class="n">{len(high)}</div><div class="l">高优先 case（今天先看）</div></div>
-</div>
-
-<div class="legend">
-  <div class="lg lg-h"><b>🟢 高优先</b>　今天就动手：约人 / 上门 / 打电话</div>
-  <div class="lg lg-m"><b>🟡 中优先</b>　顺手点一下按钮，别专门跑</div>
-  <div class="lg lg-l"><b>🔴 低优先</b>　别找关系：点按钮发封邮件就放下</div>
-</div>
-
-<div class="navchips">{navchips}</div>
-
-<div class="sec" id="PLEX">
-  <div class="sec-h">🚀 产品作战雷达 · 五款产品各自的池塘/鱼竿/鱼饵</div>
-  {product_html}
-</div>
-
-<div class="sec">
-  <div class="sec-h">PLEX 今日自动发现（海外建厂信号）</div>
-  {auto_block}
-</div>
-
-<div class="sec">
-  <div class="sec-h">高优先 · 今天先动这 {len(high)} 家</div>
-  {''.join(card(c) for c in high)}
-</div>
-
-<div class="sec">
-  <div class="sec-h">中优先 · 顺手点一下，不用专门跑</div>
-  {''.join(card(c) for c in mid)}
-</div>
-
-<div class="sec">
-  <div class="sec-h">低优先 · 别找关系，点按钮发邮件即可</div>
-  {''.join(card(c) for c in low)}
-</div>
-
-<div class="sec">
-  <div class="sec-h">否决池（不要再花时间）</div>
-  <table><tr><th>ID</th><th>公司</th><th>否决原因</th></tr>{reject_html}</table>
-</div>
-
-<div class="sec">
-  <div class="sec-h">人工步骤区（工具不自动做，需你登录）</div>
-  <table>
-    <tr><th>平台</th><th>为什么必须人工</th><th>动作</th></tr>
-    <tr><td>猎聘 / BOSS 直聘</td><td>需登录，且 ToS 禁止批量抓取</td><td>手动查保隆 MES 岗 HR 是否仍在选型；查目标公司是否新挂“海外 IT”岗</td></tr>
-    <tr><td>脉脉 / 领英</td><td>需登录，无公开 API</td><td>手动搜 12 家集团 CIO / 海外厂长实名；德国本地收件人走领英 InMail（UWG §7）</td></tr>
-    <tr><td>iatf-customerportal.org</td><td>本轮实测被安全策略拦截</td><td>手动输入新厂 site 英文名查 USI 与发证 CB；首通话直接问客户</td></tr>
-    <tr><td>AMS Shanghai 2026（12/2–5）</td><td>线下活动</td><td>提前在官网 exhibitor search 拉展位图，直奔银轮 M-03、保隆 E-03 展位</td></tr>
-  </table>
-</div>
-
-<div class="foot">
-  <span class="tag tag-seed">种子：已验证研究</span> 来自两轮实测（12 家合格 + 6 家否决）。
-  <span class="tag tag-auto">自动：今日抓取</span> 来自巨潮资讯网免费公告接口，失败已降级。
-  <span class="tag tag-manual">人工</span> 工具不代做，需你自己登录。<br>
-  日志：logs/run_{datetime.date.today().strftime('%Y%m%d')}.log
-</div>
+{nav_html(active)}
+{body}
 </div></body></html>"""
 
-out_html = ROOT / "dashboard.html"
-out_html.write_text(HTML, encoding="utf-8")
-log(f"dashboard.html 已生成：{out_html}")
+# ---- PLEX 首页 ----
+plex_body=f"""
+<div class="top"><h1>PLEX 每日商机 · 今天该干什么</h1></div>
+<div class="sub">全免费纯云端｜数据源：巨潮资讯网免费公告接口｜猎聘/BOSS/脉脉/领英 需人工</div>
+<div class="kpis">
+  <div class="kpi"><div class="n">{NOW}</div><div class="l">上次更新</div></div>
+  <div class="kpi"><div class="n">{len(new_findings)}</div><div class="l">今日新增线索</div></div>
+  <div class="kpi"><div class="n">{manual_total}</div><div class="l">待手动跟进</div></div>
+  <div class="kpi"><div class="n">{len(high)}</div><div class="l">高优先（先看）</div></div>
+</div>
+<div class="legend">
+  <div class="lg lg-h"><b>🟢 高优先</b> 今天就动手</div>
+  <div class="lg lg-m"><b>🟡 中优先</b> 顺手点按钮</div>
+  <div class="lg lg-l"><b>🔴 低优先</b> 点按钮发邮件即放下</div>
+</div>
+<div class="sec"><div class="sec-h">PLEX 今日自动发现（海外建厂信号）</div>{auto_block}</div>
+<div class="sec"><div class="sec-h">高优先 · 今天先动这 {len(high)} 家</div>{''.join(card(c) for c in high)}</div>
+<div class="sec"><div class="sec-h">中优先 · 顺手点一下</div>{''.join(card(c) for c in mid)}</div>
+<div class="sec"><div class="sec-h">低优先 · 点按钮发邮件即可</div>{''.join(card(c) for c in low)}</div>
+<div class="sec"><div class="sec-h">否决池</div><table><tr><th>ID</th><th>公司</th><th>原因</th></tr>{reject_html}</table></div>
+<div class="foot">日志 logs/run_{datetime.date.today().strftime('%Y%m%d')}.log</div>
+"""
+(ROOT/"dashboard.html").write_text(shell("PLEX 每日商机","PLEX",plex_body),encoding="utf-8")
+log("dashboard.html 已生成（PLEX 首页）")
+
+# ---- 每款产品一个独立页 ----
+for p in PRODUCTS:
+    pbody=f"""
+<div class="top"><h1>{p['emoji']} {esc(p['name'])}</h1></div>
+<div class="sub">{esc(p['pos'])}</div>
+{render_product(p)}
+<div class="foot">每日自动扫描巨潮公告 · 时间 {NOW}</div>
+"""
+    fn=FILEMAP[p["key"]]
+    (ROOT/fn).write_text(shell(p["name"], p["key"], pbody), encoding="utf-8")
+    log(f"{fn} 已生成")
 
 # ============================================================
 # 4. 生成 leads.xlsx
@@ -710,4 +686,24 @@ notify()
 # ============================================================
 log_path = LOGS / f"run_{datetime.date.today().strftime('%Y%m%d')}.log"
 log_path.write_text("\n".join(log_lines), encoding="utf-8")
-print(f"\n完成。仪表盘：{out_html}")
+print(f"\n完成。首页：{ROOT/'dashboard.html'}  产品页：ftpc/thingworx/windchill/datamosaix.html")
+
+# CI 里自动提交所有页面（workflow 的 commit 步骤只 add dashboard.html，这里补全多页）
+if os.environ.get("GITHUB_ACTIONS"):
+    try:
+        import subprocess
+        def sh(args):
+            return subprocess.run(args, cwd=str(ROOT), capture_output=True, text=True)
+        sh(["git","checkout","main"])
+        sh(["git","add","-A"])
+        chk=sh(["git","diff","--cached","--quiet"])
+        if chk.returncode != 0:
+            sh(["git","config","user.email","plex-bot@users.noreply.github.com"])
+            sh(["git","config","user.name","plex-bot"])
+            sh(["git","commit","-m","daily: update all product pages"])
+            r=sh(["git","push","origin","main"])
+            print("self-push:", r.returncode, (r.stderr or "")[-200:])
+        else:
+            print("self-push: nothing to commit")
+    except Exception as e:
+        print("self-push skipped:", e)
