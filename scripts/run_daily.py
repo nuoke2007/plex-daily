@@ -394,8 +394,11 @@ a{color:#0059b3;text-decoration:none}
 .ev{margin-top:6px;font-size:11.5px;color:#6b7d90;line-height:1.5}
 details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 .navchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.chip{display:inline-block;padding:7px 13px;border-radius:18px;background:#003DA5;color:#fff;font-size:12.5px;font-weight:600;text-decoration:none}
-.chip.alt{background:#eef4fb;color:#003DA5;border:1px solid #c5d8ee}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:18px;background:#003DA5;color:#fff;font-size:12.5px;font-weight:600;text-decoration:none;border:1px solid #003DA5}
+.chip.alt{background:#fff;color:#003DA5;border:1px solid #c5d8ee}
+.navlogo{height:18px;width:auto;display:block;background:#fff;border-radius:3px;padding:1px 3px}
+.chip .navlogo{background:#fff}
+.hdrlogo{height:34px;width:auto;vertical-align:middle;background:#fff;border-radius:4px;padding:2px 6px}
 .prod{border:1px solid #e3ebf3;border-radius:12px;margin-bottom:18px;overflow:hidden}
 .prod-h{padding:12px 16px;background:#003DA5;color:#fff;font-size:15px;font-weight:700}
 .prod-h small{font-weight:400;font-size:12px;opacity:.85;margin-left:8px}
@@ -581,12 +584,16 @@ def render_product(p):
 </div>"""
 
 FILEMAP={"PLEX":"dashboard.html","FTPC":"ftpc.html","TWX":"thingworx.html","WIND":"windchill.html","DMX":"datamosaix.html"}
-NAVITEMS=[(FILEMAP["PLEX"],"🚀 PLEX","PLEX")]+[(FILEMAP[p["key"]], f"{p['emoji']} {p['name'].split()[0]}", p["key"]) for p in PRODUCTS]
+LOGO={"PLEX":"logo-plex.png","FTPC":"logo-ft.png","TWX":"logo-twx.png","WIND":"logo-wind.png","DMX":"logo-ft.png"}
+SHORT={"PLEX":"PLEX","FTPC":"FTPC","TWX":"ThingWorx","WIND":"Windchill","DMX":"DataMosaix"}
+NAVITEMS=[(FILEMAP[k], k) for k in ["PLEX","FTPC","TWX","WIND","DMX"]]
 def nav_html(active):
     chips=""
-    for f,label,k in NAVITEMS:
+    for f,k in NAVITEMS:
         cls="chip" if k==active else "chip alt"
-        chips+=f'<a class="{cls}" href="{f}">{label}</a>'
+        chips+=(f'<a class="{cls}" href="{f}">'
+                f'<img class="navlogo" src="{LOGO[k]}" alt="">'
+                f'<span>{SHORT[k]}</span></a>')
     return f'<div class="navchips">{chips}</div>'
 
 high=[c for c in CASES if c["feas"]=="高"]
@@ -617,7 +624,7 @@ def shell(title, active, body):
 
 # ---- PLEX 首页 ----
 plex_body=f"""
-<div class="top"><h1>PLEX 每日商机 · 今天该干什么</h1></div>
+<div class="top"><h1><img class="hdrlogo" src="logo-plex.png" alt=""> PLEX 每日商机 · 今天该干什么</h1></div>
 <div class="sub">全免费纯云端｜数据源：巨潮资讯网免费公告接口｜猎聘/BOSS/脉脉/领英 需人工</div>
 <div class="kpis">
   <div class="kpi"><div class="n">{NOW}</div><div class="l">上次更新</div></div>
@@ -643,7 +650,7 @@ log("dashboard.html 已生成（PLEX 首页）")
 # ---- 每款产品一个独立页 ----
 for p in PRODUCTS:
     pbody=f"""
-<div class="top"><h1>{p['emoji']} {esc(p['name'])}</h1></div>
+<div class="top"><h1><img class="hdrlogo" src="{LOGO[p['key']]}" alt=""> {esc(p['name'])}</h1></div>
 <div class="sub">{esc(p['pos'])}</div>
 {render_product(p)}
 <div class="foot">每日自动扫描巨潮公告 · 时间 {NOW}</div>
