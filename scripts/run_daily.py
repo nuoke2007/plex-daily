@@ -133,6 +133,39 @@ CASES = [
       evidence=["https://ras.gov.rs/"], source="seed"),
 ]
 
+
+# 每家公司的“一键动作”按钮（id -> [{label,href,kind}]）
+ACTIONS = {
+ "M-02": [
+   {"label":"🔍 查 JLB Parques 园区（握租户名单）","href":"https://www.google.com/search?q=JLB+Parques+Parque+Industrial+Apaseo","kind":"link"},
+   {"label":"🔍 查劳士领 Silao 厂联系人","href":"https://www.google.com/search?q=Rochling+Silao+Guanajuato+plant","kind":"link"}],
+ "M-03": [
+   {"label":"🔍 查九慧信息（SAP 实施商，求转介）","href":"https://www.google.com/search?q=%E4%B9%9D%E6%85%A7%E4%BF%A1%E6%81%AF+SAP","kind":"link"},
+   {"label":"📅 Automechanika 上海 12/2-5","href":"https://www.google.com/search?q=Automechanika+Shanghai+2026","kind":"link"}],
+ "T-01": [
+   {"label":"🏭 打开泰中罗勇工业园官网","href":"https://www.tcrindustrial.com/","kind":"link"}],
+ "T-02": [
+   {"label":"🏭 打开泰中罗勇工业园官网","href":"https://www.tcrindustrial.com/","kind":"link"}],
+ "E-03": [
+   {"label":"🏛️ 打开 HIPA 匈牙利招商","href":"https://hipa.hu/","kind":"link"},
+   {"label":"🔍 BOSS 直聘查 MES 岗","href":"https://www.zhipin.com/","kind":"link"}],
+ "M-04": [
+   {"label":"🔍 查祥鑫科技投资者关系邮箱","href":"https://www.google.com/search?q=%E7%A5%A5%E9%91%AB%E7%A7%91%E6%8A%80+%E6%8A%95%E8%B5%84%E8%80%85%E5%85%B3%E7%B3%BB","kind":"link"}],
+ "T-03": [
+   {"label":"🏢 打开科达利官网","href":"https://www.kedali.com/","kind":"link"}],
+ "T-04": [
+   {"label":"🏭 打开洛加纳工业园官网","href":"https://www.rojana.com/","kind":"link"}],
+ "E-01": [
+   {"label":"🔍 领英搜 Grammer/继峰 CIO","href":"https://www.linkedin.com/search/results/all/?keywords=Grammer%20CIO","kind":"link"},
+   {"label":"📅 IAA Mobility 2027","href":"https://www.google.com/search?q=IAA+Mobility+2027","kind":"link"}],
+ "E-04": [
+   {"label":"🏛️ 打开 AMDIE 摩洛哥招商","href":"https://www.amdie.gov.ma/","kind":"link"}],
+ "M-01": [
+   {"label":"📧 一键发邮件给永茂泰董办","href":"mailto:ymtauto@ymtauto.com?subject=%E5%85%B3%E4%BA%8E%E5%A2%A8%E8%A5%BF%E5%93%A5%E7%94%9F%E4%BA%A7%E5%9F%BA%E5%9C%B0%20MES%20/%20MOM%20%E9%80%89%E5%9E%8B%E7%9A%84%E6%B2%9F%E9%80%9A&body=%E6%82%A8%E5%A5%BD%EF%BC%9A%E6%88%91%E4%BB%AC%E4%B8%93%E6%B3%A8%E6%B1%BD%E8%BD%A6%E9%9B%B6%E9%83%A8%E4%BB%B6%E7%A6%BB%E6%95%A3%E5%88%B6%E9%80%A0%E6%B5%B7%E5%A4%96%E5%B7%A5%E5%8E%82%E7%9A%84%20MES/MOM%20%E6%96%B9%E6%A1%88%E3%80%82%E6%B3%A8%E6%84%8F%E5%88%B0%E8%B4%B5%E5%8F%B8%E5%9C%A8%E5%A2%A8%E8%A5%BF%E5%93%A5%E5%B8%83%E5%B1%80%EF%BC%8C%E6%83%B3%E8%AF%B7%E6%95%99%EF%BC%9A1%EF%BC%89%E5%A2%A8%E8%A5%BF%E5%93%A5%E5%9F%BA%E5%9C%B0%20MES%20%E6%98%AF%E5%90%A6%E5%B7%B2%E9%80%89%E5%9E%8B%EF%BC%9B2%EF%BC%89%E5%9B%BD%E5%86%85%E7%8E%B0%E6%9C%89%20MES%20%E5%93%81%E7%89%8C%E6%98%AF%E5%93%AA%E5%AE%B6%E3%80%82%E7%9B%BC%E5%A4%8D%EF%BC%8C%E8%B0%A2%E8%B0%A2%E3%80%82","kind":"mail"}],
+ "E-02": [
+   {"label":"🏛️ 打开 RAS 塞尔维亚招商","href":"https://ras.gov.rs/","kind":"link"}],
+}
+
 REJECTED = [
  dict(id="MX-01", name="新泉股份", code="603179.SH", why="V1 命中：可转债问询回复披露 MES 为西门子（400 万元投资）、ERP 金蝶。已有重型 MES，饱和客户。"),
  dict(id="MX-02", name="爱柯迪", code="600933.SH", why="V1 命中：在招“MES 开发工程师”要求长期外派墨西哥＝自建 MES 团队。"),
@@ -273,12 +306,29 @@ tr:nth-child(even) td{background:#fafcfe}
 .empty{background:#f5f7fa;border:1px dashed #cdd9e5;border-radius:8px;padding:16px;color:#5a6b7d;font-size:12.5px}
 a{color:#0059b3;text-decoration:none}
 .foot{font-size:11.5px;color:#8494a4;border-top:1px solid #e8eef5;padding-top:12px;margin-top:20px}
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.lg{border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.55}
+.lg-h{background:#e8f6ee;border-left:3px solid #0a7f3f}
+.lg-m{background:#fdf3e3;border-left:3px solid #b26a00}
+.lg-l{background:#fdeaea;border-left:3px solid #b02a2a}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.btn{display:inline-block;padding:9px 14px;border-radius:7px;font-size:12.5px;font-weight:600;text-decoration:none;border:1px solid transparent}
+.btn-mail{background:#003DA5;color:#fff}
+.btn-link{background:#eef4fb;color:#003DA5;border-color:#c5d8ee}
+.step{margin:5px 0;font-size:12.5px;line-height:1.55}
+.step b{color:#003DA5;margin-right:4px}
+.ev{margin-top:6px;font-size:11.5px;color:#6b7d90;line-height:1.5}
+details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 """
 
 def card(c):
-    manual = "".join(f"<li>{esc(m)}</li>" for m in c["manual"])
+    acts = ACTIONS.get(c["id"], [])
+    btn = "".join(
+        f'<a class="btn {"btn-mail" if a.get("kind")=="mail" else "btn-link"}" href="{a["href"]}" target="_blank">{esc(a["label"])}</a>'
+        for a in acts)
+    steps = "".join(f'<div class="step"><b>{i+1}.</b>{esc(m)}</div>' for i,m in enumerate(c["manual"]))
     return f"""
-<div class="card{' open' if c['feas']=='高' else ''}">
+<div class="card open">
   <div class="card-h" onclick="this.parentNode.classList.toggle('open')">
     <span class="cid">{c['id']}</span><span class="nm">{esc(c['name'])}</span><span class="code">{c['code']}</span>
     <span class="base">{esc(c['base'])}</span>
@@ -288,12 +338,12 @@ def card(c):
     <div class="row"><b>决策人：</b>{esc(c['chief'])}</div>
     <div class="row"><b>杠杆点：</b>{esc(c['leverage'])}</div>
     <div class="row"><b>园区落点：</b>{esc(c['park'])}</div>
-    <div class="cols" style="margin-top:10px">
-      <div class="col col-auto"><h4>✅ 系统已自动完成</h4><div style="font-size:12.5px">{esc(c['system_done'])}</div>
-        <div style="margin-top:8px;font-size:11.5px"><span class="tag tag-seed">种子：已验证研究</span><a href="{esc(c['evidence'][0])}" target="_blank">原文链接</a></div>
-      </div>
-      <div class="col col-manual"><h4>🖐️ 你需要手动做</h4><ul>{manual}</ul></div>
-    </div>
+    <div class="acts">{btn or '<span style="font-size:12px;color:#8494a4">无外部一键动作，按下方步骤联系</span>'}</div>
+    <div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps}</div>
+    <details><summary>系统已查证 / 证据（点开看）</summary>
+      <div class="ev">{esc(c['system_done'])}</div>
+      <div class="ev"><a href="{esc(c['evidence'][0])}" target="_blank">原文链接 ↗</a></div>
+    </details>
   </div>
 </div>"""
 
@@ -328,6 +378,12 @@ HTML = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
   <div class="kpi"><div class="n">{len(high)}</div><div class="l">高优先 case（今天先看）</div></div>
 </div>
 
+<div class="legend">
+  <div class="lg lg-h"><b>🟢 高优先</b>　今天就动手：约人 / 上门 / 打电话</div>
+  <div class="lg lg-m"><b>🟡 中优先</b>　顺手点一下按钮，别专门跑</div>
+  <div class="lg lg-l"><b>🔴 低优先</b>　别找关系：点按钮发封邮件就放下</div>
+</div>
+
 <div class="sec">
   <div class="sec-h">今日自动发现</div>
   {auto_block}
@@ -339,12 +395,12 @@ HTML = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 </div>
 
 <div class="sec">
-  <div class="sec-h">中优先</div>
+  <div class="sec-h">中优先 · 顺手点一下，不用专门跑</div>
   {''.join(card(c) for c in mid)}
 </div>
 
 <div class="sec">
-  <div class="sec-h">低优先（改邮件更快）</div>
+  <div class="sec-h">低优先 · 别找关系，点按钮发邮件即可</div>
   {''.join(card(c) for c in low)}
 </div>
 
