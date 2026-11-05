@@ -299,6 +299,7 @@ PRODUCTS = [
 product_findings = {}
 for p in PRODUCTS:
     hits = []
+    _loc = set()
     for kw in p["scan_kw"]:
         for col in ("szse", "sse"):
             try:
@@ -306,10 +307,12 @@ for p in PRODUCTS:
                 anns = data.get("announcements") or []
                 for a in anns:
                     title = re.sub(r"<[^>]+>", "", a.get("announcementTitle", "") or "")
-                    if not title or title in seen_titles:
+                    if not title or title in seen_titles or title in _loc:
                         continue
                     if any(b in title for b in ["回购","减持","增持","分红","股东会","法律意见书","评级","股东大会","摘要","反馈","回复","批复","处罚"]):
                         continue
+                    _loc.add(title)
+                    seen_titles.add(title)
                     link = f"http://www.cninfo.com.cn/new/disclosure/detail?stockCode={a.get('secCode')}&announcementId={a.get('announcementId')}"
                     hits.append(dict(sec=a.get("secCode"), name=a.get("secName"), title=title, url=link, kw=kw))
             except Exception as e:
