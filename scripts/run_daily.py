@@ -303,7 +303,7 @@ for p in PRODUCTS:
     for kw in p["scan_kw"]:
         for col in ("szse", "sse"):
             try:
-                data = fetch_cninfo(kw, column=col, days=14)
+                data = fetch_cninfo(kw, column=col, days=365, page_size=30)
                 anns = data.get("announcements") or []
                 for a in anns:
                     title = re.sub(r"<[^>]+>", "", a.get("announcementTitle", "") or "")
@@ -314,7 +314,9 @@ for p in PRODUCTS:
                     _loc.add(title)
                     seen_titles.add(title)
                     link = f"http://www.cninfo.com.cn/new/disclosure/detail?stockCode={a.get('secCode')}&announcementId={a.get('announcementId')}"
-                    hits.append(dict(sec=a.get("secCode"), name=a.get("secName"), title=title, url=link, kw=kw))
+                    ts = a.get("announcementTime")
+                    nm = re.sub(r"<[^>]+>", "", a.get("secName") or "")
+                    hits.append(dict(sec=a.get("secCode"), name=nm, title=title, url=link, kw=kw, ts=ts))
             except Exception as e:
                 log(f"{p['key']} 关键词 {kw}({col}) 失败：{e}")
     product_findings[p["key"]] = hits
@@ -464,33 +466,61 @@ LEV={
  "制造":"找集团数字化/IT负责人，用行业头部案例切入",
 }
 
-def analyze(key, nm, title):
+def age_info(ts):
+    """返回 (距今天数, 距今年份月份标签, 阶段)。阶段: fresh(<1月,观察) / window(1-9月,选型窗口) / old(>9月,可能已选型)"""
+    if not ts:
+        return (None, "", "window")
+    try:
+        d = datetime.datetime.fromtimestamp(ts/1000)
+        days = (datetime.datetime.now() - d).days
+        ms = round(days/30, 1)
+        lab = d.strftime("%Y-%m")
+        if days <= 30:
+            phase = "fresh"
+        elif days <= 270:
+            phase = "window"
+        else:
+            phase = "old"
+        return (days, f"{d.strftime('%Y-%m-%d')} · 距今{ms}个月", phase)
+    except Exception:
+        return (None, "", "window")
+
+def analyze(key, nm, title, ts=None):
     t=title
     if any(w in t for w in NOISE):
         return None
     ind=industry_of(nm,t)
     lev=LEV.get(ind,LEV["制造"])
+    days,agelab,phase=age_info(ts)
+    # 信号本身的强弱
+    sig=None
     if key=="FTPC":
         if any(w in t for w in ["收购","交割","并购","股权收购","受让"]):
-            return ("高",f"{ind}企业刚完成并购/交割，新厂要并入集团体系——多厂 MES 统一或替换的天然窗口。",f"杠杆：{lev}")
-        if any(w in t for w in ["新建","投产","生产基地","募投","扩产","奠基","开工","试生产","项目备案","扩建","产线","环境影响","环评","项目投资"]):
-            return ("高",f"{ind}企业在建新产能/新基地，按行业惯例 MES/MOM 在设备进场前后 3-6 个月选型——现在提前接触正好卡在选型前。",f"杠杆：{lev}")
-        if any(w in t for w in ["智能工厂","数字化车间","技改","改造升级","灯塔"]):
-            return ("中",f"{ind}企业在做智能工厂/技改，旧 MES 可能要换代升级——趁改造期切入。",f"杠杆：{lev}")
-        return None
-    if key=="TWX":
+            sig=("并购整合", f"{ind}企业并购/交割，新厂要并入集团体系——多厂 MES 统一或替换窗口")
+        elif any(w in t for w in ["新建","投产","生产基地","募投","扩产","奠基","开工","试生产","项目备案","扩建","产线","环境影响","环评","项目投资"]):
+            sig=("新产能建设", f"{ind}企业在建新产能/新基地，按惯例 MES/MOM 在设备进场前后选型")
+        elif any(w in t for w in ["智能工厂","数字化车间","技改","改造升级","灯塔"]):
+            sig=("技改升级", f"{ind}企业做智能工厂/技改，旧 MES 可能换代")
+    elif key=="TWX":
         if any(w in t for w in ["智能工厂","数字化车间","灯塔","预测性维护","OEE","设备联网","设备数据","能耗","技改"]):
-            return ("高",f"{ind}企业明确在做设备/OEE/能耗智能化，是 ThingWorx 的对口窗口。","杠杆：对标长安鱼嘴、中海油、科勒佛山；找设备/精益/能源经理")
-        return None
-    if key=="WIND":
+            sig=("设备智能化", f"{ind}企业做设备/OEE/能耗智能化，ThingWorx 对口窗口")
+    elif key=="WIND":
         if any(w in t for w in ["研发中心","技术中心","创新中心","研究院","实验室"]):
-            return ("高",f"{ind}企业新建研发中心，是 PLM/BOM 统一的窗口。","杠杆：走 PTC Creo 渠道引荐；找研发VP/CIO")
-        return None
-    if key=="DMX":
+            sig=("研发中心建设", f"{ind}企业新建研发中心，PLM/BOM 统一窗口")
+    elif key=="DMX":
         if any(w in t for w in ["数据中台","工业大数据","数字孪生","数据治理","工业互联网平台","数据湖"]):
-            return ("高",f"{ind}企业明确建数据平台，是 DataMosaix 窗口。","杠杆：找 CDO/数字化负责人，问是否卡在单点 POC")
+            sig=("数据平台建设", f"{ind}企业建数据平台，DataMosaix 窗口")
+    if not sig:
         return None
-    return None
+    stag,sdesc=sig
+    # 按公告时点重分级：1-9个月是选型黄金窗口
+    if phase=="window":
+        grade="高"; why=f"{sdesc}。📅 公告于 {agelab}——正好卡在选型/设备进场期，现在就该接触。"
+    elif phase=="fresh":
+        grade="中"; why=f"{sdesc}。📅 公告于 {agelab}——刚起步，先盯 1-2 个月，等设计/设备阶段再切入。"
+    else:
+        grade="低"; why=f"{sdesc}。📅 公告于 {agelab}——超过 9 个月，大概率已选型，仅作存量向上销售线索。"
+    return (grade, why, f"杠杆：{lev}", agelab)
 
 GRADE_CLS={"高":"gh","中":"gm","低":"gl"}
 
@@ -506,17 +536,17 @@ def render_product(p):
     dropped=0
     for h in raw:
         nm=(h["name"] or h["sec"] or "").strip()
-        r=analyze(p["key"], nm, h["title"])
+        r=analyze(p["key"], nm, h["title"], h.get("ts"))
         if r is None:
             dropped+=1; continue
-        g,judge,lev = r
-        leads.append((g,judge,lev,nm,h))
+        g,judge,lev,agelab = r
+        leads.append((g,judge,lev,agelab,nm,h))
     order={"高":0,"中":1,"低":2}
     leads.sort(key=lambda x: order[x[0]])
     total=len(leads)
-    leads=leads[:8]
+    leads=leads[:10]
     cards=""
-    for g,judge,lev,nm,h in leads:
+    for g,judge,lev,agelab,nm,h in leads:
         import urllib.parse as _up
         sq="https://www.google.com/search?q="+_up.quote(nm+" 数字化 信息化 负责人 MES")
         cards+=('<div class="lead">'
