@@ -199,17 +199,41 @@ def fetch_cninfo(searchkey, column="szse", days=14, page_size=15):
     with urllib.request.urlopen(req, timeout=12) as r:
         return json.loads(r.read().decode("utf-8"))
 
-def auto_rule(title):
+INDUSTRY_KW = [
+    (["电池","锂电","储能","正极","负极","电解液","隔膜","光伏","新能源","材料"], "新能源/电池材料"),
+    (["轮胎","橡胶"], "轮胎橡胶"),
+    (["汽车","汽配","零部件","车架","底盘","座椅","线束","车灯","制动","传动"], "汽车零部件"),
+    (["PCB","电路板","半导体","元件","电子","精密制造","元器件"], "电子/精密制造"),
+    (["家电","空调","冰箱","电机","电器","压缩机","照明","灯具","光电","电气"], "家电/照明"),
+    (["制药","医药","生物","医疗"], "医药"),
+    (["化工","涂料","颜料","有色","金属","钢材","铝","铜","贵金属"], "材料/流程工业"),
+    (["食品","饮料","乳","酒"], "食品饮料"),
+]
+
+def infer_industry(text):
+    for kws, lab in INDUSTRY_KW:
+        if any(k in text for k in kws):
+            return lab
+    return "制造业（综合）"
+
+def auto_rule(title, name=""):
     flags = []
-    flags.append("行业是否为汽车零部件离散制造：需人工判断（工具不猜）")
+    text = f"{name} {title}"
+    ind = infer_industry(text)
+    overseas = any(k in text for k in ["泰国","墨西哥","匈牙利","塞尔维亚","摩洛哥","越南","印尼","印度","海外","境外","新加坡"])
+    acts = any(k in title for k in ["增资","设立","对外投资","购地","新建","扩建","投产","子公司","生产基地","工厂"])
+    if overseas and acts:
+        flags.append(f"🏭 行业判断：{ind}；海外绿地建厂＝PLEX 标准画像（当地无 MES 包袱、SaaS 几周上线）→ 建议主动接触海外工厂 IT/制造负责人")
+    else:
+        flags.append(f"🏭 行业判断：{ind}；按公告属产能扩张，是否汽车安全/功能件需首通电话确认")
     if ("MES" in title or "制造执行" in title) and any(k in title for k in ["开发", "二次开发", "外派", "驻外", "驻海外"]):
-        flags.append("V1 命中（自建 MES 团队，不打）")
+        flags.append("⚠️ 对方在自建 MES 团队，短期不打，转为长期观察")
     if ("MES" in title or "制造执行" in title) and any(k in title for k in ["运维", "实施", "选型", "上线"]):
-        flags.append("MES 采购信号（可打）")
+        flags.append("🎯 直接 MES 采购信号（可立即约）")
     if "注册资本" in title and ("增资" in title or "总投资" in title):
-        flags.append("壳公司警告（注册资本小≠实际投资，查后续增资公告）")
+        flags.append("📌 注册资本小≠实际投资，留意后续大额增资公告确认规模")
     if any(k in title for k in ["设立", "新建", "绿地", "生产基地"]):
-        flags.append("新厂 IATF site 证书通常滞后投产 6–18 个月＝MES 需求窗口")
+        flags.append("💡 新厂 IATF/客户审核通常滞后投产 6–18 个月，正是 MES 选型窗口")
     return flags
 
 new_findings = []
@@ -237,7 +261,7 @@ for kw in AUTO_KEYWORDS:
                 link = f"http://www.cninfo.com.cn/new/disclosure/detail?stockCode={a.get('secCode')}&announcementId={ann_id}"
                 ts = a.get("announcementTime")
                 # 按公告距今月份分级：海外绿地 MES 选型通常在公告后 3-9 个月
-                rt = auto_rule(title)
+                rt = auto_rule(title, a.get("secName") or "")
                 phase = "window"; agelab = ""
                 if ts:
                     try:
@@ -633,6 +657,27 @@ else:
     note=f"今日自动发现 0 条。"+(f"（{esc(source_note)}）" if source_note else "（近 12 个月内未命中海外建厂新公告）")
     auto_block=f'<div class="empty">{note}</div>'
 
+# 每日自动更新的"今日最该打"：窗口期(1-9月)命中，按产品页同款卡片渲染
+import urllib.parse as _up2
+PHASE_GRADE={"window":"高","fresh":"中","old":"低"}
+action_cards=""
+for f in new_findings:
+    g=PHASE_GRADE.get(f.get("phase"),"中")
+    ind=infer_industry(f["title"]+(f["name"] or ""))
+    judge=" ".join(f["rule"])
+    nm=f["name"] or f["sec"]
+    sq="https://www.google.com/search?q="+_up2.quote(nm+" 海外工厂 IT 制造 负责人")
+    action_cards+=('<div class="lead">'
+      f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(f["sec"] or "")}</span>'
+      f'<span class="indtag">🏭 {esc(ind)}</span></div>'
+      f'<a class="lead-t" href="{esc(f["url"])}" target="_blank">{esc(f["title"])}</a>'
+      f'<div class="why"><b>🔍 自动判断：</b>{esc(judge)}</div>'
+      f'<div class="nxt"><b>🎯 下一步：</b>找该公司海外基地厂长/IT 负责人，首通电话问两句——①海外厂排产报工现在用系统还是 Excel？②北美/欧洲客户的质量追溯现在靠什么满足？PLEX SaaS 几周上线、免机房运维。</div>'
+      f'<a class="btn btn-link" href="{esc(f["url"])}" target="_blank">📄 看公告原文</a> '
+      f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 找联系人</a>'
+      '</div>')
+n_window=len([f for f in new_findings if f.get("phase")=="window"])
+
 reject_html="".join(f"<tr><td>{r['id']}</td><td>{r['name']} {r['code']}</td><td>{esc(r['why'])}</td></tr>" for r in REJECTED)
 
 def shell(title, active, body):
@@ -659,7 +704,9 @@ plex_body=f"""
   <div class="lg lg-m"><b>🟡 中优先</b> 顺手点按钮</div>
   <div class="lg lg-l"><b>🔴 低优先</b> 点按钮发邮件即放下</div>
 </div>
-<div class="sec"><div class="sec-h">PLEX 今日自动发现（海外建厂信号）</div>{auto_block}</div>
+<div class="sec"><div class="sec-h">🔥 今日最该打 · 自动更新（窗口期 {n_window} 家，每天随公告变化）</div>{action_cards or '<div class="empty">今日暂无窗口期命中</div>'}</div>
+<div class="sec"><div class="sec-h">近 12 个月全部命中（按选型窗口排序 · 明细备查）</div>{auto_block}</div>
+<div class="sec"><div class="sec-h">🗒 长期重点跟进（手动维护的存量名单，不随每日公告变化）</div></div>
 <div class="sec"><div class="sec-h">高优先 · 今天先动这 {len(high)} 家</div>{''.join(card(c) for c in high)}</div>
 <div class="sec"><div class="sec-h">中优先 · 顺手点一下</div>{''.join(card(c) for c in mid)}</div>
 <div class="sec"><div class="sec-h">低优先 · 点按钮发邮件即可</div>{''.join(card(c) for c in low)}</div>
