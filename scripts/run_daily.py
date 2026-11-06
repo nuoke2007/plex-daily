@@ -660,28 +660,50 @@ else:
 # 每日滚动线索：按公告时点分高(窗口)/中(刚公告)/低(超9月)三档
 import urllib.parse as _up2
 PHASE_GRADE={"window":"高","fresh":"中","old":"低"}
+def plex_playbook(nm, title, ind):
+    """按行业+海外目的地，自动还原原始 case 卡的打法：决策人/杠杆点/按顺序动作。"""
+    t=title
+    if "泰" in t:
+        loc="泰国（罗勇/春武里 EEC）"; park="泰中罗勇工业园 TCR / Amata（中资园区运营方，握租户名单）"
+    elif "越南" in t:
+        loc="越南（海防/北宁/平阳）"; park="VSIP / 中资制造园区运营方"
+    elif "墨西哥" in t or "墨西哥" in nm or "北美" in t:
+        loc="墨西哥（Bajío 汽车带）"; park="Bajío 汽车产业园运营方（周边已有大量中国汽零厂）"
+    elif "印尼" in t or "印度尼西亚" in t:
+        loc="印尼（雅加达/卡拉旺）"; park="中资园区运营方"
+    elif "马来" in t:
+        loc="马来西亚（槟城/柔佛）"; park="中资园区运营方"
+    else:
+        loc="海外（国别见公告）"; park="当地中资/制造园区运营方"
+    chief=f"海外新厂厂长 + IT(数字化)负责人 + 质量经理（IATF 体系）"
+    lev=(f"{park}；该公司产线若已用罗克韦尔 PLC 则走存量客户渠道；公告董秘/证券部可代为转数字化负责人")
+    steps=[
+        f"脉脉/LinkedIn 搜【{nm}】+“{loc.split('（')[0]} IT / 海外工厂 IT”——在招这类岗=MES 选型正当时，直接加人聊",
+        f"上门{park.split('（')[0]}运营方——一次上门可同时触达同园区多家出海企业",
+        f"首通电话三问：①海外厂排产报工现在用系统还是 Excel？②当地买服务器招 IT 的预算/周期能接受吗？③北美/欧洲客户的质量追溯现在靠什么满足？",
+    ]
+    return chief, lev, steps, loc
 def card_for(f):
     g=PHASE_GRADE.get(f.get("phase"),"中")
-    ind=infer_industry(f["title"]+(f["name"] or ""))
+    ind=industry_of((f["name"] or ""), f["title"])
     judge=" ".join(f["rule"])
     nm=f["name"] or f["sec"]
-    sq="https://www.google.com/search?q="+_up2.quote(nm+" 海外工厂 IT 制造 负责人")
-    # 自动补全打法：找谁 / 杠杆 / 话术（不靠用户自己探索）
-    who="海外基地厂长 / 工厂 IT 经理 / 质量经理（新厂三巨头）"
-    lever=("① 脉脉/LinkedIn 搜【"+esc(nm)+"】+“海外 IT / 墨西哥 / 东南亚 / 工厂 IT”岗——在招这类人=选型正当时；"
-           "② 通过公告里的董秘/证券部转数字化负责人；"
-           "③ 若该公司产线已用罗克韦尔 PLC，走存量客户渠道直接约")
-    hook=("“海外新厂按传统 MES：当地服务器+机房+国内顾问飞过去，第一年几百万、半年才上线；"
-          "PLEX 是 SaaS，一年几十万、几周上线，免运维，直接满足北美/欧洲客户的质量追溯审核。”")
-    return ('<div class="lead">'
-      f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(f["sec"] or "")}</span>'
-      f'<span class="indtag">🏭 {esc(ind)}</span></div>'
-      f'<a class="lead-t" href="{esc(f["url"])}" target="_blank">{esc(f["title"])}</a>'
-      f'<div class="why"><b>🔍 为什么是机会：</b>{esc(judge)}</div>'
-      f'<div class="nxt"><b>🎯 找谁：</b>{who}<br><b>🧭 怎么搭上线：</b>{lever}<br><b>🎣 第一句怎么开口：</b>{hook}</div>'
-      f'<a class="btn btn-link" href="{esc(f["url"])}" target="_blank">📄 看公告原文</a> '
-      f'<button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button>'
-      '</div>')
+    chief,lev,steps,loc=plex_playbook(nm, f["title"], ind)
+    steps_html="".join(f'<div class="step"><b>{i+1}.</b>{esc(m)}</div>' for i,m in enumerate(steps))
+    return ('<div class="card open">'
+      f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
+      f'<span class="cid">{g}</span><span class="nm">{esc(nm)}</span><span class="code">{esc(f["sec"] or "")}</span>'
+      f'<span class="base">📍 {esc(loc)}</span>'
+      f'<span class="right"><span class="grade">🏭 {esc(ind)}</span></span></div>'
+      '<div class="card-b">'
+      f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
+      f'<div class="row"><b>决策人：</b>{esc(chief)}</div>'
+      f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
+      f'<div class="row"><b>怎么开口：</b>“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维，直接过北美客户追溯审核。”</div>'
+      f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>'
+      f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
+      f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>'
+      '</div></div>')
 cards_win="".join(card_for(f) for f in new_findings if f.get("phase")=="window")
 cards_fresh="".join(card_for(f) for f in new_findings if f.get("phase")=="fresh")
 cards_old="".join(card_for(f) for f in new_findings if f.get("phase")=="old")
