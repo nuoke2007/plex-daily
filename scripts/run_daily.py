@@ -660,6 +660,47 @@ else:
 # 每日滚动线索：按公告时点分高(窗口)/中(刚公告)/低(超9月)三档
 import urllib.parse as _up2
 PHASE_GRADE={"window":"高","fresh":"中","old":"低"}
+
+# ===== AI 逐家深挖档案（真查后写入，按股票代码）=====
+# 每家：loc / chief / lev / steps / hook(可空用默认) / note
+DOSSIERS={
+ "603166":dict(loc="墨西哥（筹建中，2026-03公告设全资子公司）",
+   chief="桂林总部：数字化牵头人王长顺（公开谈过 MES/5G 工业互联网）；墨西哥子公司经理将由董事聘任（尚未到岗=切入窗口）",
+   lev="国内已贯通 PLM/ERP/MES/WMS——是成熟 MES 用户；但墨西哥是绿地新厂、当地无 IT。桂林总部 MES 团队最关心“海外厂怎么快速复制、不养本地运维”",
+   hook="“王总，国内 MES 已经跑顺，墨西哥新厂若再买一套传统 MES，当地服务器+专职 IT 至少两年才回本；PLEX 是 SaaS，和国内体系并行、几周上线，墨西哥厂厂长不用养 IT。”",
+   steps=["先约桂林总部数字化/IT 负责人（王长顺线），不谈买新 MES，谈“墨西哥厂怎么零运维快速上线”",
+          "墨西哥子公司经理尚未聘任——通过董秘办/证券部问筹建组，赶在团队到位前把 IT 方案锁定",
+          "对标：国内 MES 已投，海外厂用 PLEX 补位，避免重复买重型 MES"]),
+ "001380":dict(loc="墨西哥克雷塔罗州（与万安科技合资 65/35，2028 投产）",
+   chief="董事长金雷（公开谈墨西哥本地化供应链闭环）；合资公司由华纬金晟实业控股，万安科技（香港）北美持股35%",
+   lev="克雷塔罗=福特/宝马汽车带；这是与万安科技的合资厂——MES 选型要过两家股东。董事长金雷是决策拍板人",
+   hook="“金总，克雷塔罗厂贴着福特/宝马，客户审厂要看追溯；PLEX SaaS 几周上线，合资厂两边股东都不用为 IT 运维扯皮。”",
+   steps=["直接攻董事长金雷（他亲自讲墨西哥战略），定位是“2028 投产前把 IT 架构定掉”",
+          "同步接触合资方万安科技（35%股东），它自己也有出海 IT 诉求，可捆绑",
+          "克雷塔罗中资企业集中，托当地中资园区/中企商会引荐已落地厂长"]),
+ "002454":dict(loc="墨西哥蒙特雷（2026 年中投产，现处设备调试阶段）",
+   chief="松芝国际控股（全资母公司）统筹；墨西哥松芝尚未正式经营、无专职 IT=真空窗口",
+   lev="工厂正处设备调试、未投产——正是 MES 选型最后窗口，投产再上就晚；3.6 亿增资说明投真金",
+   hook="“松芝蒙特雷厂马上投产，现在上 PLEX，投产第一天就有排产/追溯；等投产后再补系统，要停产折腾。”",
+   steps=["抢在 2026 年中投产前接触松芝国际控股 IT——设备调试期是最后选型窗",
+          "通过董秘/互动易松芝证券部转海外项目负责人",
+          "对标汽车热管理客户（北美主机厂审厂），主打投产即合规"]),
+ "300852":dict(loc="泰国（子公司一品电路，2024H2 已量产，现 1.5 亿营收爬坡）",
+   chief="一品电路（泰国）管理层 + 总部 IT；泰国厂正建本地化人才梯队、优化品控",
+   lev="已过绿地期、在爬坡扩产（9.3 亿定增加码）；痛点是“中国+泰国双基地标准不统一、品控要对齐”——更偏 FTPC 统一标准，PLEX 补泰国厂追溯",
+   hook="“泰国一品电路在爬坡，国内 PCB 厂 MES 标准怎么一键复制到泰国厂、品控数据回传总部？PLEX 几周上线先把泰国厂追溯跑起来。”",
+   steps=["定位泰国一品电路爬坡期的品控/IT 负责人，问双基地标准怎么对齐",
+          "已量产=不是绿地冷启动，主打“快速补追溯+双基地看板”，不推翻现有系统",
+          "注意：此案更偏 FTPC 多厂统一，PLEX 只切泰国厂快速上线这一块"]),
+ "301039":dict(loc="墨西哥（集团海外布局；泰国 DS 厂已自动化灯塔）",
+   chief="集团数字化流程中心（一办三中心之一）；灯塔项目组李晓甫博士线",
+   lev="中集车辆是灯塔工厂老手、数字化能力极强——不是 PLEX 冷启动对象。真正机会是 FTPC/ThingWorx 向墨西哥新厂复制灯塔方法论",
+   hook="（此案 PLEX 非首选）“集团灯塔工厂经验要复制到墨西哥新厂，要不要用 ThingWorx/FTPC 把泰国 DS 那套自动化产线标准直接搬过去？”",
+   steps=["不推 PLEX，转推 FTPC/ThingWorx——找集团数字化流程中心",
+          "借泰国 DS 厂灯塔案例做背书",
+          "标为“存量灯塔客户出海复制”，不按绿地 MES 打"]),
+}
+
 def plex_playbook(nm, title, ind):
     """按行业+海外目的地，自动还原原始 case 卡的打法：决策人/杠杆点/按顺序动作。"""
     t=title
@@ -688,7 +729,16 @@ def card_for(f):
     ind=industry_of((f["name"] or ""), f["title"])
     judge=" ".join(f["rule"])
     nm=f["name"] or f["sec"]
-    chief,lev,steps,loc=plex_playbook(nm, f["title"], ind)
+    code=(f["sec"] or "").replace(".SH","").replace(".SZ","").zfill(6)
+    d=DOSSIERS.get(code)
+    if d:
+        chief,lev,steps,loc=d["chief"],d["lev"],d["steps"],d["loc"]
+        hook=d.get("hook") or "“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
+        badge='<span class="ev" style="color:#137333">✓ AI 已查证深挖</span>'
+    else:
+        chief,lev,steps,loc=plex_playbook(nm, f["title"], ind)
+        hook="“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
+        badge='<span class="ev" style="color:#b26a00">⏳ AI 待深挖决策人（先按信号入围）</span>'
     steps_html="".join(f'<div class="step"><b>{i+1}.</b>{esc(m)}</div>' for i,m in enumerate(steps))
     return ('<div class="card open">'
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
@@ -697,9 +747,10 @@ def card_for(f):
       f'<span class="right"><span class="grade">🏭 {esc(ind)}</span></span></div>'
       '<div class="card-b">'
       f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
+      f'<div class="row">{badge}</div>'
       f'<div class="row"><b>决策人：</b>{esc(chief)}</div>'
       f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
-      f'<div class="row"><b>怎么开口：</b>“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维，直接过北美客户追溯审核。”</div>'
+      f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
       f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>'
       f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
       f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>'
