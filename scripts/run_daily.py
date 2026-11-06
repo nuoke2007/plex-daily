@@ -625,13 +625,20 @@ def render_product(p):
                         "BOM与工程变更归研发体系，找IT运维或车间都不对口") ,
                  "DMX":("CDO/数字化转型负责人 或 数据团队负责人",
                         "跨站点数据上下文化是高管工程，找传统IT运维推不动") }.get(p["key"],("信息化/数字化负责人","找对部门比找对公司更重要"))
+            _d=PRODUCT_DOSSIERS.get(code)
+            if _d:
+                _role,_why=_d["role"],_d["why"]
+                _chief=f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:2px">👤 {esc(_d["chief"])}</div>'
+            else:
+                _role,_why=_rw[0],_rw[1]; _chief=''
             cards+=(f'<div class="lead" data-rg="{esc(rg)}">'
               f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(code)}</span>'
               f'<span class="indtag">🏭 {esc(ind)}</span><span class="indtag">🗺️ {esc(rg)}</span></div>'
               f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
               f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
               f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
-              f'{contact_links(code,nm,ask,role=_rw[0],why=_rw[1],grade=g)}'
+              f'{_chief}'
+              f'{contact_links(code,nm,ask,role=_role,why=_why,grade=g)}'
               f'<div style="margin-top:6px"><a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a></div>'
               '</div>')
     # 区域筛选条
@@ -896,7 +903,20 @@ def contact_links(code, nm, ask=None, role="", why="", grade=""):
             f'<a class="ev" href="{esc(baidu)}" target="_blank">③ 年报查董秘直线 ↗</a>'
             f'</div></div>')
 
-# 总部所在区域（按股票代码；新公司默认“待确认”）
+# 公司级真查档案（AI 逐家上网查证后写入；未入档的走产品级通用判断）
+# 字段: role=该找谁 why=为什么是他 chief=已具名查到的对接人/部门 + 证据
+PRODUCT_DOSSIERS={
+ "600298":{"role":"信息中心（韩陈）+ 集团装备部（王秀峰部长）",
+   "why":"安琪是流程行业多基地（德宏/普洱/崇左/济宁/赤峰/可克达拉），已拿两化融合贯标+国家级智能制造场景，MES不空白；FTPC 切的是多基地标准统一，找信息中心而非车间",
+   "chief":"已查证：装备部部长王秀峰主谈2026技改（AI+自动化升级）；信息中心高工韩陈负责5G工业互联网标识项目。董秘留言请转信息中心/装备部。"},
+ "603313":{"role":"集团制造/IT负责人（南通零压/上海总部）",
+   "why":"六大基地横跨中/美/塞尔维亚/西班牙/泰国，已用RFID+智能吊挂+立体仓；海外新基地（塞/泰/西）正是多工厂MES标准统一的选型窗，典型FTPC标的",
+   "chief":"未具名：六大基地跨三洲，制造标准统一是集团议题；董秘留言请转'海外基地制造/信息化负责人'。"},
+ "002812":{"role":"注意：FTPC优先级下调，转 ThingWorx/DataMosaix 向上销售",
+   "why":"恩捷2026年8月已全面上线SCADA数采+能源管理系统，并与安脉盛做AI制膜厚度控制，OT数据层已自建；FTPC不是空白切入，数据上下文化/OEE才是切口",
+   "chief":"已查证：SCADA生产数采2026-08全面上线、能源管理系统2026-09试运行。建议走数字化/智造团队而非MES采购口径。"},
+}
+
 HQ_REGION={
  "603166":"华南·广西","001380":"长三角·浙江","002454":"长三角·上海","300852":"珠三角·广东",
  "301039":"珠三角·广东","600261":"长三角·浙江","002543":"珠三角·广东","002815":"珠三角·广东",
