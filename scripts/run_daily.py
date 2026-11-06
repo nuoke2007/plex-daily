@@ -317,7 +317,7 @@ PRODUCTS = [
    manual=["优先从 FTPC/PLC 存量客户向上卖（长安、奇瑞都是 MES+IIoT 一起上）",
            "搜“工业互联网/设备数采/OT 网络工程师”在招岗",
            "展会/论坛找抱怨“设备孤岛”的企业"],
-   scan_kw=["工业互联网","预测性维护","设备联网","OEE"]),
+   scan_kw=["工业互联网","预测性维护","设备联网","OEE","数字化车间","技改","机器视觉","能耗"]),
  dict(key="WIND", emoji="📐", name="PTC Windchill (PLM)",
    pos="多研发中心协同、设计 BOM 一致、工程变更闭环（数字主线）",
    who="变型/衍生设计多的汽配、家电、精密模具、工程机械；≥2 个研发中心或多厂各自研发",
@@ -328,7 +328,7 @@ PRODUCTS = [
    manual=["优先走 PTC Creo 代理商（CAD 卖进去，PLM 是自然延伸）",
            "搜“PLM 工程师 / BOM 工程师 / 研发 IT 经理”岗",
            "领英/脉脉关注研发总监，评论“研发协同”帖"],
-   scan_kw=["研发中心","PLM","产品数据","协同研发"]),
+   scan_kw=["研发中心","PLM","产品数据","协同研发","技术中心","创新中心","实验室","研发投入"]),
  dict(key="DMX", emoji="📊", name="FactoryTalk DataMosaix / FTA",
    pos="工业 DataOps：把 OT/IT/ET 数据上下文化，工艺工程师自己做跨站点分析",
    who="流程工业（采矿/化工/食饮）或设备密集型离散；已有 Historian/PI/SCADA/MES 但数据分散、单点 POC 推不开",
@@ -339,7 +339,7 @@ PRODUCTS = [
    manual=["从 FactoryTalk Historian / PI 存量客户向上销售（存数据→用数据）",
            "找 CDO / 数字化转型负责人，不找传统 IT 运维",
            "参加数据规模 / 数字孪生主题闭门会"],
-   scan_kw=["数据中台","数字孪生","工业大数据","数据治理"]),
+   scan_kw=["数据中台","数字孪生","工业大数据","数据治理","数字化转型","智能制造","工业互联网平台","数据平台"]),
 ]
 
 product_findings = {}
@@ -558,8 +558,8 @@ def analyze(key, nm, title, ts=None):
         if any(w in t for w in ["研发中心","技术中心","创新中心","研究院","实验室"]):
             sig=("研发中心建设", f"{ind}企业新建研发中心，PLM/BOM 统一窗口")
     elif key=="DMX":
-        if any(w in t for w in ["数据中台","工业大数据","数字孪生","数据治理","工业互联网平台","数据湖"]):
-            sig=("数据平台建设", f"{ind}企业建数据平台，DataMosaix 窗口")
+        if any(w in t for w in ["数据中台","工业大数据","数字孪生","数据治理","工业互联网平台","数据湖","数据平台","数字化转型","智能制造","SCADA","Historian","数据采集","云平台"]):
+            sig=("数据平台/数字化建设", f"{ind}企业建数据平台/推进数字化转型，DataMosaix 跨站点数据上下文化窗口")
     if not sig:
         return None
     stag,sdesc=sig
@@ -594,20 +594,35 @@ def render_product(p):
     order={"高":0,"中":1,"低":2}
     leads.sort(key=lambda x: order[x[0]])
     total=len(leads)
-    leads=leads[:10]
-    cards=""
+    leads=leads[:15]
+    # 各产品对董秘的搭线话术
+    PRODUCT_ASK={
+      "FTPC":"关注到贵司新基地投产/多厂扩张，希望15分钟对接制造/IT负责人交流多工厂MES/MOM标准统一",
+      "TWX":"关注到贵司设备联网/OEE/智能化项目，希望15分钟对接设备/自动化负责人交流OT数据采集与预测维护",
+      "WIND":"关注到贵司研发中心/产品数据建设，希望15分钟对接研发IT/PLM负责人交流BOM与工程变更管理",
+      "DMX":"关注到贵司数据平台/工业大数据项目，希望15分钟对接CDO/数字化负责人交流跨站点数据上下文化分析",
+    }
+    ask=PRODUCT_ASK.get(p["key"],"希望对接信息化负责人交流")
+    # 按总部区域分组
+    from collections import OrderedDict
+    by_region=OrderedDict()
     for g,judge,lev,agelab,ind,nm,h in leads:
-        import urllib.parse as _up
-        sq="https://www.google.com/search?q="+_up.quote(nm+" 数字化 信息化 负责人 MES")
-        cards+=('<div class="lead">'
-          f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(h["sec"] or "")}</span>'
-          f'<span class="indtag">🏭 {esc(ind)}</span></div>'
-          f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
-          f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
-          f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
-          f'<a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a> '
-          f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 找联系人</a>'
-          '</div>')
+        reg=region_of(h.get("sec"))
+        by_region.setdefault(reg,[]).append((g,judge,lev,agelab,ind,nm,h))
+    cards=""
+    for reg, items in by_region.items():
+        cards+=f'<div style="margin:12px 0 4px;font-size:13px;font-weight:700;color:#003DA5;border-left:4px solid #003DA5;padding-left:8px">🗺️ 总部区域：{esc(reg)}（{len(items)}家）</div>'
+        for g,judge,lev,agelab,ind,nm,h in items:
+            code=h.get("sec") or ""
+            cards+=('<div class="lead">'
+              f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(code)}</span>'
+              f'<span class="indtag">🏭 {esc(ind)}</span><span class="indtag">🗺️ {esc(reg.split("·")[0])}</span></div>'
+              f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
+              f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
+              f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
+              f'{contact_links(code,nm,ask)}'
+              f'<div style="margin-top:6px"><a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a></div>'
+              '</div>')
     if not cards:
         cards='<div class="empty" style="padding:14px;font-size:12.5px;color:#8494a4">今日无合格线索（已过滤财报/治理类公告，只留有新产能·并购·技改信号的；雷达每天自动扫）</div>'
     qs="".join(f'<div class="q">问{i+1}：{esc(q)}</div>' for i,q in enumerate(p["three"]))
@@ -822,27 +837,40 @@ def auto_dossier(nm, title, rule, ind):
     ]
     return chief,lev,steps,loc
 
-def contact_links(code, nm):
+def contact_links(code, nm, ask=None):
     """一键找人：董秘法定入口 + 招聘反查，全部公开合规、不用登录猜人。"""
     import urllib.parse as _u
+    code=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
+    ask=ask or "关注到贵司海外新厂建设，希望15分钟对接信息化/海外项目负责人交流MES方案"
     if code.startswith("6"):  # 上交所：e互动/公司资料页（含董秘电话）
         ir=f"https://sns.sseinfo.com/company/company.do?stockcode={code}"
         ir_label="董秘/e互动直达（上交所）"
     else:  # 深交所：互动易公司页（可直接提问，董秘必回）
         ir=f"https://irm.cninfo.com.cn/ircs/company/companyDetail?stockcode={code}"
         ir_label="董秘/互动易直达（深交所·可直接提问）"
-    job=f"https://www.zhipin.com/web/geek/job?query={_u.quote(nm)}%20海外"
+    job=f"https://www.zhipin.com/web/geek/job?query={_u.quote(nm)}"
     baidu=f"https://www.baidu.com/s?wd={_u.quote(nm+' 董秘 电话 年报')}"
     return (f'<div style="margin-top:8px;padding:8px;background:#f4f8ff;border:1px solid #d6e4ff;border-radius:8px">'
             f'<b style="font-size:12.5px;color:#003DA5">🔗 一键找人（不用打总机）：</b>'
             f'<div style="font-size:12px;margin-top:4px;color:#33414f">① 先点董秘入口——他是法定信息披露人，对合作问询必须回应；留言话术：'
-            f'“您好，我是罗克韦尔自动化，关注到贵司海外新厂建设，希望15分钟对接信息化/海外项目负责人交流MES方案。”'
+            f'“您好，我是罗克韦尔自动化/PT C，{ask}。”'
             f'</div>'
             f'<div style="margin-top:6px">'
             f'<a class="ev" href="{esc(ir)}" target="_blank">① {ir_label} ↗</a>　'
-            f'<a class="ev" href="{esc(job)}" target="_blank">② BOSS直聘搜“{esc(nm)}海外岗” ↗</a>　'
+            f'<a class="ev" href="{esc(job)}" target="_blank">② BOSS直聘搜“{esc(nm)}”在职岗 ↗</a>　'
             f'<a class="ev" href="{esc(baidu)}" target="_blank">③ 年报里查董秘电话 ↗</a>'
             f'</div></div>')
+
+# 总部所在区域（按股票代码；新公司默认“待确认”）
+HQ_REGION={
+ "603166":"华南·广西","001380":"长三角·浙江","002454":"长三角·上海","300852":"珠三角·广东",
+ "301039":"珠三角·广东","600261":"长三角·浙江","002543":"珠三角·广东","002815":"珠三角·广东",
+ "001359":"华中·湖北","605277":"珠三角·广东","002843":"华中·湖南","300791":"珠三角·广东",
+ "002429":"珠三角·广东","300818":"华中·江西","605099":"长三角·江苏",
+}
+def region_of(code):
+    c=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
+    return HQ_REGION.get(c, "其他/待确认")
 
 def card_for(f):
     g=PHASE_GRADE.get(f.get("phase"),"中")
@@ -864,7 +892,7 @@ def card_for(f):
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
       f'<span class="cid">{g}</span><span class="nm">{esc(nm)}</span><span class="code">{esc(f["sec"] or "")}</span>'
       f'<span class="base">📍 {esc(loc)}</span>'
-      f'<span class="right"><span class="grade">🏭 {esc(ind)}</span></span></div>'
+      f'<span class="right"><span class="grade">🏭 {esc(ind)}</span> <span class="grade">🗺️ {esc(region_of(code).split("·")[0])}</span></span></div>'
       '<div class="card-b">'
       f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
       f'<div class="row">{badge}</div>'
