@@ -1141,6 +1141,23 @@ except Exception as e:
 # ============================================================
 # 6. 可选推送钩子（Server酱 / Bark；未配环境变量则静默跳过）
 # ============================================================
+def _send_push(sc, bk, title, body):
+    if sc:
+        try:
+            data = urllib.parse.urlencode({"title": title, "desp": body}).encode("utf-8")
+            req = urllib.request.Request(f"https://sctapi.ftqq.com/{sc}.send", data=data)
+            urllib.request.urlopen(req, timeout=8).read()
+            log("Server酱推送成功")
+        except Exception as e:
+            log(f"Server酱推送失败（已忽略）：{e}")
+    if bk:
+        try:
+            url = f"https://api.day.app/{bk}/{urllib.parse.quote(title)}/{urllib.parse.quote(body)}"
+            urllib.request.urlopen(url, timeout=8).read()
+            log("Bark 推送成功")
+        except Exception as e:
+            log(f"Bark 推送失败（已忽略）：{e}")
+
 def notify():
     sc = os.environ.get("SERVERCHAN_KEY", "").strip()
     bk = os.environ.get("BARK_KEY", "").strip()
@@ -1148,35 +1165,41 @@ def notify():
     if not (sc or bk):
         log("未配置 SERVERCHAN_KEY / BARK_KEY，跳过推送")
         return
-    # 只在每周一推送一次汇总，平时静默不打扰
-    if datetime.date.today().weekday() != 0:
-        log("非周一，静默不推送")
-        return
-    n_win = len([f for f in new_findings if f.get("phase")=="window"])
-    top = [ (f["name"] or f["sec"]) for f in new_findings if f.get("phase")=="window" ][:5]
-    prod_counts = "；".join(f"{p['key']} {len(product_findings.get(p['key'],[]))}条" for p in PRODUCTS)
-    title = f"销售线索周报 {TODAY}"
-    body = (f"本周扫描汇总（每周一推一次）：\n"
-            f"- PLEX 海外建厂线索 {len(new_findings)} 条，其中正好选型窗口 {n_win} 条\n"
-            f"- 各产品命中：{prod_counts}\n"
-            f"- 本周最该打：{('、'.join(top) if top else '暂无窗口期命中')}\n"
-            f"- 待手动跟进 {manual_total} 项\n"
-            f"看板：{site or ''}")
-    if sc:
-        try:
-            data = urllib.parse.urlencode({"title": title, "desp": body}).encode("utf-8")
-            req = urllib.request.Request(f"https://sctapi.ftqq.com/{sc}.send", data=data)
-            urllib.request.urlopen(req, timeout=8).read()
-            log("Server酱周报推送成功")
-        except Exception as e:
-            log(f"Server酱推送失败（已忽略）：{e}")
-    if bk:
-        try:
-            url = f"https://api.day.app/{bk}/{urllib.parse.quote(title)}/{urllib.parse.quote(body)}"
-            urllib.request.urlopen(url, timeout=8).read()
-            log("Bark 周报推送成功")
-        except Exception as e:
-            log(f"Bark 推送失败（已忽略）：{e}")
+    # 事件驱动：近48小时内出现的新公告信号（不靠固定时钟，安静日不推）
+    fresh=[]; _fs=set()
+    for p in PRODUCTS:
+        for h in product_findings.get(p["key"], []):
+            d,_,_ = age_info(h.get("ts"))
+            if d is not None and d <= 2:
+                sec=h.get("sec")
+                if sec in _fs: continue
+                _fs.add(sec)
+                fresh.append((p["name"], h.get("name") or sec, h.get("title",""), h.get("url","")))
+    fresh=fresh[:6]
+    today=datetime.date.today()
+    if today.weekday() == 0:
+        # 周一：全景周报；若恰逢有新信号，一并附上
+        n_win = len([f for f in new_findings if f.get("phase")=="window"])
+        top = [ (f["name"] or f["sec"]) for f in new_findings if f.get("phase")=="window" ][:5]
+        prod_counts = "；".join(f"{p['key']} {len(product_findings.get(p['key'],[]))}条" for p in PRODUCTS)
+        title = f"销售线索周报 {TODAY}"
+        body = (f"本周扫描汇总（每周一推一次）：\n"
+                f"- PLEX 海外建厂线索 {len(new_findings)} 条，其中正好选型窗口 {n_win} 条\n"
+                f"- 各产品命中：{prod_counts}\n"
+                f"- 本周最该打：{('、'.join(top) if top else '暂无窗口期命中')}\n"
+                f"- 待手动跟进 {manual_total} 项\n"
+                f"看板：{site or ''}")
+        if fresh:
+            body += "\n\n🆕 近48h新信号：\n" + "\n".join(f"· [{pn}] {nm}：{tt}" for pn,nm,tt,_ in fresh)
+        _send_push(sc,bk,title,body)
+    elif fresh:
+        # 非周一：仅当出现新信号才即时推，安静日不打扰
+        title = f"🆕 新销售信号 {len(fresh)} 条 {TODAY}"
+        body = "\n".join(f"· [{pn}] {nm}\n  {tt}\n  {u}" for pn,nm,tt,u in fresh)
+        body += f"\n\n打开看板看搭线动作链：{site or ''}"
+        _send_push(sc,bk,title,body)
+    else:
+        log("非周一且近48h无新信号，静默不推送")
 
 notify()
 
