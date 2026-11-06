@@ -2,7 +2,8 @@ name: daily-update
 
 on:
   schedule:
-    - cron: "0 1 * * *"
+    - cron: '0 1 * * *'      # 北京时 09:00
+    - cron: '30 12 * * *'    # 北京时 20:30
   workflow_dispatch:
 
 permissions:
