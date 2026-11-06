@@ -617,13 +617,21 @@ def render_product(p):
         cards+=f'<div class="rg-head" data-rg="{esc(rg)}" style="margin:12px 0 4px;font-size:13px;font-weight:700;color:#003DA5;border-left:4px solid #003DA5;padding-left:8px">🗺️ 总部区域：{esc(reg)}（{len(items)}家）</div>'
         for g,judge,lev,agelab,ind,nm,h in items:
             code=h.get("sec") or ""
+            _rw={"FTPC":("集团制造/生产副总 或 信息化(IT)负责人",
+                        "多工厂MES/MOM标准统一是制造与IT一把手联合拍板，找车间主任或纯IT运维都够不到预算") ,
+                 "TWX":("设备/自动化(OT)总监 或 工业互联网负责人",
+                        "设备数采/OEE/预测维护是设备口的项目预算，找纯IT部门不触发") ,
+                 "WIND":("研发IT/PLM负责人 或 研发中心(技术)总监",
+                        "BOM与工程变更归研发体系，找IT运维或车间都不对口") ,
+                 "DMX":("CDO/数字化转型负责人 或 数据团队负责人",
+                        "跨站点数据上下文化是高管工程，找传统IT运维推不动") }.get(p["key"],("信息化/数字化负责人","找对部门比找对公司更重要"))
             cards+=(f'<div class="lead" data-rg="{esc(rg)}">'
               f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(code)}</span>'
               f'<span class="indtag">🏭 {esc(ind)}</span><span class="indtag">🗺️ {esc(rg)}</span></div>'
               f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
               f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
               f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
-              f'{contact_links(code,nm,ask)}'
+              f'{contact_links(code,nm,ask,role=_rw[0],why=_rw[1],grade=g)}'
               f'<div style="margin-top:6px"><a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a></div>'
               '</div>')
     # 区域筛选条
@@ -857,28 +865,35 @@ def auto_dossier(nm, title, rule, ind):
     ]
     return chief,lev,steps,loc
 
-def contact_links(code, nm, ask=None):
-    """一键找人：董秘法定入口 + 招聘反查，全部公开合规、不用登录猜人。"""
+def contact_links(code, nm, ask=None, role="", why="", grade=""):
+    """分析先行的搭线块：先讲清找谁/为什么是他/为什么现在，再给把话递进去的合规通道。"""
     import urllib.parse as _u
     code=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
     ask=ask or "关注到贵司海外新厂建设，希望15分钟对接信息化/海外项目负责人交流MES方案"
-    if code.startswith("6"):  # 上交所：e互动/公司资料页（含董秘电话）
+    if code.startswith("6"):
         ir=f"https://sns.sseinfo.com/company/company.do?stockcode={code}"
         ir_label="董秘/e互动直达（上交所）"
-    else:  # 深交所：互动易公司页（可直接提问，董秘必回）
+    else:
         ir=f"https://irm.cninfo.com.cn/ircs/company/companyDetail?stockcode={code}"
         ir_label="董秘/互动易直达（深交所·可直接提问）"
     job=f"https://www.zhipin.com/web/geek/job?query={_u.quote(nm)}"
     baidu=f"https://www.baidu.com/s?wd={_u.quote(nm+' 董秘 电话 年报')}"
-    return (f'<div style="margin-top:8px;padding:8px;background:#f4f8ff;border:1px solid #d6e4ff;border-radius:8px">'
-            f'<b style="font-size:12.5px;color:#003DA5">🔗 一键找人（不用打总机）：</b>'
-            f'<div style="font-size:12px;margin-top:4px;color:#33414f">① 先点董秘入口——他是法定信息披露人，对合作问询必须回应；留言话术：'
-            f'“您好，我是罗克韦尔自动化/PT C，{ask}。”'
+    now={"高":"公告时点正好卡在选型/设备进场期，现在递话最容易被当回事",
+         "中":"项目刚启动，先把关系种进去，等方案阶段再深入",
+         "低":"大概率已定选型，只做存量/向上销售观察"}.get(grade,"")
+    return (f'<div style="margin-top:8px;padding:10px;background:#f4f8ff;border:1px solid #d6e4ff;border-radius:8px">'
+            f'<b style="font-size:12.5px;color:#003DA5">🎯 AI 判断：怎么把话递到决策人</b>'
+            f'<div style="font-size:12px;line-height:1.7;margin-top:5px;color:#243b53">'
+            f'<div>👉 <b>该找谁：</b>{esc(role)}</div>'
+            f'<div>🧭 <b>为什么是他：</b>{esc(why)}</div>'
+            f'<div>⏱️ <b>为什么现在：</b>{esc(now)}</div>'
+            f'<div style="margin-top:4px;color:#5a6b7b">✍️ 搭线话术（别打总机、别发公共邮箱）：“您好，我是罗克韦尔自动化/PTC，{esc(ask)}。”</div>'
             f'</div>'
-            f'<div style="margin-top:6px">'
+            f'<div style="margin-top:7px;padding-top:6px;border-top:1px dashed #c8d8ee;font-size:11.5px;color:#5a6b7b">递话通道（公开合规，董秘对合作问询必须回应）：</div>'
+            f'<div style="margin-top:4px">'
             f'<a class="ev" href="{esc(ir)}" target="_blank">① {ir_label} ↗</a>　'
-            f'<a class="ev" href="{esc(job)}" target="_blank">② BOSS直聘搜“{esc(nm)}”在职岗 ↗</a>　'
-            f'<a class="ev" href="{esc(baidu)}" target="_blank">③ 年报里查董秘电话 ↗</a>'
+            f'<a class="ev" href="{esc(job)}" target="_blank">② BOSS直聘看在招岗（在招=窗口期）↗</a>　'
+            f'<a class="ev" href="{esc(baidu)}" target="_blank">③ 年报查董秘直线 ↗</a>'
             f'</div></div>')
 
 # 总部所在区域（按股票代码；新公司默认“待确认”）
