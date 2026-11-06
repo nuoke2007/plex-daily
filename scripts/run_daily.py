@@ -888,19 +888,23 @@ def contact_links(code, nm, ask=None, role="", why="", grade=""):
     now={"高":"公告时点正好卡在选型/设备进场期，现在递话最容易被当回事",
          "中":"项目刚启动，先把关系种进去，等方案阶段再深入",
          "低":"大概率已定选型，只做存量/向上销售观察"}.get(grade,"")
+    tgt=role.split("（")[0].split("/")[0]  # 转介目标，取最前的部门/人
+    steps=[
+      f'① <b>董秘/证券部公开问询转介</b>（合规、对方不能装没看见）：在 <a class="ev" href="{esc(ir)}" target="_blank">{ir_label}</a> 公开发商务问询，请其转{esc(tgt)}；别写成广告，写“多基地制造/数字化标准统一，求商务对接窗口”。',
+      f'② <b>打证券部直线（不是总机）</b>：<a class="ev" href="{esc(baidu)}" target="_blank">年报查董秘办电话</a>，工作日上午一句“有个多基地方案想转{esc(tgt)}，给个商务对接邮箱”。',
+      f'③ <b>行业论坛换名片</b>：查下一场智能制造/工业互联网大会，看{esc(nm)}谁上台；你方是赞助商，茶歇以“同议题”同行交流破冰，不推销。',
+      f'④ <b>内部CRM找现有AM warm intro（你独有）</b>：查{esc(nm)}现有设备/经销商，让已在现场服务的AM转介{esc(tgt)}；并用 <a class="ev" href="{esc(job)}" target="_blank">BOSS看在招岗</a> 验证是否在建队（在招=窗口期）。',
+    ]
     return (f'<div style="margin-top:8px;padding:10px;background:#f4f8ff;border:1px solid #d6e4ff;border-radius:8px">'
-            f'<b style="font-size:12.5px;color:#003DA5">🎯 AI 判断：怎么把话递到决策人</b>'
+            f'<b style="font-size:12.5px;color:#003DA5">🎯 搭线动作链（照着走就能拨通）</b>'
             f'<div style="font-size:12px;line-height:1.7;margin-top:5px;color:#243b53">'
             f'<div>👉 <b>该找谁：</b>{esc(role)}</div>'
             f'<div>🧭 <b>为什么是他：</b>{esc(why)}</div>'
             f'<div>⏱️ <b>为什么现在：</b>{esc(now)}</div>'
-            f'<div style="margin-top:4px;color:#5a6b7b">✍️ 搭线话术（别打总机、别发公共邮箱）：“您好，我是罗克韦尔自动化/PTC，{esc(ask)}。”</div>'
             f'</div>'
-            f'<div style="margin-top:7px;padding-top:6px;border-top:1px dashed #c8d8ee;font-size:11.5px;color:#5a6b7b">递话通道（公开合规，董秘对合作问询必须回应）：</div>'
-            f'<div style="margin-top:4px">'
-            f'<a class="ev" href="{esc(ir)}" target="_blank">① {ir_label} ↗</a>　'
-            f'<a class="ev" href="{esc(job)}" target="_blank">② BOSS直聘看在招岗（在招=窗口期）↗</a>　'
-            f'<a class="ev" href="{esc(baidu)}" target="_blank">③ 年报查董秘直线 ↗</a>'
+            f'<div style="margin-top:7px;padding-top:6px;border-top:1px dashed #c8d8ee;font-size:11.8px;line-height:1.8;color:#33414f">'
+            f'{"".join(f"<div style=\"margin:3px 0\">{s}</div>" for s in steps)}'
+            f'<div style="color:#5a6b7b;margin-top:4px">✍️ 开口话术：“我是罗克韦尔/PTC，{esc(ask)}。”</div>'
             f'</div></div>')
 
 # 公司级真查档案（AI 逐家上网查证后写入；未入档的走产品级通用判断）
