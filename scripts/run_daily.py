@@ -657,60 +657,112 @@ else:
     note=f"今日自动发现 0 条。"+(f"（{esc(source_note)}）" if source_note else "（近 12 个月内未命中海外建厂新公告）")
     auto_block=f'<div class="empty">{note}</div>'
 
-# 每日自动更新的"今日最该打"：窗口期(1-9月)命中，按产品页同款卡片渲染
+# 每日滚动线索：按公告时点分高(窗口)/中(刚公告)/低(超9月)三档
 import urllib.parse as _up2
 PHASE_GRADE={"window":"高","fresh":"中","old":"低"}
-action_cards=""
-for f in new_findings:
+def card_for(f):
     g=PHASE_GRADE.get(f.get("phase"),"中")
     ind=infer_industry(f["title"]+(f["name"] or ""))
     judge=" ".join(f["rule"])
     nm=f["name"] or f["sec"]
     sq="https://www.google.com/search?q="+_up2.quote(nm+" 海外工厂 IT 制造 负责人")
-    action_cards+=('<div class="lead">'
+    return ('<div class="lead">'
       f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(f["sec"] or "")}</span>'
       f'<span class="indtag">🏭 {esc(ind)}</span></div>'
       f'<a class="lead-t" href="{esc(f["url"])}" target="_blank">{esc(f["title"])}</a>'
       f'<div class="why"><b>🔍 自动判断：</b>{esc(judge)}</div>'
       f'<div class="nxt"><b>🎯 下一步：</b>找该公司海外基地厂长/IT 负责人，首通电话问两句——①海外厂排产报工现在用系统还是 Excel？②北美/欧洲客户的质量追溯现在靠什么满足？PLEX SaaS 几周上线、免机房运维。</div>'
       f'<a class="btn btn-link" href="{esc(f["url"])}" target="_blank">📄 看公告原文</a> '
-      f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 找联系人</a>'
+      f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 找联系人</a> '
+      f'<button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button>'
       '</div>')
+cards_win="".join(card_for(f) for f in new_findings if f.get("phase")=="window")
+cards_fresh="".join(card_for(f) for f in new_findings if f.get("phase")=="fresh")
+cards_old="".join(card_for(f) for f in new_findings if f.get("phase")=="old")
 n_window=len([f for f in new_findings if f.get("phase")=="window"])
 
 reject_html="".join(f"<tr><td>{r['id']}</td><td>{r['name']} {r['code']}</td><td>{esc(r['why'])}</td></tr>" for r in REJECTED)
 
+# 标记跟进 + 隔天回访提醒（浏览器 localStorage，免后端）
+FU_JS = """
+<div id="fu-banner"></div>
+<script>
+(function(){
+  var KEY='fu_marks_v1';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}}
+  function save(m){localStorage.setItem(KEY,JSON.stringify(m))}
+  function fmt(ts){var d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate();}
+  function paintBtns(){
+    document.querySelectorAll('.fu-btn').forEach(function(b){
+      var m=load()[b.getAttribute('data-fu')];
+      if(m){b.textContent='✅ 已标记 '+fmt(m.ts);b.classList.add('done');}
+      else{b.textContent='📌 标记今天跟进';b.classList.remove('done');}
+    });
+  }
+  function paintBanner(){
+    var m=load(), box=document.getElementById('fu-banner'), now=Date.now(), html='';
+    Object.keys(m).forEach(function(k){
+      var e=m[k]; if(e.snooze && e.snooze>now) return;
+      var days=(now-e.ts)/86400000;
+      if(days>=2){
+        html+='<div class="fu-item">🔔 <b>'+k+'</b> —— 你 '+Math.floor(days)+' 天前标记跟进，完成了吗？ '
+          +'<button data-act="done" data-k="'+k+'">✅ 已完成</button> '
+          +'<button data-act="snooze" data-k="'+k+'">⏰ 过两天再问</button></div>';
+      }
+    });
+    box.innerHTML=html;
+  }
+  document.body.addEventListener('click',function(ev){
+    var b=ev.target;
+    if(!b||!b.getAttribute) return;
+    var k=b.getAttribute('data-fu'), act=b.getAttribute('data-act');
+    if(k && b.classList.contains('fu-btn')){
+      var m=load();
+      if(m[k]){delete m[k];}else{m[k]={name:k,ts:Date.now()};}
+      save(m); paintBtns(); paintBanner();
+    }
+    else if(act){
+      var m=load();
+      if(act==='done'){delete m[k];}
+      else if(act==='snooze'){if(m[k])m[k].snooze=Date.now()+2*86400000;}
+      save(m); paintBanner();
+    }
+  });
+  paintBtns(); paintBanner();
+})();
+</script>"""
+
 def shell(title, active, body):
     return f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{esc(title)}</title><style>{CSS}</style></head><body>
+<title>{esc(title)}</title><style>{CSS}</style>
+<style>.fu-btn{{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#003DA5;border-radius:6px;padding:4px 10px;font-size:12px;margin-left:4px}}.fu-btn.done{{background:#e6f4ea;color:#137333;border-color:#137333}}.fu-item{{background:#fff8e1;border:1px solid #f0c36d;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px}}.fu-item button{{margin-left:6px;cursor:pointer;border:none;border-radius:6px;padding:4px 10px;font-size:12px;background:#003DA5;color:#fff}}</style>
+</head><body>
 <div class="wrap">
 {nav_html(active)}
+{FU_JS}
 {body}
 </div></body></html>"""
 
 # ---- PLEX 首页 ----
 plex_body=f"""
 <div class="top"><h1><img class="hdrlogo" src="logo-plex.png" alt=""> PLEX 每日商机 · 今天该干什么</h1></div>
-<div class="sub">全免费纯云端｜数据源：巨潮资讯网免费公告接口｜猎聘/BOSS/脉脉/领英 需人工</div>
+<div class="sub">全免费纯云端｜每天早9点自动扫巨潮公告｜点卡片上"📌标记跟进"，隔天会再提醒你</div>
 <div class="kpis">
   <div class="kpi"><div class="n">{NOW}</div><div class="l">上次更新</div></div>
-  <div class="kpi"><div class="n">{len(new_findings)}</div><div class="l">今日新增线索</div></div>
+  <div class="kpi"><div class="n">{len(new_findings)}</div><div class="l">近12月线索</div></div>
+  <div class="kpi"><div class="n">{n_window}</div><div class="l">🟢 正好选型窗口</div></div>
   <div class="kpi"><div class="n">{manual_total}</div><div class="l">待手动跟进</div></div>
-  <div class="kpi"><div class="n">{len(high)}</div><div class="l">高优先（先看）</div></div>
 </div>
-<div class="legend">
-  <div class="lg lg-h"><b>🟢 高优先</b> 今天就动手</div>
-  <div class="lg lg-m"><b>🟡 中优先</b> 顺手点按钮</div>
-  <div class="lg lg-l"><b>🔴 低优先</b> 点按钮发邮件即放下</div>
-</div>
-<div class="sec"><div class="sec-h">🔥 今日最该打 · 自动更新（窗口期 {n_window} 家，每天随公告变化）</div>{action_cards or '<div class="empty">今日暂无窗口期命中</div>'}</div>
-<div class="sec"><div class="sec-h">🗒 长期重点跟进（手动维护的存量名单，不随每日公告变化）</div></div>
-<div class="sec"><div class="sec-h">高优先 · 今天先动这 {len(high)} 家</div>{''.join(card(c) for c in high)}</div>
-<div class="sec"><div class="sec-h">中优先 · 顺手点一下</div>{''.join(card(c) for c in mid)}</div>
-<div class="sec"><div class="sec-h">低优先 · 点按钮发邮件即可</div>{''.join(card(c) for c in low)}</div>
+<div class="sec"><div class="sec-h">🟢 高优先 · 正好选型窗口（公告后1-9个月，今天就打）{n_window} 家</div>{cards_win or '<div class="empty">今日无窗口期命中</div>'}</div>
+<div class="sec"><div class="sec-h">🟡 中优先 · 刚公告（≤1个月，先观察）</div>{cards_fresh or '<div class="empty">无</div>'}</div>
+<div class="sec"><div class="sec-h">🗄 低优先 · 超9个月（可能已选型，存量观察）</div>{cards_old or '<div class="empty">无</div>'}</div>
+<details class="sec"><summary style="cursor:pointer;font-weight:600;color:#5a6b7b">🗒 手动维护的重点客户名单（历史种子，不随每日公告刷新，点开看）</summary>
+<div style="margin-top:10px"><b>高优先</b></div>{''.join(card(c) for c in high)}
+<div style="margin-top:10px"><b>中优先</b></div>{''.join(card(c) for c in mid)}
+<div style="margin-top:10px"><b>低优先</b></div>{''.join(card(c) for c in low)}</details>
 <div class="sec"><div class="sec-h">否决池</div><table><tr><th>ID</th><th>公司</th><th>原因</th></tr>{reject_html}</table></div>
-<div class="foot">日志 logs/run_{datetime.date.today().strftime('%Y%m%d')}.log</div>
+<div class="foot">日志 logs/run_{datetime.date.today().strftime('%Y%m%d')}.log ｜ 标记跟进存在本机浏览器，换手机需重新标记</div>
 """
 (ROOT/"dashboard.html").write_text(shell("PLEX 每日商机","PLEX",plex_body),encoding="utf-8")
 log("dashboard.html 已生成（PLEX 首页）")
