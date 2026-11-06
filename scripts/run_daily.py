@@ -822,6 +822,28 @@ def auto_dossier(nm, title, rule, ind):
     ]
     return chief,lev,steps,loc
 
+def contact_links(code, nm):
+    """一键找人：董秘法定入口 + 招聘反查，全部公开合规、不用登录猜人。"""
+    import urllib.parse as _u
+    if code.startswith("6"):  # 上交所：e互动/公司资料页（含董秘电话）
+        ir=f"https://sns.sseinfo.com/company/company.do?stockcode={code}"
+        ir_label="董秘/e互动直达（上交所）"
+    else:  # 深交所：互动易公司页（可直接提问，董秘必回）
+        ir=f"https://irm.cninfo.com.cn/ircs/company/companyDetail?stockcode={code}"
+        ir_label="董秘/互动易直达（深交所·可直接提问）"
+    job=f"https://www.zhipin.com/web/geek/job?query={_u.quote(nm)}%20海外"
+    baidu=f"https://www.baidu.com/s?wd={_u.quote(nm+' 董秘 电话 年报')}"
+    return (f'<div style="margin-top:8px;padding:8px;background:#f4f8ff;border:1px solid #d6e4ff;border-radius:8px">'
+            f'<b style="font-size:12.5px;color:#003DA5">🔗 一键找人（不用打总机）：</b>'
+            f'<div style="font-size:12px;margin-top:4px;color:#33414f">① 先点董秘入口——他是法定信息披露人，对合作问询必须回应；留言话术：'
+            f'“您好，我是罗克韦尔自动化，关注到贵司海外新厂建设，希望15分钟对接信息化/海外项目负责人交流MES方案。”'
+            f'</div>'
+            f'<div style="margin-top:6px">'
+            f'<a class="ev" href="{esc(ir)}" target="_blank">① {ir_label} ↗</a>　'
+            f'<a class="ev" href="{esc(job)}" target="_blank">② BOSS直聘搜“{esc(nm)}海外岗” ↗</a>　'
+            f'<a class="ev" href="{esc(baidu)}" target="_blank">③ 年报里查董秘电话 ↗</a>'
+            f'</div></div>')
+
 def card_for(f):
     g=PHASE_GRADE.get(f.get("phase"),"中")
     ind=industry_of((f["name"] or ""), f["title"])
@@ -850,6 +872,7 @@ def card_for(f):
       f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
       f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
       f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>'
+      f'{contact_links(code,nm)}'
       f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
       f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>'
       '</div></div>')
