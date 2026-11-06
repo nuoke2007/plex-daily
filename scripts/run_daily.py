@@ -705,7 +705,6 @@ plex_body=f"""
   <div class="lg lg-l"><b>🔴 低优先</b> 点按钮发邮件即放下</div>
 </div>
 <div class="sec"><div class="sec-h">🔥 今日最该打 · 自动更新（窗口期 {n_window} 家，每天随公告变化）</div>{action_cards or '<div class="empty">今日暂无窗口期命中</div>'}</div>
-<div class="sec"><div class="sec-h">近 12 个月全部命中（按选型窗口排序 · 明细备查）</div>{auto_block}</div>
 <div class="sec"><div class="sec-h">🗒 长期重点跟进（手动维护的存量名单，不随每日公告变化）</div></div>
 <div class="sec"><div class="sec-h">高优先 · 今天先动这 {len(high)} 家</div>{''.join(card(c) for c in high)}</div>
 <div class="sec"><div class="sec-h">中优先 · 顺手点一下</div>{''.join(card(c) for c in mid)}</div>
