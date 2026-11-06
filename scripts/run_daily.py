@@ -666,14 +666,20 @@ def card_for(f):
     judge=" ".join(f["rule"])
     nm=f["name"] or f["sec"]
     sq="https://www.google.com/search?q="+_up2.quote(nm+" 海外工厂 IT 制造 负责人")
+    # 自动补全打法：找谁 / 杠杆 / 话术（不靠用户自己探索）
+    who="海外基地厂长 / 工厂 IT 经理 / 质量经理（新厂三巨头）"
+    lever=("① 脉脉/LinkedIn 搜【"+esc(nm)+"】+“海外 IT / 墨西哥 / 东南亚 / 工厂 IT”岗——在招这类人=选型正当时；"
+           "② 通过公告里的董秘/证券部转数字化负责人；"
+           "③ 若该公司产线已用罗克韦尔 PLC，走存量客户渠道直接约")
+    hook=("“海外新厂按传统 MES：当地服务器+机房+国内顾问飞过去，第一年几百万、半年才上线；"
+          "PLEX 是 SaaS，一年几十万、几周上线，免运维，直接满足北美/欧洲客户的质量追溯审核。”")
     return ('<div class="lead">'
       f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(f["sec"] or "")}</span>'
       f'<span class="indtag">🏭 {esc(ind)}</span></div>'
       f'<a class="lead-t" href="{esc(f["url"])}" target="_blank">{esc(f["title"])}</a>'
-      f'<div class="why"><b>🔍 自动判断：</b>{esc(judge)}</div>'
-      f'<div class="nxt"><b>🎯 下一步：</b>找该公司海外基地厂长/IT 负责人，首通电话问两句——①海外厂排产报工现在用系统还是 Excel？②北美/欧洲客户的质量追溯现在靠什么满足？PLEX SaaS 几周上线、免机房运维。</div>'
+      f'<div class="why"><b>🔍 为什么是机会：</b>{esc(judge)}</div>'
+      f'<div class="nxt"><b>🎯 找谁：</b>{who}<br><b>🧭 怎么搭上线：</b>{lever}<br><b>🎣 第一句怎么开口：</b>{hook}</div>'
       f'<a class="btn btn-link" href="{esc(f["url"])}" target="_blank">📄 看公告原文</a> '
-      f'<a class="btn btn-link" href="{sq}" target="_blank">🔍 找联系人</a> '
       f'<button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button>'
       '</div>')
 cards_win="".join(card_for(f) for f in new_findings if f.get("phase")=="window")
@@ -818,23 +824,33 @@ def notify():
     if not (sc or bk):
         log("未配置 SERVERCHAN_KEY / BARK_KEY，跳过推送")
         return
-    title = f"PLEX 每日商机 {TODAY}"
-    body = f"今日新增 {len(new_findings)} 条线索；待手动跟进 {manual_total} 项；高优先 {len(high)} 家。"
-    if site:
-        body += f"\n{site}"
+    # 只在每周一推送一次汇总，平时静默不打扰
+    if datetime.date.today().weekday() != 0:
+        log("非周一，静默不推送")
+        return
+    n_win = len([f for f in new_findings if f.get("phase")=="window"])
+    top = [ (f["name"] or f["sec"]) for f in new_findings if f.get("phase")=="window" ][:5]
+    prod_counts = "；".join(f"{p['key']} {len(product_findings.get(p['key'],[]))}条" for p in PRODUCTS)
+    title = f"销售线索周报 {TODAY}"
+    body = (f"本周扫描汇总（每周一推一次）：\n"
+            f"- PLEX 海外建厂线索 {len(new_findings)} 条，其中正好选型窗口 {n_win} 条\n"
+            f"- 各产品命中：{prod_counts}\n"
+            f"- 本周最该打：{('、'.join(top) if top else '暂无窗口期命中')}\n"
+            f"- 待手动跟进 {manual_total} 项\n"
+            f"看板：{site or ''}")
     if sc:
         try:
             data = urllib.parse.urlencode({"title": title, "desp": body}).encode("utf-8")
             req = urllib.request.Request(f"https://sctapi.ftqq.com/{sc}.send", data=data)
             urllib.request.urlopen(req, timeout=8).read()
-            log("Server酱推送成功")
+            log("Server酱周报推送成功")
         except Exception as e:
             log(f"Server酱推送失败（已忽略）：{e}")
     if bk:
         try:
             url = f"https://api.day.app/{bk}/{urllib.parse.quote(title)}/{urllib.parse.quote(body)}"
             urllib.request.urlopen(url, timeout=8).read()
-            log("Bark 推送成功")
+            log("Bark 周报推送成功")
         except Exception as e:
             log(f"Bark 推送失败（已忽略）：{e}")
 
