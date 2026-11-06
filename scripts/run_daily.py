@@ -794,6 +794,34 @@ def plex_playbook(nm, title, ind):
         f"首通电话三问：①海外厂排产报工现在用系统还是 Excel？②当地买服务器招 IT 的预算/周期能接受吗？③北美/欧洲客户的质量追溯现在靠什么满足？",
     ]
     return chief, lev, steps, loc
+def auto_dossier(nm, title, rule, ind):
+    """无手写档案时，从公告原文自动抠真料（投资额/阶段/地点），不再套模板。"""
+    import re as _re
+    txt=(title or "")+" "+" ".join(rule or [])
+    # 投资额
+    amts=_re.findall(r'([0-9.]+)\s*(?:亿|万)\s*(?:元|人民币|美元|港币)?', txt)
+    amt=("约"+amts[0]+"亿" if amts and "亿" in txt else ("约"+amts[0]+"万美元" if amts and "美元" in txt else ("约"+amts[0] if amts else "投资额见公告")))
+    # 阶段
+    if "终止" in txt or "终止投资" in txt: stage="项目已终止/调整（负信号，需复核是否仍跟进）"
+    elif "封顶" in txt: stage="厂房已封顶，正处设备进场/安装阶段＝MES 选型最后窗口"
+    elif "试产" in txt: stage="已进入试产/小批量阶段"
+    elif "投产" in txt: stage="已投产，处产能爬坡期"
+    elif "奠基" in txt: stage="刚奠基，土建阶段，IT 方案尚未锁定"
+    elif "购买土地" in txt or "购地" in txt or "土地" in txt: stage="刚签购地协议/拿地，纯绿地最早期窗口"
+    elif "增资" in txt: stage="对海外子公司增资扩产，处扩产/建设期"
+    elif "筹建" in txt or "设立" in txt: stage="子公司刚设立/筹建，管理团队未到位＝切入窗口"
+    else: stage="对外投资/设立海外项目，处早期"
+    # 地点
+    loc=plex_playbook(nm, title, ind)[3]
+    chief=f"{nm} 总部：海外项目/IT（数字化）负责人；海外子公司管理层待配或刚到位"
+    lev=f"公告显示{stage}；投资规模{amt}。这是从公告直接读出的窗口——决策人尚未在公开材料点名，需通过总部董秘办转海外项目组。"
+    steps=[
+        f"先读公告原文确认：{stage}、投资{amt}，判断是否真有 MES/MOM 选型需求",
+        f"通过 {nm} 董秘办/证券部转“海外项目/数字化负责人”（公告里只有董秘联系方式，这是公开可达的入口）",
+        f"脉脉/Boss 搜【{nm}】+“海外 IT / 海外工厂 IT / 制造工程师”——在招=选型正当时，直接加人",
+    ]
+    return chief,lev,steps,loc
+
 def card_for(f):
     g=PHASE_GRADE.get(f.get("phase"),"中")
     ind=industry_of((f["name"] or ""), f["title"])
@@ -806,9 +834,9 @@ def card_for(f):
         hook=d.get("hook") or "“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
         badge='<span class="ev" style="color:#137333">✓ AI 已查证深挖</span>'
     else:
-        chief,lev,steps,loc=plex_playbook(nm, f["title"], ind)
+        chief,lev,steps,loc=auto_dossier(nm, f["title"], f["rule"], ind)
         hook="“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
-        badge='<span class="ev" style="color:#b26a00">⏳ AI 待深挖决策人（先按信号入围）</span>'
+        badge='<span class="ev" style="color:#0b6bcb">⚙ AI 已自动解析公告（可深挖）</span>'
     steps_html="".join(f'<div class="step"><b>{i+1}.</b>{esc(m)}</div>' for i,m in enumerate(steps))
     return ('<div class="card open">'
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
