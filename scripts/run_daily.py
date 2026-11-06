@@ -180,6 +180,7 @@ REJECTED = [
 # ============================================================
 OVERSEAS_KW = ["泰国", "墨西哥", "匈牙利", "塞尔维亚", "摩洛哥", "东欧", "海外", "境外", "出海"]
 ACTION_KW = ["增资", "设立", "对外投资", "购地", "新建", "扩建", "投产", "子公司", "生产基地", "工厂"]
+NOISE_PLEX = ["回购","减持","增持","分红","股东会","法律意见书","评级","股东大会","摘要","季度报告","年度报告","半年度报告","董事会","监事会","独董","声明","承诺","议案","决议","问询","关注函","担保","质押","会计","减值","审计","更正","补充","批复","处罚","提示","召开","通知","换届","选举","聘任","辞职","薪酬","制度","修订","停牌","复牌","龙虎榜","可转换","债券","票据","授信","贷款"]
 # 单关键词检索（多词 AND 太严会漏），动作关键词在客户端过滤
 AUTO_KEYWORDS = ["泰国", "墨西哥", "匈牙利", "塞尔维亚", "摩洛哥"]
 
@@ -219,7 +220,7 @@ seen_titles = set()
 for kw in AUTO_KEYWORDS:
     for col in ("szse", "sse"):
         try:
-            data = fetch_cninfo(kw, column=col)
+            data = fetch_cninfo(kw, column=col, days=365, page_size=30)
             anns = data.get("announcements") or []
             hit_this = 0
             for a in anns:
@@ -230,14 +231,30 @@ for kw in AUTO_KEYWORDS:
                 # 必须同时含动作关键词；行业是否为汽车零部件交给人工
                 if not any(k in title for k in ACTION_KW):
                     continue
-                if any(b in title for b in ["回购", "减持", "增持", "分红", "股东会", "法律意见书", "评级", "股东大会", "摘要"]):
+                if any(b in title for b in NOISE_PLEX):
                     continue
                 ann_id = a.get("announcementId")
                 link = f"http://www.cninfo.com.cn/new/disclosure/detail?stockCode={a.get('secCode')}&announcementId={ann_id}"
+                ts = a.get("announcementTime")
+                # 按公告距今月份分级：海外绿地 MES 选型通常在公告后 3-9 个月
+                rt = auto_rule(title)
+                phase = "window"; agelab = ""
+                if ts:
+                    try:
+                        d = datetime.datetime.fromtimestamp(ts/1000)
+                        days = (datetime.datetime.now() - d).days
+                        agelab = f"{d.strftime('%Y-%m-%d')} · 距今{round(days/30,1)}个月"
+                        if days <= 30:
+                            phase = "fresh"; rt.append(f"⏳ {agelab}——刚公告，海外厂还在立项，先观察 2-3 个月")
+                        elif days <= 270:
+                            phase = "window"; rt.append(f"🎯 {agelab}——正好卡在海外厂 MES 选型窗口，现在就该接触")
+                        else:
+                            phase = "old"; rt.append(f"🗄 {agelab}——超过 9 个月，大概率已选型，仅作存量向上销售")
+                    except Exception:
+                        pass
                 new_findings.append(dict(
                     sec=a.get("secCode"), name=a.get("secName"), title=title,
-                    date=a.get("announcementTime"), url=link,
-                    rule=auto_rule(title),
+                    date=ts, url=link, rule=rt, phase=phase,
                 ))
                 hit_this += 1
             log(f"关键词“{kw}”({col})：拉到 {len(anns)} 条，新增命中 {hit_this} 条")
@@ -245,6 +262,11 @@ for kw in AUTO_KEYWORDS:
             source_status = "degraded"
             source_note = f"抓取失败：{type(e).__name__}: {e}"
             log(f"关键词“{kw}”({col})失败：{e}")
+
+# 按选型窗口排序：window 在前，fresh 次之，old 最后
+_ord = {"window": 0, "fresh": 1, "old": 2}
+new_findings.sort(key=lambda f: _ord.get(f.get("phase"), 9))
+new_findings = new_findings[:15]
 
 log(f"今日自动发现：{len(new_findings)} 条（源状态：{source_status}）")
 
@@ -608,7 +630,7 @@ if new_findings:
         for f in new_findings)
     auto_block=f'<table><tr><th>代码/公司</th><th>公告标题</th><th>自动判定</th><th>链接</th></tr>{auto_html}</table>'
 else:
-    note=f"今日自动发现 0 条。"+(f"（{esc(source_note)}）" if source_note else "（近 14 天内未命中海外建厂新公告）")
+    note=f"今日自动发现 0 条。"+(f"（{esc(source_note)}）" if source_note else "（近 12 个月内未命中海外建厂新公告）")
     auto_block=f'<div class="empty">{note}</div>'
 
 reject_html="".join(f"<tr><td>{r['id']}</td><td>{r['name']} {r['code']}</td><td>{esc(r['why'])}</td></tr>" for r in REJECTED)
