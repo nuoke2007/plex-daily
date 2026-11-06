@@ -922,7 +922,8 @@ def card_for(f):
         hook="“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
         badge='<span class="ev" style="color:#0b6bcb">⚙ AI 已自动解析公告（可深挖）</span>'
     steps_html="".join(f'<div class="step"><b>{i+1}.</b>{esc(m)}</div>' for i,m in enumerate(steps))
-    return ('<div class="card open">'
+    rg=region_of(code).split("·")[0]
+    return (f'<div class="card open" data-rg="{esc(rg)}">'
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
       f'<span class="cid">{g}</span><span class="nm">{esc(nm)}</span><span class="code">{esc(f["sec"] or "")}</span>'
       f'<span class="base">📍 {esc(loc)}</span>'
@@ -942,6 +943,23 @@ cards_win="".join(card_for(f) for f in new_findings if f.get("phase")=="window")
 cards_fresh="".join(card_for(f) for f in new_findings if f.get("phase")=="fresh")
 cards_old="".join(card_for(f) for f in new_findings if f.get("phase")=="old")
 n_window=len([f for f in new_findings if f.get("phase")=="window"])
+# PLEX 区域筛选条
+_plex_rg=[]
+for f in new_findings:
+    r=region_of(f.get("sec")).split("·")[0]
+    if r not in _plex_rg: _plex_rg.append(r)
+_plex_chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(f'<button class="rg-chip" data-rg="{esc(r)}">{esc(r)}</button>' for r in _plex_rg)
+_plex_filter_js="""
+<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}</style>
+<script>
+(function(){var bar=document.getElementById('rgbar');if(!bar)return;
+bar.querySelectorAll('.rg-chip').forEach(function(c){c.onclick=function(){
+bar.querySelectorAll('.rg-chip').forEach(function(x){x.classList.remove('active')});c.classList.add('active');
+var rg=c.getAttribute('data-rg');
+document.querySelectorAll('.card[data-rg]').forEach(function(el){
+el.style.display=(rg==='全部'||el.getAttribute('data-rg')===rg)?'':'none';});
+};});})();
+</script>"""
 
 reject_html="".join(f"<tr><td>{r['id']}</td><td>{r['name']} {r['code']}</td><td>{esc(r['why'])}</td></tr>" for r in REJECTED)
 
@@ -1009,16 +1027,17 @@ def shell(title, active, body):
 # ---- PLEX 首页 ----
 plex_body=f"""
 <div class="top"><h1><img class="hdrlogo" src="logo-plex.png" alt=""> PLEX 每日商机 · 今天该干什么</h1></div>
-<div class="sub">全免费纯云端｜每天早9点自动扫巨潮公告｜点卡片上"📌标记跟进"，隔天会再提醒你</div>
 <div class="kpis">
   <div class="kpi"><div class="n">{NOW}</div><div class="l">上次更新</div></div>
   <div class="kpi"><div class="n">{len(new_findings)}</div><div class="l">近12月线索</div></div>
   <div class="kpi"><div class="n">{n_window}</div><div class="l">🟢 正好选型窗口</div></div>
   <div class="kpi"><div class="n">{manual_total}</div><div class="l">待手动跟进</div></div>
 </div>
+<div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}</div>
 <div class="sec"><div class="sec-h">🟢 高优先 · 正好选型窗口（公告后1-9个月，今天就打）{n_window} 家</div>{cards_win or '<div class="empty">今日无窗口期命中</div>'}</div>
 <div class="sec"><div class="sec-h">🟡 中优先 · 刚公告（≤1个月，先观察）</div>{cards_fresh or '<div class="empty">无</div>'}</div>
 <div class="sec"><div class="sec-h">🗄 低优先 · 超9个月（可能已选型，存量观察）</div>{cards_old or '<div class="empty">无</div>'}</div>
+{_plex_filter_js}
 <details class="sec"><summary style="cursor:pointer;font-weight:600;color:#5a6b7b">🗒 手动维护的重点客户名单（历史种子，不随每日公告刷新，点开看）</summary>
 <div style="margin-top:10px"><b>高优先</b></div>{''.join(card(c) for c in high)}
 <div style="margin-top:10px"><b>中优先</b></div>{''.join(card(c) for c in mid)}
