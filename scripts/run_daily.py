@@ -903,6 +903,7 @@ def contact_links(code, nm, ask=None, role="", why="", grade=""):
       f'③ <b>行业论坛换名片</b>：查下一场智能制造/工业互联网大会，看{esc(nm)}谁上台；你方是赞助商，茶歇以“同议题”同行交流破冰，不推销。',
       f'④ <b>内部CRM找现有AM warm intro（你独有）</b>：查{esc(nm)}现有设备/经销商，让已在现场服务的AM转介{esc(tgt)}；并用 <a class="ev" href="{esc(job)}" target="_blank">BOSS看在招岗</a> 验证是否在建队（在招=窗口期）。',
     ]
+    steps_html="".join('<div style="margin:3px 0">'+s+'</div>' for s in steps)
     return (f'<div style="margin-top:8px;padding:10px;background:#f4f8ff;border:1px solid #d6e4ff;border-radius:8px">'
             f'<b style="font-size:12.5px;color:#003DA5">🎯 搭线动作链（照着走就能拨通）</b>'
             f'<div style="font-size:12px;line-height:1.7;margin-top:5px;color:#243b53">'
@@ -911,7 +912,7 @@ def contact_links(code, nm, ask=None, role="", why="", grade=""):
             f'<div>⏱️ <b>为什么现在：</b>{esc(now)}</div>'
             f'</div>'
             f'<div style="margin-top:7px;padding-top:6px;border-top:1px dashed #c8d8ee;font-size:11.8px;line-height:1.8;color:#33414f">'
-            f'{"".join(f"<div style=\"margin:3px 0\">{s}</div>" for s in steps)}'
+            f'{steps_html}'
             f'<div style="color:#5a6b7b;margin-top:4px">✍️ 开口话术：“我是罗克韦尔/PTC，{esc(ask)}。”</div>'
             f'</div></div>')
 
