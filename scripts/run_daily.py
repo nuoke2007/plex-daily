@@ -610,21 +610,39 @@ def render_product(p):
         reg=region_of(h.get("sec"))
         by_region.setdefault(reg,[]).append((g,judge,lev,agelab,ind,nm,h))
     cards=""
+    rg_order=[]
     for reg, items in by_region.items():
-        cards+=f'<div style="margin:12px 0 4px;font-size:13px;font-weight:700;color:#003DA5;border-left:4px solid #003DA5;padding-left:8px">🗺️ 总部区域：{esc(reg)}（{len(items)}家）</div>'
+        rg=reg.split("·")[0]
+        if rg not in rg_order: rg_order.append(rg)
+        cards+=f'<div class="rg-head" data-rg="{esc(rg)}" style="margin:12px 0 4px;font-size:13px;font-weight:700;color:#003DA5;border-left:4px solid #003DA5;padding-left:8px">🗺️ 总部区域：{esc(reg)}（{len(items)}家）</div>'
         for g,judge,lev,agelab,ind,nm,h in items:
             code=h.get("sec") or ""
-            cards+=('<div class="lead">'
+            cards+=(f'<div class="lead" data-rg="{esc(rg)}">'
               f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(code)}</span>'
-              f'<span class="indtag">🏭 {esc(ind)}</span><span class="indtag">🗺️ {esc(reg.split("·")[0])}</span></div>'
+              f'<span class="indtag">🏭 {esc(ind)}</span><span class="indtag">🗺️ {esc(rg)}</span></div>'
               f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
               f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
               f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
               f'{contact_links(code,nm,ask)}'
               f'<div style="margin-top:6px"><a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a></div>'
               '</div>')
+    # 区域筛选条
+    chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(
+        f'<button class="rg-chip" data-rg="{esc(rg)}">{esc(rg)}</button>' for rg in rg_order)
+    rg_filter_js="""
+<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}</style>
+<script>
+(function(){var bar=document.getElementById('rgbar');if(!bar)return;
+bar.querySelectorAll('.rg-chip').forEach(function(c){c.onclick=function(){
+bar.querySelectorAll('.rg-chip').forEach(function(x){x.classList.remove('active')});c.classList.add('active');
+var rg=c.getAttribute('data-rg');
+document.querySelectorAll('.lead,.rg-head').forEach(function(el){
+el.style.display=(rg==='全部'||el.getAttribute('data-rg')===rg)?'':'none';});
+};});})();
+</script>"""
     if not cards:
         cards='<div class="empty" style="padding:14px;font-size:12.5px;color:#8494a4">今日无合格线索（已过滤财报/治理类公告，只留有新产能·并购·技改信号的；雷达每天自动扫）</div>'
+        chips=""; rg_filter_js=""
     qs="".join(f'<div class="q">问{i+1}：{esc(q)}</div>' for i,q in enumerate(p["three"]))
     return f"""
 <div class="prod" id="{p['key']}">
@@ -632,7 +650,9 @@ def render_product(p):
   <div class="prod-b" style="grid-template-columns:1fr">
     <div>
       <div style="font-size:12.5px;color:#33475b;margin:2px 0 10px">🆕 今日自动线索 <b style="color:#003DA5">{total}</b> 条 · 已按优先级排序（高在前）</div>
+      <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}</div>
       {cards}
+      {rg_filter_js}
       <details style="margin-top:12px"><summary style="font-size:12px;color:#8494a4">📖 这款产品的打法参考（打谁/三问/钩子，平时不用看）</summary>
         <div class="prod-sop" style="margin-top:8px">
           <div class="row"><b>打谁：</b>{esc(p['who'])}</div>
