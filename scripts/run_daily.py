@@ -629,6 +629,14 @@ def render_product(p):
             if _d:
                 _role,_why=_d["role"],_d["why"]
                 _chief=f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:2px">👤 {esc(_d["chief"])}</div>'
+                if _d.get("email"):
+                    import urllib.parse as _u2
+                    _e=_d["email"]
+                    _sub=_u2.quote(f"【{nm}】多基地制造/数字化标准统一交流——罗克韦尔自动化")
+                    _body=_u2.quote(f"王部长您好：\n关注到{nm}多基地（德宏/普洱/崇左/赤峰等）智造升级，我们在食品/流程行业多工厂MES标准统一上有成熟案例，想约15分钟电话交流，看是否对您2026技改有借鉴。\n罗克韦尔自动化")
+                    _chief+=(f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:3px">📮 <b>推断邮箱：</b><code style="background:#eef4fb;padding:1px 5px;border-radius:4px">{esc(_e["to"])}</code>'
+                             f' <span style="color:#8494a4">（备选：{esc(_e["alt"])}；{esc(_e["note"])}）</span>'
+                             f' <a class="ev" href="mailto:{_e["to"]}?subject={_sub}&body={_body}">📧 直接写邮件</a></div>')
             else:
                 _role,_why=_rw[0],_rw[1]; _chief=''
             cards+=(f'<div class="lead" data-rg="{esc(rg)}">'
@@ -912,7 +920,8 @@ def contact_links(code, nm, ask=None, role="", why="", grade=""):
 PRODUCT_DOSSIERS={
  "600298":{"role":"信息中心（韩陈）+ 集团装备部（王秀峰部长）",
    "why":"安琪是流程行业多基地（德宏/普洱/崇左/济宁/赤峰/可克达拉），已拿两化融合贯标+国家级智能制造场景，MES不空白；FTPC 切的是多基地标准统一，找信息中心而非车间",
-   "chief":"已查证：装备部部长王秀峰主谈2026技改（AI+自动化升级）；信息中心高工韩陈负责5G工业互联网标识项目。董秘留言请转信息中心/装备部。"},
+   "chief":"已查证：装备部部长王秀峰主谈2026技改（AI+自动化升级）；信息中心高工韩陈负责5G工业互联网标识项目。董秘留言请转信息中心/装备部。",
+   "email":{"to":"wangxiufeng@angelyeast.com","alt":"wang.xiufeng@ / wangxf@angelyeast.com","note":"官网域名angelyeast.com；按A股制造业惯例推断，首封先测退信"}},
  "603313":{"role":"集团制造/IT负责人（南通零压/上海总部）",
    "why":"六大基地横跨中/美/塞尔维亚/西班牙/泰国，已用RFID+智能吊挂+立体仓；海外新基地（塞/泰/西）正是多工厂MES标准统一的选型窗，典型FTPC标的",
    "chief":"未具名：六大基地跨三洲，制造标准统一是集团议题；董秘留言请转'海外基地制造/信息化负责人'。"},
