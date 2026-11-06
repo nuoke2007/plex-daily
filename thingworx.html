@@ -91,9 +91,58 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 .lead-t{display:block;font-size:13px;font-weight:600;color:#003DA5;margin:3px 0}
 .why{font-size:12px;color:#33475b;margin:2px 0}
 .nxt{font-size:12px;color:#b26a00;margin:3px 0 7px}
-</style></head><body>
+</style>
+<style>.fu-btn{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#003DA5;border-radius:6px;padding:4px 10px;font-size:12px;margin-left:4px}.fu-btn.done{background:#e6f4ea;color:#137333;border-color:#137333}.fu-item{background:#fff8e1;border:1px solid #f0c36d;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px}.fu-item button{margin-left:6px;cursor:pointer;border:none;border-radius:6px;padding:4px 10px;font-size:12px;background:#003DA5;color:#fff}</style>
+</head><body>
 <div class="wrap">
 <div class="navchips"><a class="chip alt" href="dashboard.html"><img class="navlogo" src="logo-plex.png" alt=""><span>PLEX</span></a><a class="chip alt" href="ftpc.html"><img class="navlogo" src="logo-ft.png" alt=""><span>FTPC</span></a><a class="chip" href="thingworx.html"><img class="navlogo" src="logo-twx.png" alt=""><span>ThingWorx</span></a><a class="chip alt" href="windchill.html"><img class="navlogo" src="logo-wind.png" alt=""><span>Windchill</span></a><a class="chip alt" href="datamosaix.html"><img class="navlogo" src="logo-ft.png" alt=""><span>DataMosaix</span></a></div>
+
+<div id="fu-banner"></div>
+<script>
+(function(){
+  var KEY='fu_marks_v1';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}}
+  function save(m){localStorage.setItem(KEY,JSON.stringify(m))}
+  function fmt(ts){var d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate();}
+  function paintBtns(){
+    document.querySelectorAll('.fu-btn').forEach(function(b){
+      var m=load()[b.getAttribute('data-fu')];
+      if(m){b.textContent='✅ 已标记 '+fmt(m.ts);b.classList.add('done');}
+      else{b.textContent='📌 标记今天跟进';b.classList.remove('done');}
+    });
+  }
+  function paintBanner(){
+    var m=load(), box=document.getElementById('fu-banner'), now=Date.now(), html='';
+    Object.keys(m).forEach(function(k){
+      var e=m[k]; if(e.snooze && e.snooze>now) return;
+      var days=(now-e.ts)/86400000;
+      if(days>=2){
+        html+='<div class="fu-item">🔔 <b>'+k+'</b> —— 你 '+Math.floor(days)+' 天前标记跟进，完成了吗？ '
+          +'<button data-act="done" data-k="'+k+'">✅ 已完成</button> '
+          +'<button data-act="snooze" data-k="'+k+'">⏰ 过两天再问</button></div>';
+      }
+    });
+    box.innerHTML=html;
+  }
+  document.body.addEventListener('click',function(ev){
+    var b=ev.target;
+    if(!b||!b.getAttribute) return;
+    var k=b.getAttribute('data-fu'), act=b.getAttribute('data-act');
+    if(k && b.classList.contains('fu-btn')){
+      var m=load();
+      if(m[k]){delete m[k];}else{m[k]={name:k,ts:Date.now()};}
+      save(m); paintBtns(); paintBanner();
+    }
+    else if(act){
+      var m=load();
+      if(act==='done'){delete m[k];}
+      else if(act==='snooze'){if(m[k])m[k].snooze=Date.now()+2*86400000;}
+      save(m); paintBanner();
+    }
+  });
+  paintBtns(); paintBanner();
+})();
+</script>
 
 <div class="top"><h1><img class="hdrlogo" src="logo-twx.png" alt=""> PTC ThingWorx (IIoT)</h1></div>
 <div class="sub">设备互联、OEE 透明化、预测性维护，打通 OT→IT 最后一公里</div>
@@ -114,6 +163,6 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
     </div>
   </div>
 </div>
-<div class="foot">每日自动扫描巨潮公告 · 时间 2026-11-06 01:09</div>
+<div class="foot">每日自动扫描巨潮公告 · 时间 2026-11-06 01:13</div>
 
 </div></body></html>
