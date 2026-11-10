@@ -5,7 +5,7 @@ PLEX 每日商机工具 · 本地每日运行脚本
 - 不爬任何登录墙/反爬平台（猎聘/BOSS/脉脉/领英/IATF customerportal 一律不碰，标人工）。
 - 产物：dashboard.html（双击即开）+ leads.xlsx + logs/run_YYYYMMDD.log
 """
-import json, os, re, sys, datetime, urllib.request, urllib.parse
+import json, os, re, sys, time, datetime, urllib.request, urllib.parse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -707,12 +707,28 @@ def render_product(p):
             _d=PRODUCT_DOSSIERS.get(code)
             if _d:
                 _role,_why=_d["role"],_d["why"]
-                _chief=f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:2px">👤 {esc(_d["chief"])}</div>'
+                _chief=''
+                if _d.get("auto"):
+                    _demand=_d.get("demand") or ""
+                    _dc="#137333" if _demand=="是" else ("#b3541e" if _demand=="待验证" else "#8494a4")
+                    _chief=(f'<div style="font-size:12px;line-height:1.6;margin-top:2px">'
+                            f'<span style="color:#7a5af8;font-weight:700">🤖 AI 自动查证</span>'
+                            f' <span style="color:{_dc};font-weight:700">选型判断：{esc(_demand)}</span>'
+                            f'<span style="color:#5a6b7b"> —— {esc(_d.get("demand_reason") or "")}</span></div>')
+                    _chief += f'<div style="font-size:12px;color:#33414f;line-height:1.6">🔎 信号：{esc(_d.get("signal") or "")}</div>'
+                _chief += f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:2px">👤 {esc(_d["chief"])}</div>'
+                if _d.get("src"):
+                    _chief += f'<div style="font-size:11.5px;margin-top:1px"><a class="ev" style="color:#0b6bcb" href="{esc(_d["src"])}" target="_blank">🔗 点开核实人名出处</a></div>'
                 if _d.get("email"):
                     import urllib.parse as _u2
                     _e=_d["email"]
                     _sub=_u2.quote(f"【{nm}】多基地制造/数字化标准统一交流——罗克韦尔自动化")
-                    _body=_u2.quote(f"王部长您好：\n关注到{nm}多基地（德宏/普洱/崇左/赤峰等）智造升级，我们在食品/流程行业多工厂MES标准统一上有成熟案例，想约15分钟电话交流，看是否对您2026技改有借鉴。\n罗克韦尔自动化")
+                    _body=_u2.quote(
+                        f"您好：\n"
+                        f"我是罗克韦尔自动化的售前顾问。关注到{nm}近期的产能/海外布局动向，"
+                        f"我们在多工厂制造执行与数据统一上有行业头部落地案例，想约15分钟电话交流，"
+                        f"看是否对贵司当前规划有借鉴。\n"
+                        f"如方向不对，烦请转介对口同事，感谢！\n罗克韦尔自动化")
                     _chief+=(f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:3px">📮 <b>推断邮箱：</b><code style="background:#eef4fb;padding:1px 5px;border-radius:4px">{esc(_e["to"])}</code>'
                              f' <span style="color:#8494a4">（备选：{esc(_e["alt"])}；{esc(_e["note"])}）</span>'
                              f' <a class="ev" href="mailto:{_e["to"]}?subject={_sub}&body={_body}">📧 直接写邮件</a></div>')
@@ -1048,6 +1064,259 @@ def region_of(code):
     c=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
     return HQ_REGION.get(c, "其他/待确认")
 
+
+# ============================================================
+# 6.4 AI 自动深查（GLM-4.7-Flash 免费 + Tavily 免费额度）
+# 新线索自动查：信号判断 / 总部区域 / 具名负责人 / 邮箱推断
+# 硬规则：人名必须能在检索到的原文里逐字命中且带可点开来源，否则一律"未具名"
+# ============================================================
+GLM_KEY = os.environ.get("GLM_KEY", "").strip()
+TVLY_KEY = os.environ.get("TAVILY_KEY", "").strip()
+AI_CACHE = DATA / "dossiers.json"
+AI_MAX = int(os.environ.get("AI_MAX", "3") or 3)   # 每次运行最多深查几家，护住免费额度
+AI_MODELS = ["glm-4-flash", "glm-4.7-flash"]
+REGION_RE = re.compile(r"^(长三角|珠三角|京津冀|华中|华南|西南|西北|华东|华北|东北)·[\u4e00-\u9fa5]{2,4}$")
+PROV_REGION = {
+ "江苏":"长三角","浙江":"长三角","上海":"长三角","安徽":"华东","山东":"华东",
+ "广东":"珠三角","广西":"华南","海南":"华南","福建":"华东",
+ "北京":"京津冀","天津":"京津冀","河北":"京津冀","山西":"华北","内蒙古":"华北",
+ "湖北":"华中","湖南":"华中","河南":"华中","江西":"华中",
+ "四川":"西南","重庆":"西南","云南":"西南","贵州":"西南","西藏":"西南",
+ "陕西":"西北","甘肃":"西北","宁夏":"西北","新疆":"西北","青海":"西北",
+ "辽宁":"东北","吉林":"东北","黑龙江":"东北",
+}
+def norm_region(txt):
+    """把模型给的区域说法归一成 大区·省；认不出来则返回空"""
+    t = (txt or "").strip()
+    if REGION_RE.match(t): return t
+    for prov, reg in PROV_REGION.items():
+        if prov in t:
+            return f"{reg}·{prov}"
+    return ""
+_AI_CACHE = {}
+
+def _http_json(url, payload, headers=None, timeout=40):
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json", **(headers or {})})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+def tavily(q, n=4):
+    if not TVLY_KEY: return []
+    for attempt in range(3):
+        try:
+            d = _http_json("https://api.tavily.com/search",
+                           {"api_key": TVLY_KEY, "query": q, "max_results": n,
+                            "search_depth": "basic", "include_answer": False}, timeout=30)
+            return [{"url": x.get("url",""), "title": x.get("title",""), "content": x.get("content","")}
+                    for x in (d.get("results") or [])]
+        except Exception as e:
+            log(f"    tavily 第{attempt+1}次失败：{str(e)[:70]}")
+            time.sleep(2 + attempt * 3)
+    return []
+
+def glm_json(system, user):
+    if not GLM_KEY: return None, None
+    for i, m in enumerate(AI_MODELS):
+        try:
+            d = _http_json("https://open.bigmodel.cn/api/paas/v4/chat/completions",
+                {"model": m, "messages": [{"role":"system","content":system},
+                                          {"role":"user","content":user}],
+                 "temperature": 0.1, "stream": False},
+                {"Authorization": f"Bearer {GLM_KEY}"}, timeout=100)
+            txt = d["choices"][0]["message"]["content"] or ""
+            txt = re.sub(r"```json|```", "", txt).strip()
+            s, e = txt.find("{"), txt.rfind("}")
+            if s >= 0 and e > s:
+                return json.loads(txt[s:e+1]), m
+        except Exception as ex:
+            log(f"    glm {m} 不可用：{str(ex)[:70]}")
+            time.sleep(3 + i * 4)          # 指数退避，避开免费档限流
+    return None, None
+
+def _load_ai_cache():
+    try:
+        if AI_CACHE.exists():
+            d = json.loads(AI_CACHE.read_text(encoding="utf-8"))
+            for k, v in d.items():
+                _AI_CACHE[k] = v
+                PRODUCT_DOSSIERS.setdefault(k, v)
+                if v.get("region") and REGION_RE.match(v["region"]):
+                    HQ_REGION[k] = v["region"]
+            log(f"AI 档案缓存载入 {len(d)} 家")
+    except Exception as e:
+        log(f"AI 档案缓存读取失败：{str(e)[:60]}")
+
+def _save_ai_cache():
+    if not _AI_CACHE: return
+    try:
+        AI_CACHE.parent.mkdir(exist_ok=True)
+        AI_CACHE.write_text(json.dumps(_AI_CACHE, ensure_ascii=False, indent=1), encoding="utf-8")
+        log(f"AI 档案缓存已写盘（{len(_AI_CACHE)} 家）")
+    except Exception as e:
+        log(f"AI 档案缓存写盘失败：{str(e)[:60]}")
+
+_AI_SYS = (
+ "你是罗克韦尔/PTC 售前线索分析员。只依据我给你的检索材料作答，禁止臆造。"
+ "输出严格 JSON，不要任何解释文字。人名必须逐字出现在材料中才可填，否则填空字符串。"
+)
+
+def ai_dossier(code, nm, p, finding):
+    """对一家公司做一次自动深查，返回 dossier dict；证据不足则返回 None"""
+    if not (GLM_KEY and TVLY_KEY): return None
+    nm = (nm or "").strip()
+    if len(nm) < 2: return None
+    logs = []
+    qs = [f"{nm} 海外 建厂 投资 新基地 扩产 2025 2026",
+          f"{nm} 信息化 数字化 IT 负责人 MES 智能制造 项目",
+          f"{nm} 总部 地址 年报 董事会秘书 联系电话"]
+    for q in qs:
+        logs += tavily(q, 4)
+    seen, hits = set(), []
+    for h in logs:
+        u = h.get("url") or ""
+        if u and u not in seen:
+            seen.add(u); hits.append(h)
+    if not hits:
+        log("    未检索到任何材料，跳过")
+        return None
+    urls = [h["url"] for h in hits]
+    ctx = "\n".join(f"[{i+1}] {h['title']}\nURL: {h['url']}\n{h['content'][:700]}"
+                    for i, h in enumerate(hits))[:9000]
+    playbook = (f"产品：{p['name']}｜定位：{p['pos']}\n目标客户：{p['who']}\n"
+                f"验证真需求的三问：{' / '.join(p['three'])}")
+    user = f"""公司：{nm}（{code}），本次触发的公告标题：{finding.get('title','')}
+
+{playbook}
+
+检索材料（含编号与URL，只能引用这些URL）：
+{ctx}
+
+请输出 JSON，字段：
+{{
+ "demand":"是|否|待验证",           // 该信号是否会引出上述产品的选型需求（你自己的判断）
+ "demand_reason":"60字内，依据哪条材料做出的判断",
+ "signal":"40字内，公告/材料里最关键的一条事实（带时间）",
+ "region":"大区·省，如 长三角·浙江；大区只能是 长三角|珠三角|京津冀|华中|华南|西南|西北|华东|华北|东北",
+ "grade":"高|中|低",                  // 现在打它的优先级
+ "role":"该找的对口部门/岗位",
+ "why":"50字内，为什么找他而不是别人",
+ "chief_name":"材料中逐字出现的负责人姓名；查不到填空字符串",
+ "chief_title":"他的职务，如 信息中心主任",
+ "chief_source":"chief_name 出现的那条材料的完整URL，必须来自上面列表；查不到填空字符串",
+ "domain":"该公司企业邮箱域名，如 angelyeast.com；查不到填空字符串",
+ "email_guess":"按该域名与中文姓名拼音推断的最可能邮箱；查不到填空字符串"
+}}"""
+    d, model = glm_json(_AI_SYS, user)
+    if not d:
+        log("    模型未返回有效 JSON")
+        return None
+    log(f"    模型={model} demand={d.get('demand')}")
+
+    # —— 硬校验：人名必须在我们真实检索到的页面原文里逐字出现 ——
+    name = (d.get("chief_name") or "").strip()
+    src = (d.get("chief_source") or "").strip()
+    bad_words = ("未具名", "未查到", "未知", "不详", "N/A")
+    if name and (any(w in name for w in bad_words) or len(name) < 2):
+        name = ""
+    if name:
+        # 优先用模型给的那条来源；否则在我们抓到的材料里找一条真的写了这个人名、且讲的是这家公司的
+        cand = []
+        if src in urls:
+            cand.append(next(h for h in hits if h["url"] == src))
+        cand += [h for h in hits if h["url"] != src]
+        got = ""
+        for h in cand:
+            if name in (h["content"] or "") and nm in (h["content"] or ""):
+                got = h["url"]; break
+        if got:
+            src = got
+        else:
+            log(f"    人名「{name}」在检索原文中未命中 → 未具名")
+            name = ""; src = ""
+
+    # —— 域名校验：必须真实出现在材料里 ——
+    domain = (d.get("domain") or "").strip().lower().lstrip("@")
+    email = None
+    if name and domain:
+        dom_ok = any(domain in (h["content"] or "").lower() or domain in h["url"].lower() for h in hits)
+        guess = (d.get("email_guess") or "").strip().lower()
+        if dom_ok and guess.endswith("@" + domain) and re.match(r"^[a-z0-9._-]+@[a-z0-9.-]+\.(com|cn|com\.cn|net)$", guess):
+            pinyin = guess.split("@")[0]
+            email = {"to": guess,
+                     "alt": f"{pinyin}@{domain}（同域名变体：姓.名 / 名.姓）",
+                     "note": f"官网域名{domain}；按A股制造业惯例推断，首封先测退信"}
+
+    _title = (d.get("chief_title") or "").strip()
+    referral = ""
+    if name and any(k in _title for k in ("董秘", "董事会秘书", "证券事务")):
+        chief = (f"未具名（决策人）：已锁定转介人 —— {_title} {name}。"
+                 f"董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案")
+        referral = name
+    elif name:
+        chief = f"🤖 AI 查证：{_title} {name}（来源可点开核实）"
+    else:
+        chief = "未具名：AI 已跑 3 轮公开源（公告/官网/新闻/招聘），未见可靠具名负责人；走董秘转介 + 年报证券部直线"
+
+    region = norm_region(d.get("region"))
+    # 注意：不做"正文里扫省份"的兜底——会抓到公告里的子公司/项目所在地，
+    # 把总部区域judge错（曾把云南的贵研铂业判成山东）。认不出就留待确认。
+    ds = {"role": (d.get("role") or PRODUCT_WHO_ROLE.get(p["key"], ("信息化/数字化负责人",""))[0])[:60],
+          "why": (d.get("why") or "")[:100],
+          "chief": chief,
+          "demand": d.get("demand") or "待验证",
+          "demand_reason": (d.get("demand_reason") or "")[:100],
+          "signal": (d.get("signal") or "")[:80],
+          "grade": d.get("grade") if d.get("grade") in ("高","中","低") else "中",
+          "region": region if region else "",
+          "auto": True, "model": model,
+          "src": src if name else "",
+          "referral": referral,
+          "researched": datetime.date.today().isoformat()}
+    if email:
+        if referral:
+            email["note"] = "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
+        ds["email"] = email
+    if not region: log("    区域未能归一（保留待确认）")
+    return ds
+
+def ai_research_pass():
+    """新线索自动查档；已入档的跳过，不重复烧额度"""
+    _load_ai_cache()
+    if not (GLM_KEY and TVLY_KEY):
+        log("未配置 GLM_KEY / TAVILY_KEY，跳过 AI 自动深查（页面照常生成）")
+        return
+    todo = []
+    for p in PRODUCTS:
+        for h in product_findings.get(p["key"], []):
+            c = (h.get("sec") or "").replace(".SH","").replace(".SZ","").zfill(6)
+            if not c or c in PRODUCT_DOSSIERS: continue
+            nm = (h.get("name") or c).strip()
+            if len(nm) < 2: continue
+            try:
+                r = analyze(p["key"], nm, h.get("title",""), h.get("ts"))
+            except Exception:
+                r = None
+            if not r or r[0] != "高":      # 只深查"正好在选型窗口"的高优先线索，省钱省时
+                continue
+            d0 = age_info(h.get("ts"))[0]
+            todo.append((d0 if d0 is not None else 999, c, nm, p, h))
+    todo.sort(key=lambda x: x[0])
+    if todo:
+        log(f"待 AI 深查（仅高优先窗口期）{len(todo)} 家，本次上限 {AI_MAX} 家")
+    done = 0
+    for _age, c, nm, p, h in todo:
+        if done >= AI_MAX: break
+        log(f"  AI 深查：{nm} [{p['key']}]")
+        ds = ai_dossier(c, nm, p, h)
+        done += 1
+        if ds:
+            PRODUCT_DOSSIERS[c] = ds
+            _AI_CACHE[c] = ds
+            if ds.get("region"): HQ_REGION[c] = ds["region"]
+            log(f"    ✓ 入档（{ds['demand']}/{ds['grade']}）")
+    _save_ai_cache()
+
 def card_for(f):
     g=PHASE_GRADE.get(f.get("phase"),"中")
     ind=industry_of((f["name"] or ""), f["title"])
@@ -1177,6 +1446,8 @@ def shell(title, active, body):
 </div></body></html>"""
 
 # ---- PLEX 首页 ----
+# 新线索自动深查（先查档，再渲染，页面里看到的就是查过的）
+ai_research_pass()
 plex_body=f"""
 <div class="top"><h1><img class="hdrlogo" src="logo-plex.png" alt=""> PLEX 每日商机 · 今天该干什么</h1></div>
 <div class="kpis">
