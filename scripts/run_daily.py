@@ -1095,6 +1095,25 @@ def norm_region(txt):
     return ""
 _AI_CACHE = {}
 
+def _py_full(name):
+    """姓名全拼，用于生成邮箱。优先本地拼音库，避免模型自己拼错（如 蔡报贵→caobaoji）"""
+    try:
+        from pypinyin import lazy_pinyin
+    except Exception:
+        try:
+            if os.environ.get("GITHUB_ACTIONS"):
+                import subprocess
+                subprocess.run([sys.executable, "-m", "pip", "install", "-q", "pypinyin"],
+                               capture_output=True, timeout=120)
+            from pypinyin import lazy_pinyin
+        except Exception:
+            return ""
+    try:
+        out = "".join(lazy_pinyin(name)).lower()
+        return out if re.match(r"^[a-z]{2,20}$", out) else ""
+    except Exception:
+        return ""
+
 def _http_json(url, payload, headers=None, timeout=40):
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json", **(headers or {})})
@@ -1241,11 +1260,13 @@ def ai_dossier(code, nm, p, finding):
     if name and domain:
         dom_ok = any(domain in (h["content"] or "").lower() or domain in h["url"].lower() for h in hits)
         guess = (d.get("email_guess") or "").strip().lower()
-        if dom_ok and guess.endswith("@" + domain) and re.match(r"^[a-z0-9._-]+@[a-z0-9.-]+\.(com|cn|com\.cn|net)$", guess):
-            pinyin = guess.split("@")[0]
-            email = {"to": guess,
-                     "alt": f"{pinyin}@{domain}（同域名变体：姓.名 / 名.姓）",
-                     "note": f"官网域名{domain}；按A股制造业惯例推断，首封先测退信"}
+        py = _py_full(name)                     # 自己算拼音，不信模型拼写
+        target = (py + "@" + domain) if py else guess
+        ok_fmt = bool(re.match(r"^[a-z0-9._-]+@[a-z0-9.-]+\.(com|cn|com\.cn|net)$", target or ""))
+        if dom_ok and ok_fmt and target.endswith("@" + domain):
+            email = {"to": target,
+                     "alt": f"{py[:1]}.{py[1:]}@{domain}（若公司用'姓.名'格式）" if len(py) > 2 else f"{py}@{domain}",
+                     "note": f"官网域名{domain}；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"}
 
     _title = (d.get("chief_title") or "").strip()
     referral = ""
@@ -1272,6 +1293,7 @@ def ai_dossier(code, nm, p, finding):
           "auto": True, "model": model,
           "src": src if name else "",
           "referral": referral,
+          "chief_name": (referral or name),
           "researched": datetime.date.today().isoformat()}
     if email:
         if referral:
