@@ -1265,8 +1265,8 @@ def ai_dossier(code, nm, p, finding):
         ok_fmt = bool(re.match(r"^[a-z0-9._-]+@[a-z0-9.-]+\.(com|cn|com\.cn|net)$", target or ""))
         if dom_ok and ok_fmt and target.endswith("@" + domain):
             email = {"to": target,
-                     "alt": f"{py[:1]}.{py[1:]}@{domain}（若公司用'姓.名'格式）" if len(py) > 2 else f"{py}@{domain}",
-                     "note": f"官网域名{domain}；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"}
+                     "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+                     "note": f"官网域名{domain}；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"}
 
     _title = (d.get("chief_title") or "").strip()
     referral = ""
@@ -1309,12 +1309,14 @@ def ai_research_pass():
         log("未配置 GLM_KEY / TAVILY_KEY，跳过 AI 自动深查（页面照常生成）")
         return
     todo = []
+    _seen_code = set()
     for p in PRODUCTS:
         for h in product_findings.get(p["key"], []):
             c = (h.get("sec") or "").replace(".SH","").replace(".SZ","").zfill(6)
             if not c or c in PRODUCT_DOSSIERS: continue
             nm = (h.get("name") or c).strip()
-            if len(nm) < 2: continue
+            if len(nm) < 2 or c in _seen_code: continue
+            _seen_code.add(c)
             try:
                 r = analyze(p["key"], nm, h.get("title",""), h.get("ts"))
             except Exception:
