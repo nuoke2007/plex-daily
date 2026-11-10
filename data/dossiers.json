@@ -223,5 +223,84 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名jushi.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
   }
+ },
+ "600980": {
+  "role": "研发部门负责人",
+  "why": "研发部门负责人直接负责技术创新和研发流程，对PLM系统需求有直接决策权。",
+  "chief": "未具名（决策人）：已锁定转介人 —— 董事会秘书 冉红想。董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案",
+  "demand": "是",
+  "demand_reason": "北矿科技受让国创新材股权，涉及稀土新材料技术创新，可能需要PLM系统支持多研发中心协同和数据统一源头。",
+  "signal": "北矿科技关于受让控股股东所持国创新材（北京）稀土新材料技术创新中心有限公司9%股权暨关联交易的公告",
+  "grade": "中",
+  "region": "华北·北京",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://www.bgrimmtec.com/docs/2026-04/890e287195ad4a369a81e8b420f94f53.pdf",
+  "referral": "冉红想",
+  "chief_name": "冉红想",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "ranhongxiang@bgrimmtec.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
+  }
+ },
+ "600819": {
+  "role": "研发部门负责人",
+  "why": "研发部门负责人直接负责技术创新和产品研发，与PTC ThingWorx产品需求直接相关。",
+  "chief": "🤖 AI 查证：法人代表 殷俊（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "公司有明确的技改升级和产能优化计划，且关注高附加值产品研发。",
+  "signal": "2026年公司主要经营计划如下：浮法玻璃板块聚焦超薄在线镀膜玻璃研发，主打差异化、高附加值产品。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://q.stock.sohu.com/cn/600819/gsjj.shtml",
+  "referral": "",
+  "chief_name": "殷俊",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "yinjun@sypglass.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名sypglass.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
+ },
+ "300441": {
+  "role": "智能制造部门",
+  "why": "新基地投产及旧基地升级改造直接相关",
+  "chief": "🤖 AI 查证：法定代表人 陈金岳（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "新基地投产及旧基地升级改造，需统一标准及MES系统",
+  "signal": "鲍斯股份投资建设冷媒压缩机及热泵新生产基地，竞得江西国有建设用地使用权",
+  "grade": "高",
+  "region": "华东·浙江",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12218215",
+  "referral": "",
+  "chief_name": "陈金岳",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "chenjinyue@cnbaosi.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名cnbaosi.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
+ },
+ "300125": {
+  "role": "信息中心主任",
+  "why": "公告中提到公司进行技改项目，信息中心主任可能负责相关技术选型。",
+  "chief": "未具名：AI 已跑 3 轮公开源（公告/官网/新闻/招聘），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
+  "demand": "是",
+  "demand_reason": "公司进行光伏电站技改项目，可能需要设备互联、OEE透明化和预测性维护解决方案。",
+  "signal": "关于子公司光伏电站技改项目的进展公告",
+  "grade": "中",
+  "region": "华东·安徽",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "researched": "2026-11-10"
  }
 }
