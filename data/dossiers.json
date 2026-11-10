@@ -18,7 +18,8 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
   },
-  "chief_name": "陈国林"
+  "chief_name": "陈国林",
+  "tier": "拍板"
  },
  "603906": {
   "role": "信息中心主任",
@@ -39,7 +40,8 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名lopal.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
   },
-  "chief_name": "石俊峰"
+  "chief_name": "石俊峰",
+  "tier": "拍板"
  },
  "300318": {
   "role": "生产管理部经理",
@@ -60,7 +62,8 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名bohui-tech.com；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
   },
-  "chief_name": "沈治卫"
+  "chief_name": "沈治卫",
+  "tier": "转介"
  },
  "300831": {
   "role": "研发部门负责人",
@@ -75,7 +78,8 @@
   "model": "glm-4-flash",
   "src": "https://q.stock.sohu.com/cn/300831/gsjj.shtml",
   "referral": "",
-  "researched": "2026-11-10"
+  "researched": "2026-11-10",
+  "tier": "转介"
  },
  "300811": {
   "role": "制造部经理",
@@ -96,7 +100,8 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名pocomagnetic.com；按A股制造业惯例推断，首封先测退信"
   },
-  "chief_name": "杜江华"
+  "chief_name": "杜江华",
+  "tier": "拍板"
  },
  "600343": {
   "role": "技术部门",
@@ -117,7 +122,8 @@
    "to": "sunyantang@china-htdl.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名china-htdl.com；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "301517": {
   "role": "研发部门负责人",
@@ -138,7 +144,8 @@
    "to": "fanjunwei@huada853.com.cn",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名huada853.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "600176": {
   "role": "智能制造部门",
@@ -159,7 +166,8 @@
    "to": "zhangyuqiang@jushi.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名jushi.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "002469": {
   "role": "技术部门",
@@ -181,7 +189,8 @@
    "to": "zhangjun@sdsunway.com.cn",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
-  }
+  },
+  "tier": "拍板"
  },
  "001207": {
   "role": "智能制造解决方案负责人",
@@ -203,7 +212,8 @@
    "to": "gaoxinsheng@sdlianke.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
-  }
+  },
+  "tier": "拍板"
  },
  "300748": {
   "role": "技术中心主任",
@@ -225,7 +235,8 @@
    "to": "laixunlong@jlmag.com.cn",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名jlmag.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "对口"
  },
  "600980": {
   "role": "研发工程师",
@@ -242,7 +253,8 @@
   "referral": "",
   "chief_name": "",
   "insider": null,
-  "researched": "2026-11-10"
+  "researched": "2026-11-10",
+  "tier": "转介"
  },
  "600819": {
   "role": "技术中心/研发部门",
@@ -264,7 +276,8 @@
    "to": "shahaixiang@sypglass.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名sypglass.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "300441": {
   "role": "智能制造部门/信息化部门",
@@ -281,7 +294,8 @@
   "referral": "",
   "chief_name": "",
   "insider": null,
-  "researched": "2026-11-10"
+  "researched": "2026-11-10",
+  "tier": "转介"
  },
  "300125": {
   "role": "技术部门负责人",
@@ -298,7 +312,8 @@
   "referral": "",
   "chief_name": "",
   "insider": null,
-  "researched": "2026-11-10"
+  "researched": "2026-11-10",
+  "tier": "转介"
  },
  "688179": {
   "role": "生产部门负责人",
@@ -315,7 +330,8 @@
   "referral": "",
   "chief_name": "",
   "insider": null,
-  "researched": "2026-11-10"
+  "researched": "2026-11-10",
+  "tier": "转介"
  },
  "301353": {
   "role": "智能制造部门",
@@ -341,7 +357,8 @@
    "to": "yangweiming@prulde.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名prulde.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "002078": {
   "role": "技术部门/IT部门",
@@ -367,7 +384,8 @@
    "to": "lina@sunpaper.cn",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名sunpaper.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "600261": {
   "role": "生产部门负责人",
@@ -384,7 +402,8 @@
   "referral": "",
   "chief_name": "",
   "insider": null,
-  "researched": "2026-11-10"
+  "researched": "2026-11-10",
+  "tier": "转介"
  },
  "002543": {
   "role": "海外业务拓展部门",
@@ -401,7 +420,8 @@
   "referral": "",
   "chief_name": "",
   "insider": null,
-  "researched": "2026-11-10"
+  "researched": "2026-11-10",
+  "tier": "转介"
  },
  "Q30e92d65": {
   "name": "安琪酵母",
@@ -428,7 +448,8 @@
    "to": "xiongtao@angelyeast.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名angelyeast.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "300852": {
   "name": "四会富仕",
@@ -451,7 +472,8 @@
    "to": "liutianming@fujipcb.cn",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名fujipcb.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "001359": {
   "name": "平安电工",
@@ -474,7 +496,8 @@
    "to": "pandujiang@pamica.com.cn",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名pamica.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
+  },
+  "tier": "拍板"
  },
  "605277": {
   "name": "新亚电子",
@@ -501,34 +524,17 @@
    "to": "zhaozhanbing@xinya-cn.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名xinya-cn.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
- },
- "Qa6e0c708": {
-  "name": "即查模式队列\n\n页面「交给 AI 自动查（排队）」按钮会在这里建一个 xxx-PLEX.txt，内容是「公司名",
-  "role": "技术总监",
-  "why": "技术总监负责企业的技术管理体系的建设和维护，与MES系统选型直接相关。",
-  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
-  "demand": "是",
-  "demand_reason": "有海外建厂/新基地/并购扩张的上市制造企业，且多工厂要统一制造运营标准。",
-  "signal": "MKS-安美特全球设备业务副总裁兼总经理Tassilo Thuene在活动上强调，本次扩建将进一步巩固黄埔以及广州在集团全球制造网络中的战略地位。",
-  "grade": "高",
-  "region": "华南·广东",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "",
-  "referral": "",
-  "chief_name": "",
-  "insider": null,
-  "researched": "2026-11-10"
+  },
+  "tier": "拍板"
  },
  "002815": {
   "name": "崇达技术",
-  "role": "海外业务拓展经理",
-  "why": "该岗位负责海外业务拓展，与崇达技术泰国子公司的增资和建设直接相关。",
-  "chief": "🤖 AI 查证：集团董事 朱雪花（来源可点开核实）",
+  "role": "海外业务拓展部门",
+  "why": "该部门负责海外项目的实施和运营，直接关联到MES系统的需求。",
+  "chief": "🤖 AI 查证：集团董事 朱雪花（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）",
   "demand": "是",
-  "demand_reason": "崇达技术计划在泰国建立新工厂，并已增资至20亿泰铢，表明有明确的海外扩张需求。",
-  "signal": "2025年9月，崇达技术在泰国巴真府洛加纳工业园奠基泰国工厂。",
+  "demand_reason": "崇达技术在泰国设立子公司并增资，表明其海外扩张需求强烈，可能需要快速MES系统支持新基地投产。",
+  "signal": "2025年8月，公司完成泰国子公司(泰国崇达)的设立登记手续，注册资本增至10亿泰铢。",
   "grade": "高",
   "region": "",
   "auto": true,
@@ -536,157 +542,25 @@
   "src": "https://www.suntakpcb.com/article/74",
   "referral": "",
   "chief_name": "朱雪花",
-  "insider": {
-   "name": "余忠",
-   "title": "副总裁",
-   "src": "https://www.suntakpcb.com/article/74"
-  },
+  "insider": null,
+  "tier": "拍板",
+  "phones": [
+   {
+    "num": "0755-26055208",
+    "src": "https://stockn.xueqiu.com/SZ002815/20220415355911.pdf",
+    "ctx": "新桥街道新玉路横岗下大 街16 号 深圳市宝安区新桥街道新玉路横岗下大 街16 号 电话 "
+   },
+   {
+    "num": "0755-32980699",
+    "src": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=002815&id=12570652",
+    "ctx": "| 深圳市光明区凤凰街道东坑社区科能路（南延伸段）808号崇达大厦 | | | 电话 | "
+   }
+  ],
   "researched": "2026-11-10",
   "email": {
    "to": "zhuxuehua@suntakpcb.com",
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
-   "note": "官网域名suntakpcb.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+   "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
   }
- },
- "002843": {
-  "name": "泰嘉股份",
-  "role": "海外事业部负责人",
-  "why": "海外事业部负责人直接负责海外业务，对海外建厂和MES系统需求有深入了解。",
-  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
-  "demand": "是",
-  "demand_reason": "泰嘉股份在泰国设立孙公司并完成增资变更登记，表明其海外扩张计划明确，对MES系统有潜在需求。",
-  "signal": "泰嘉股份公告：2025年5月，泰嘉股份完成了泰国孙公司的设立登记工作。",
-  "grade": "中",
-  "region": "华南·广东",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "",
-  "referral": "",
-  "chief_name": "",
-  "insider": null,
-  "researched": "2026-11-10"
- },
- "300791": {
-  "name": "仙乐健康",
-  "role": "生产经理",
-  "why": "生产经理负责新基地的投产和运营，需要MES系统支持。",
-  "chief": "🤖 AI 查证：董事长兼总经理 林培青（来源可点开核实）",
-  "demand": "是",
-  "demand_reason": "公司计划在泰国建设生产基地二期工程，需要快速MES落地以支持新基地投产。",
-  "signal": "仙乐健康于2026年7月17日召开董事会，审议通过了《关于投资建设泰国生产基地二期工程的议案》。",
-  "grade": "高",
-  "region": "华南·广东",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=300791&id=12174326",
-  "referral": "",
-  "chief_name": "林培青",
-  "insider": null,
-  "researched": "2026-11-10",
-  "email": {
-   "to": "linpeiqing@siriopharma.com",
-   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
-   "note": "官网域名siriopharma.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
- },
- "002429": {
-  "name": "兆驰股份",
-  "role": "制造运营部门",
-  "why": "制造运营部门负责生产基地的日常运营和管理，需要MES系统来支持。",
-  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
-  "demand": "是",
-  "demand_reason": "兆驰股份计划在墨西哥建设生产基地，需要快速MES落地以支持新基地的运营。",
-  "signal": "兆驰股份计划投资建设墨西哥生产基地，投资规模不超过3,833.00万美元。",
-  "grade": "高",
-  "region": "华东·上海",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "",
-  "referral": "",
-  "chief_name": "",
-  "insider": null,
-  "researched": "2026-11-10"
- },
- "300818": {
-  "name": "耐普矿机",
-  "role": "技术总监",
-  "why": "技术总监负责技术选型和实施。",
-  "chief": "🤖 AI 查证：生产中心总监 王磊（来源可点开核实）",
-  "demand": "是",
-  "demand_reason": "耐普矿机海外业务扩张，需快速MES落地以提升本地化服务能力。",
-  "signal": "耐普矿机持续推进海外产能落地，构建全域覆盖的产业服务网络。",
-  "grade": "高",
-  "region": "华东·江西",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "http://static.cninfo.com.cn/finalpage/2025-04-03/1222989128.PDF",
-  "referral": "",
-  "chief_name": "王磊",
-  "insider": null,
-  "researched": "2026-11-10",
-  "email": {
-   "to": "wanglei@naipu.com.cn",
-   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
-   "note": "官网域名naipu.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  }
- },
- "301039": {
-  "name": "中集车辆",
-  "role": "信息化部门负责人",
-  "why": "该部门负责公司的信息化建设，包括MES系统的选型和实施。",
-  "chief": "未具名（决策人）：已锁定转介人 —— 董事会秘书 毛弋。董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案",
-  "demand": "是",
-  "demand_reason": "中集车辆参与美国商务部针对墨西哥、加拿大和中国生产的Van-Type Trailers and Subassemblies Thereof发起的反补贴、反倾销调查，可能需要快速MES系统来应对海外建厂",
-  "signal": "中集车辆参与美国商务部针对墨西哥、加拿大和中国生产的Van-Type Trailers and Subassemblies Thereof发起的反补贴、反倾销调",
-  "grade": "高",
-  "region": "华东·上海",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=301039&id=11352747",
-  "referral": "毛弋",
-  "chief_name": "毛弋",
-  "insider": null,
-  "researched": "2026-11-10",
-  "email": {
-   "to": "maoyi@cimc.com",
-   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
-   "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
-  }
- },
- "002454": {
-  "name": "松芝股份",
-  "role": "信息中心主任",
-  "why": "公司有信息化建设和数字化转型需求。",
-  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
-  "demand": "是",
-  "demand_reason": "公司拟对墨西哥松芝有限公司进行增资，涉及海外建厂。",
-  "signal": "松芝股份拟通过全资子公司松芝国际控股有限公司对墨西哥松芝有限公司进行增资。",
-  "grade": "高",
-  "region": "华东·上海",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "",
-  "referral": "",
-  "chief_name": "",
-  "insider": null,
-  "researched": "2026-11-10"
- },
- "605099": {
-  "name": "共创草坪",
-  "role": "技术总监",
-  "why": "技术总监负责产品研发和项目管理，与MES系统选型直接相关。",
-  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
-  "demand": "是",
-  "demand_reason": "共创草坪积极布局全球产能，且2026年上半年国际市场收入增长显著，表明有海外建厂需求。",
-  "signal": "共创草坪2026年上半年国际市场收入17.29亿元，同比增长8.12%。",
-  "grade": "高",
-  "region": "华东·江苏",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "",
-  "referral": "",
-  "chief_name": "",
-  "insider": null,
-  "researched": "2026-11-10"
  }
 }
