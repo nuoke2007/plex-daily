@@ -612,6 +612,7 @@ def qk_panel(key, who, three, hook, rhint):
     <div style="font-size:11.8px;line-height:1.75;color:#33414f;margin-top:3px">董秘/证券部公开问询转介 → 年报查证券部直线 → 行业论坛换名片 → 内部CRM找现有AM warm intro</div>
     <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
       <button class="qk-queue" style="cursor:pointer;border:none;background:#7a5af8;color:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">🚀 交给 AI 自动查（排队）</button>
+      <a href="inquiry.html" target="_blank" style="align-self:center;font-size:12.5px;color:#7a5af8;text-decoration:none;font-weight:600">🔎 看即查结果</a>
       <button class="qk-copy" style="cursor:pointer;border:1px solid #003DA5;background:#fff;color:#003DA5;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">📋 复制指令（急用·分钟级）</button>
       <span class="qk-tip" style="font-size:11.5px;color:#8494a4;align-self:center">排队＝每天 09:00 / 20:30 自动查完入档；急用就复制指令发我，当场查</span>
     </div>
@@ -749,7 +750,8 @@ def render_product(p):
                         f"如方向不对，烦请转介对口同事，感谢！\n罗克韦尔自动化")
                     _chief+=(f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:3px">📮 <b>推断邮箱：</b><code style="background:#eef4fb;padding:1px 5px;border-radius:4px">{esc(_e["to"])}</code>'
                              f' <span style="color:#8494a4">（备选：{esc(_e["alt"])}；{esc(_e["note"])}）</span>'
-                             f' <a class="ev" href="mailto:{_e["to"]}?subject={_sub}&body={_body}">📧 直接写邮件</a></div>')
+                             f' <a class="ev" href="mailto:{_e["to"]}?subject={_sub}&body={_body}">{esc(_cta_label(_d))}</a></div>')
+                    _chief += _tel_html(_d, esc)
             else:
                 _role,_why=_rw[0],_rw[1]; _chief=''
             cards+=(f'<div class="lead" data-rg="{esc(rg)}">'
@@ -1177,6 +1179,12 @@ def _load_ai_cache():
             d = json.loads(AI_CACHE.read_text(encoding="utf-8"))
             for k, v in d.items():
                 _AI_CACHE[k] = v
+                if not v.get("tier"):
+                    c = v.get("chief") or ""
+                    if "董事长" in c or "法定代表人" in c or "总经理" in c or "拍板" in c: v["tier"] = "拍板"
+                    elif "董秘" in c or "证券事务" in c or "转介" in c: v["tier"] = "转介"
+                    elif "总监" in c or "部长" in c or "主任" in c or "经理" in c: v["tier"] = "对口"
+                    else: v["tier"] = "转介"
                 PRODUCT_DOSSIERS.setdefault(k, v)
                 if v.get("region") and REGION_RE.match(v["region"]):
                     HQ_REGION[k] = v["region"]
@@ -1203,6 +1211,57 @@ def _same_subject(nm, c):
     if not (nm and c): return False
     return re.search(re.escape(nm) + r"[^，。；\s]{0,4}股份", c) is not None
 
+def _tel_html(ds, escfn=None):
+    """📞 电话线索块：公开可查的号码 + 30 秒开场（比冷邮件有效得多）"""
+    ph = ds.get("phones") or []
+    if not ph: return ""
+    esc = escfn or (lambda x: x)
+    rows = []
+    for x in ph:
+        rows.append('<div style="margin:1px 0">· <b>' + esc(x.get("num","")) + '</b>'
+                    + ' <span style="color:#8494a4">（原文语境：' + esc((x.get("ctx") or "")[-28:]) + '）</span>'
+                    + ' <a class="ev" style="color:#0b6bcb" href="' + esc(x.get("src","")) + '" target="_blank">🔗 出处</a></div>')
+    return ('<div style="margin-top:4px;background:#fffdf5;border:1px solid #f0e0b6;border-radius:8px;padding:7px 10px">'
+            '<div style="font-size:12px;font-weight:700;color:#8a6b1f">📞 电话直拨（比发邮件有效）</div>'
+            + "".join(rows) +
+            '<div style="font-size:11.5px;color:#5a6b7b;margin-top:3px">开场只说一句：“我在整理贵司新基地/扩产的制造系统方案，想确认该找制造还是信息中心，麻烦转一下。”——不要一上来讲产品。</div></div>')
+
+def _cta_label(ds):
+    t = ds.get("tier")
+    if t == "对口": return "📧 直接约 15 分钟"
+    if t == "内线": return "📧 问汇报线（内线）"
+    return "📧 发转介请求（请转对口）"
+
+def _tier(title):
+    """联系人分级：不是谁官大，而是谁是这个产品的门"""
+    t = title or ""
+    if any(k in t for k in ("董事长","副董事长","法定代表人","法人","总经理","总裁","董事")):
+        return "拍板"
+    if any(k in t for k in ("董秘","董事会秘书","证券事务")):
+        return "转介"
+    if any(k in t for k in ("人事","人力资源","HR","招聘")):
+        return "内线"
+    if any(k in t for k in ("总监","部长","主任","经理","厂长","负责人","主管","工程师")):
+        return "对口"
+    return "对口"
+
+def _phones(nm, hits, limit=2):
+    """从抓回材料里抽真电话；必须讲的是这家公司，且有联系人/招聘/招标语境"""
+    out=[]
+    for h in hits:
+        c = h.get("content") or ""
+        if not _same_subject(nm, c): continue
+        if not any(k in c for k in ("联系人","联系电话","联系方式","招聘","招标","询价","人力资源","HR")):
+            continue
+        for m in re.finditer(r"(0\d{2,3}[-－]?\d{7,8}|400[-－]\d{3}[-－]\d{4}|1[3-9]\d{9})", c):
+            num = re.sub(r"[-－]", "-", m.group(1))
+            if any(x["num"] == num for x in out): continue
+            ctx = c[max(0, m.start()-45):m.start()].replace("\n", " ")[-45:]
+            out.append({"num": num, "src": h["url"], "ctx": ctx})
+            break
+        if len(out) >= limit: break
+    return out
+
 def ai_dossier(code, nm, p, finding):
     """对一家公司做一次自动深查，返回 dossier dict；证据不足则返回 None"""
     if not (GLM_KEY and TVLY_KEY): return None
@@ -1213,7 +1272,9 @@ def ai_dossier(code, nm, p, finding):
           f"{nm} 信息化 数字化 IT 负责人 MES 智能制造 项目",
           f"{nm} 总部 地址 年报 董事会秘书 联系电话",
           f'"{nm}" 副总经理 技术总监 生产总监 简历 高管',   # 高管/任命公告页实名带职务，实测命中最高
-          f'"{nm}" 中标 智能制造 项目 负责人 联系人']      # 招投标材料常留项目联系人真名
+          f'"{nm}" 中标 智能制造 项目 负责人 联系人',       # 招投标材料常留项目联系人真名
+          f'"{nm}" 招聘 MES 信息化 主管 工程师 汇报 部门',   # 在招岗=正在建队，JD 常露部门名/HR电话
+          f'"{nm}" 智能制造 试点示范 项目 负责人 公示']      # 政府/协会公示里是真实项目负责人
     for q in qs:
         logs += tavily(q, 4)
     seen, hits = set(), []
@@ -1322,12 +1383,18 @@ def ai_dossier(code, nm, p, finding):
                  f"董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案")
         referral = name
     elif name:
-        chief = f"🤖 AI 查证：{_title} {name}（来源可点开核实）"
+        _t = _tier(_title)
+        if _t == "拍板":
+            chief = f"🤖 AI 查证：{_title} {name}（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）"
+        elif _t == "内线":
+            chief = f"🤖 AI 查证：{_title} {name}（内线｜能问出这个岗的汇报线，比猜人准）"
+        else:
+            chief = f"🤖 AI 查证：{_title} {name}（对口人｜可直接谈方案，这是真正的门）"
     elif insider and any(k in insider["title"] for k in ("联系人","项目负责","主任","经理","部长","总监")):
         chief = (f"未具名（决策人）：但从招投标材料挖到项目线具名人 —— "
                  f"{insider['title']} {insider['name']}。可直接按招标联系方式触达，比董秘更近一层")
     else:
-        chief = "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线"
+        chief = "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介"
 
     region = norm_region(d.get("region"))
     # 注意：不做"正文里扫省份"的兜底——会抓到公告里的子公司/项目所在地，
@@ -1346,10 +1413,16 @@ def ai_dossier(code, nm, p, finding):
           "referral": referral,
           "chief_name": (referral or name),
           "insider": insider,
+          "tier": _tier(_title if name else ""),
+          "phones": _phones(nm, hits),
           "researched": datetime.date.today().isoformat()}
     if email:
         if referral:
-            email["note"] = "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
+            email["note"] = "转介用邮箱：只求转交对口部门，不要谈方案细节"
+        elif ds.get("tier") == "拍板":
+            email["note"] = "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
+        elif ds.get("tier") == "对口":
+            email["note"] = "对口邮箱：可直接约15分钟，附同行业案例一页纸"
         ds["email"] = email
     if not region: log("    区域未能归一（保留待确认）")
     return ds
@@ -1362,9 +1435,30 @@ PLEX_PSEUDO = dict(key="PLEX", emoji="🚀", name="罗克韦尔 PLEX（SaaS MES�
            "这次扩产是照搬老厂方案，还是重新选型？"],
     hook="“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”")
 
+INQ_CACHE = ROOT / "data" / "inquiries.json"
+_INQ = {}
+
+def _load_inq():
+    try:
+        if INQ_CACHE.exists():
+            d = json.loads(INQ_CACHE.read_text(encoding="utf-8"))
+            _INQ.update(d)
+            log(f"即查结果载入 {len(d)} 家")
+    except Exception as e:
+        log(f"即查结果读取失败：{str(e)[:60]}")
+
+def _save_inq():
+    if not _INQ: return
+    try:
+        INQ_CACHE.parent.mkdir(exist_ok=True)
+        INQ_CACHE.write_text(json.dumps(_INQ, ensure_ascii=False, indent=1), encoding="utf-8")
+        log(f"即查结果已写盘（{len(_INQ)} 家）")
+    except Exception as e:
+        log(f"即查结果写盘失败：{str(e)[:60]}")
+
 def queue_pass():
     """即查模式接 AI：页面按钮在 queue/ 下建一个任务文件，CI 跑时自动查完入档并删除该文件"""
-    _load_ai_cache()
+    _load_ai_cache(); _load_inq()
     if not (GLM_KEY and TVLY_KEY): return
     qdir = ROOT / "queue"
     if not qdir.exists(): return
@@ -1386,17 +1480,18 @@ def queue_pass():
         m = re.search(r"\d{6}", nm)
         if m: code = m.group(0)
         if not code: code = "Q" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:8]
-        if code in PRODUCT_DOSSIERS:
-            log(f"  队列：{nm} 已入档，跳过")
+        if code in PRODUCT_DOSSIERS or code in _INQ:
+            log(f"  队列：{nm} 已查过，跳过")
             fp.unlink(missing_ok=True); continue
         log(f"  队列深查：{nm} [{p['key']}]")
         ds = ai_dossier(code, nm, p, {"title": "（用户即查模式提交）"})
         if ds:
-            PRODUCT_DOSSIERS[code] = ds; _AI_CACHE[code] = ds
-            if ds.get("region"): HQ_REGION[code] = ds["region"]
-            log(f"    ✓ 队列入档（{ds['demand']}/{ds['grade']}）")
+            ds["product_key"] = p["key"]
+            ds["inquiry"] = True
+            _INQ[code] = ds
+            log(f"    ✓ 即查完成（{ds['demand']}/{ds['grade']}）→ inquiry.html")
             fp.unlink(missing_ok=True)
-            _save_ai_cache()
+            _save_inq()
         else:
             log(f"    队列：{nm} 未查到，保留文件待下次重试")
 
@@ -1499,8 +1594,9 @@ def card_for(f):
                          f"适合新厂赶投产节点、老厂不想再投几百万的传统 MES。\n"
                          f"想用 15 分钟聊聊：新厂 MES 时间表、与老厂是否一套标准。\n\n罗克韦尔自动化")
         mail_html=(f'<div style="margin-top:6px"><a class="btn btn-mail" target="_blank" '
-                   f'href="mailto:{esc(_e3["to"])}?subject={_sub3}&body={_body3}">📧 直接写邮件给 {esc(_e3["to"])}</a>'
+                   f'href="mailto:{esc(_e3["to"])}?subject={_sub3}&body={_body3}">{esc(_cta_label(ai))} · {esc(_e3["to"])}</a>'
                    f'<div style="font-size:11.5px;color:#8494a4;margin-top:2px">📮 推断邮箱 · {esc(_e3.get("note",""))} ｜ 备选：{esc(_e3.get("alt",""))}</div></div>')
+        mail_html += _tel_html(ai, esc)
     rg=region_of(code).split("·")[0]
     return (f'<div class="card open" data-rg="{esc(rg)}">'
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
@@ -1665,7 +1761,7 @@ plex_body=f"""
 <div style="margin-top:10px"><b>高优先</b></div>{''.join(card(c) for c in high)}
 <div style="margin-top:10px"><b>中优先</b></div>{''.join(card(c) for c in mid)}
 <div style="margin-top:10px"><b>低优先</b></div>{''.join(card(c) for c in low)}</details>
-<div class="sec"><div class="sec-h">🤖 AI 已深查档案（{len(PRODUCT_DOSSIERS)} 家 · 含即查队列结果，每天自动补）</div>{ai_archive_html or '<div class="empty">暂无</div>'}</div>
+<div class="sec"><div class="sec-h">🤖 AI 已深查档案（{len(PRODUCT_DOSSIERS)} 家 · 雷达内自动深查，每天补）</div>{ai_archive_html or '<div class="empty">暂无</div>'}</div>
 <div class="sec"><div class="sec-h">否决池</div><table><tr><th>ID</th><th>公司</th><th>原因</th></tr>{reject_html}</table></div>
 <div class="foot">日志 logs/run_{datetime.date.today().strftime('%Y%m%d')}.log ｜ 标记跟进存在本机浏览器，换手机需重新标记</div>
 """
@@ -1683,6 +1779,49 @@ for p in PRODUCTS:
     fn=FILEMAP[p["key"]]
     (ROOT/fn).write_text(shell(p["name"], p["key"], pbody), encoding="utf-8")
     log(f"{fn} 已生成")
+
+# ---- 即查结果独立页（临时查的公司不进主看板）----
+def _inq_html():
+    if not _INQ:
+        return '<div class="empty">还没有即查记录。到任意产品页用「交给 AI 自动查（排队）」提交一家公司，下次自动任务跑完就会出现在这里。</div>'
+    rows=[]
+    for code, d in sorted(_INQ.items(), key=lambda kv: kv[1].get("name","")):
+        nm=d.get("name",""); pk=d.get("product_key","PLEX")
+        em=(d.get("email") or {}).get("to","")
+        emh=""
+        if em:
+            emh=f'<code style="background:#eef4fb;padding:1px 5px;border-radius:4px">{esc(em)}</code>'
+            emh+=f' · <span style="font-size:11.5px;color:#8494a4">{esc((d.get("email") or {}).get("note",""))}</span>'
+        ph="".join('<div>· <b>%s</b> <a class="ev" href="%s" target="_blank">🔗</a></div>'%(esc(x.get("num","")),esc(x.get("src",""))) for x in (d.get("phones") or []))
+        src=d.get("src") or ""
+        srch=f' <a class="ev" href="{esc(src)}" target="_blank">🔗 出处</a>' if src else ""
+        rows.append(f"""<div class="lead" data-rg="{esc(d.get('region','') or '')}">
+<div class="lead-top"><span class="badge">{esc(d.get('grade','中'))}</span><b>{esc(nm)}</b><span class="lc">{esc(code)}</span>
+<span class="indtag">{esc(pk)}</span><span class="indtag">🗺️ {esc(d.get('region','') or '待确认')}</span></div>
+<div style="font-size:12.5px;color:#3d4c5c;line-height:1.75;margin-top:4px">
+<b>判断：</b>{esc(d.get('demand','待验证'))} —— {esc(d.get('demand_reason',''))}<br>
+<b>信号：</b>{esc(d.get('signal',''))}<br>
+<b>联系人：</b>{esc(d.get('chief',''))}{srch}</div>
+{('<div style="font-size:12px;color:#0b6bcb;margin-top:3px">📮 '+emh+'</div>') if emh else ''}
+{('<div style="font-size:12px;color:#8a6b1f;margin-top:3px">📞 '+ph+'</div>') if ph else ''}
+</div>""")
+    return ('<div class="srchwrap"><input class="srch" id="q2" placeholder="🔍 输入公司名 / 代码 / 产品" oninput="flt2(this.value)">'
+            '<div class="rgbar" id="rgbar2"></div></div>'
+            '<div id="list2">'+"".join(rows)+'</div>')
+
+inq_body=f"""
+<div class="top"><h1>🔎 即查结果（临时查询 · 不进主看板）</h1></div>
+<div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
+<div class="sec"><div class="sec-h">已查 {len(_INQ)} 家</div>{_inq_html()}</div>
+<div class="foot">每次自动任务（09:00 / 20:30）处理 queue 队列，查完即写入本页</div>
+<script>
+function flt2(v){{var k=(v||'').toLowerCase(),n=0;
+ document.querySelectorAll('#list2 .lead').forEach(function(el){{
+  var t=el.innerText.toLowerCase(),ok=(!k)||t.indexOf(k)>=0;el.style.display=ok?'':'none';if(ok)n++;}});}}
+</script>
+"""
+(ROOT/"inquiry.html").write_text(shell("即查结果","PLEX",inq_body),encoding="utf-8")
+log(f"inquiry.html 已生成（即查 {len(_INQ)} 家）")
 
 # ============================================================
 # 4. 生成 leads.xlsx
