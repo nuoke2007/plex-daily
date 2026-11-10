@@ -5,7 +5,7 @@ PLEX 每日商机工具 · 本地每日运行脚本
 - 不爬任何登录墙/反爬平台（猎聘/BOSS/脉脉/领英/IATF customerportal 一律不碰，标人工）。
 - 产物：dashboard.html（双击即开）+ leads.xlsx + logs/run_YYYYMMDD.log
 """
-import json, os, re, sys, time, datetime, urllib.request, urllib.parse
+import json, os, re, sys, time, datetime, hashlib, urllib.request, urllib.parse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -611,8 +611,9 @@ def qk_panel(key, who, three, hook, rhint):
     <div style="font-size:11.8px;color:#5a6b7b;margin-top:8px">③ 查到具名人后，按下面这条链递话：</div>
     <div style="font-size:11.8px;line-height:1.75;color:#33414f;margin-top:3px">董秘/证券部公开问询转介 → 年报查证券部直线 → 行业论坛换名片 → 内部CRM找现有AM warm intro</div>
     <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="qk-copy" style="cursor:pointer;border:1px solid #003DA5;background:#fff;color:#003DA5;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">📋 复制「AI 深查指令」</button>
-      <span class="qk-tip" style="font-size:11.5px;color:#8494a4;align-self:center">复制后粘到对话里发我，我当场查完写真名+邮箱并部署上线</span>
+      <button class="qk-queue" style="cursor:pointer;border:none;background:#7a5af8;color:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">🚀 交给 AI 自动查（排队）</button>
+      <button class="qk-copy" style="cursor:pointer;border:1px solid #003DA5;background:#fff;color:#003DA5;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">📋 复制指令（急用·分钟级）</button>
+      <span class="qk-tip" style="font-size:11.5px;color:#8494a4;align-self:center">排队＝每天 09:00 / 20:30 自动查完入档；急用就复制指令发我，当场查</span>
     </div>
   </div>
   <details style="margin-top:8px"><summary style="cursor:pointer;font-size:11.8px;color:#8494a4">钩子话术（查到人后用）</summary>
@@ -644,6 +645,16 @@ def qk_panel(key, who, three, hook, rhint):
  }}
  box.querySelector('.qk-go').onclick=build;
  inp.onkeydown=function(e){{if(e.key==='Enter')build();}};
+ var qb=box.querySelector('.qk-queue');
+ if(qb)qb.onclick=function(){{
+  var n=(inp.value||'').trim();
+  if(!n){{inp.focus();return;}}
+  var fn='queue/'+enc(n)+'-{key}.txt';
+  var val=enc(n+' | {key}');
+  var url='https://github.com/nuoke2007/plex-daily/new/main?filename='+fn+'&value='+val;
+  window.open(url,'_blank');
+  tip.textContent='已打开 GitHub：点绿色「Commit changes」即加入队列';tip.style.color='#7a5af8';
+ }};
  cp.onclick=function(){{
   var t='帮我深查【'+cur+'】这家公司，产品线是 {key}：\\n'
    +'1) 近12个月有没有新基地投产/海外建厂/并购/技改/研发中心/数据平台类信号，判断它接下来会不会有 {key} 的选型需求，给明确判断（不要让我自己去判断）；\\n'
@@ -1321,7 +1332,8 @@ def ai_dossier(code, nm, p, finding):
     region = norm_region(d.get("region"))
     # 注意：不做"正文里扫省份"的兜底——会抓到公告里的子公司/项目所在地，
     # 把总部区域judge错（曾把云南的贵研铂业判成山东）。认不出就留待确认。
-    ds = {"role": (d.get("role") or PRODUCT_WHO_ROLE.get(p["key"], ("信息化/数字化负责人",""))[0])[:60],
+    ds = {"name": nm,
+          "role": (d.get("role") or PRODUCT_WHO_ROLE.get(p["key"], ("信息化/数字化负责人",""))[0])[:60],
           "why": (d.get("why") or "")[:100],
           "chief": chief,
           "demand": d.get("demand") or "待验证",
@@ -1341,6 +1353,52 @@ def ai_dossier(code, nm, p, finding):
         ds["email"] = email
     if not region: log("    区域未能归一（保留待确认）")
     return ds
+
+PLEX_PSEUDO = dict(key="PLEX", emoji="🚀", name="罗克韦尔 PLEX（SaaS MES）",
+    pos="海外绿地建厂/新基地投产的快速 MES 落地：几周上线、免运维、按订阅付费，绕开传统 MES 几百万+半年实施",
+    who="有海外建厂/新基地/并购扩张的上市制造企业；多工厂要统一制造运营标准",
+    three=["新厂投产时间表定了吗？老厂与新厂是不是一套标准？",
+           "多工厂的排产与制造执行口径统一了吗？",
+           "这次扩产是照搬老厂方案，还是重新选型？"],
+    hook="“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”")
+
+def queue_pass():
+    """即查模式接 AI：页面按钮在 queue/ 下建一个任务文件，CI 跑时自动查完入档并删除该文件"""
+    _load_ai_cache()
+    if not (GLM_KEY and TVLY_KEY): return
+    qdir = ROOT / "queue"
+    if not qdir.exists(): return
+    files = sorted(qdir.glob("*.txt"))
+    if not files: return
+    log(f"即查队列：{len(files)} 个待查任务")
+    for fp in files[:max(1, AI_MAX)]:
+        try:
+            raw = fp.read_text(encoding="utf-8").strip()
+        except Exception:
+            raw = ""
+        if not raw:
+            fp.unlink(missing_ok=True); continue
+        parts = [x.strip() for x in raw.replace("｜","|").split("|")]
+        nm = parts[0]
+        pk = (parts[1].upper() if len(parts) > 1 and parts[1] else "PLEX")
+        p = next((x for x in PRODUCTS if x["key"] == pk), None) or PLEX_PSEUDO
+        code = ""
+        m = re.search(r"\d{6}", nm)
+        if m: code = m.group(0)
+        if not code: code = "Q" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:8]
+        if code in PRODUCT_DOSSIERS:
+            log(f"  队列：{nm} 已入档，跳过")
+            fp.unlink(missing_ok=True); continue
+        log(f"  队列深查：{nm} [{p['key']}]")
+        ds = ai_dossier(code, nm, p, {"title": "（用户即查模式提交）"})
+        if ds:
+            PRODUCT_DOSSIERS[code] = ds; _AI_CACHE[code] = ds
+            if ds.get("region"): HQ_REGION[code] = ds["region"]
+            log(f"    ✓ 队列入档（{ds['demand']}/{ds['grade']}）")
+            fp.unlink(missing_ok=True)
+            _save_ai_cache()
+        else:
+            log(f"    队列：{nm} 未查到，保留文件待下次重试")
 
 def ai_research_pass():
     """新线索自动查档；已入档的跳过，不重复烧额度"""
@@ -1365,7 +1423,18 @@ def ai_research_pass():
                 continue
             d0 = age_info(h.get("ts"))[0]
             todo.append((d0 if d0 is not None else 999, c, nm, p, h))
-    todo.sort(key=lambda x: x[0])
+    # PLEX 的线索来自 new_findings（公告扫描），不在 product_findings，必须单独入队
+    for f in new_findings:
+        if f.get("phase") != "window": continue
+        c = (f.get("sec") or "").replace(".SH","").replace(".SZ","").zfill(6)
+        if not c or c in PRODUCT_DOSSIERS or c in _seen_code: continue
+        nm = (f.get("name") or c).strip()
+        if len(nm) < 2: continue
+        _seen_code.add(c)
+        d0 = age_info(f.get("ts"))[0]
+        todo.append((d0 if d0 is not None else 999, c, nm, PLEX_PSEUDO, f))
+    # PLEX 是首页，优先深查：先 PLEX 窗口期，再按公告新旧
+    todo.sort(key=lambda x: (0 if x[3].get("key") == "PLEX" else 1, x[0]))
     if todo:
         log(f"待 AI 深查（仅高优先窗口期）{len(todo)} 家，本次上限 {AI_MAX} 家")
     done = 0
@@ -1388,6 +1457,7 @@ def card_for(f):
     nm=f["name"] or f["sec"]
     code=(f["sec"] or "").replace(".SH","").replace(".SZ","").zfill(6)
     d=DOSSIERS.get(code)
+    ai=PRODUCT_DOSSIERS.get(code)
     if d:
         chief,lev,steps,loc=d["chief"],d["lev"],d["steps"],d["loc"]
         hook=d.get("hook") or "“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
@@ -1396,7 +1466,41 @@ def card_for(f):
         chief,lev,steps,loc=auto_dossier(nm, f["title"], f["rule"], ind)
         hook="“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
         badge='<span class="ev" style="color:#0b6bcb">⚙ AI 已自动解析公告（可深挖）</span>'
+    ai_html=""
+    if ai:
+        _dc={"是":"#137333","否":"#9aa7b4","待验证":"#b26a00"}.get(ai.get("demand"),"#b26a00")
+        _in=(ai.get("insider") or {})
+        _inetxt=""
+        if _in.get("name"):
+            _inetxt=('<div style="font-size:12px;color:#7a4b00;line-height:1.6">🧩 内部线索人：'
+                     + esc(_in.get("title") or "内部线索人") + ' <b>' + esc(_in.get("name","")) + '</b>'
+                     + ' <a class="ev" style="color:#0b6bcb" href="' + esc(_in.get("src","")) + '" target="_blank">🔗 出处</a></div>')
+        _srchtml=""
+        if ai.get("src"):
+            _srchtml=('<div style="font-size:11.5px"><a class="ev" style="color:#0b6bcb" href="'
+                      + esc(ai.get("src","")) + '" target="_blank">🔗 点开核实人名出处</a></div>')
+        ai_html=('<div style="margin-top:4px;background:#f7f5ff;border:1px solid #e3dcff;border-radius:8px;padding:8px 10px">'
+                 '<div style="font-size:12.5px;line-height:1.7">'
+                 '<span style="color:#7a5af8;font-weight:700">🤖 AI 自动查证</span>'
+                 ' <span style="color:' + _dc + ';font-weight:700">选型判断：' + esc(ai.get("demand","")) + '</span>'
+                 '<span style="color:#5a6b7b"> —— ' + esc(ai.get("demand_reason","")) + '</span></div>'
+                 '<div style="font-size:12px;color:#33414f;line-height:1.6">🔎 信号：' + esc(ai.get("signal","")) + '</div>'
+                 '<div style="font-size:12px;color:#0b6bcb;line-height:1.6">👤 ' + esc(ai.get("chief","")) + '</div>'
+                 + _srchtml + _inetxt + '</div>')
+        if ai.get("chief"): chief=ai["chief"]
+        badge='<span class="ev" style="color:#7a5af8">🤖 AI 自动查证（已覆盖模板判断）</span>'
     steps_html="".join(f'<div class="step"><b>{i+1}.</b>{esc(m)}</div>' for i,m in enumerate(steps))
+    mail_html=""
+    if ai and ai.get("email"):
+        import urllib.parse as _u3
+        _e3=ai["email"]
+        _sub3=_u3.quote(f"【{nm}】海外新厂 MES 快速上线交流——罗克韦尔 PLEX")
+        _body3=_u3.quote(f"您好，\n\n关注到 {nm} 的产能扩张/海外基地布局。PLEX 是订阅制 SaaS MES，几周上线、免运维，"
+                         f"适合新厂赶投产节点、老厂不想再投几百万的传统 MES。\n"
+                         f"想用 15 分钟聊聊：新厂 MES 时间表、与老厂是否一套标准。\n\n罗克韦尔自动化")
+        mail_html=(f'<div style="margin-top:6px"><a class="btn btn-mail" target="_blank" '
+                   f'href="mailto:{esc(_e3["to"])}?subject={_sub3}&body={_body3}">📧 直接写邮件给 {esc(_e3["to"])}</a>'
+                   f'<div style="font-size:11.5px;color:#8494a4;margin-top:2px">📮 推断邮箱 · {esc(_e3.get("note",""))} ｜ 备选：{esc(_e3.get("alt",""))}</div></div>')
     rg=region_of(code).split("·")[0]
     return (f'<div class="card open" data-rg="{esc(rg)}">'
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
@@ -1406,14 +1510,19 @@ def card_for(f):
       '<div class="card-b">'
       f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
       f'<div class="row">{badge}</div>'
+      f'{ai_html}'
       f'<div class="row"><b>决策人：</b>{esc(chief)}</div>'
       f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
       f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
+      f'{mail_html}'
       f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>'
       f'{contact_links(code,nm)}'
       f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
       f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>'
       '</div></div>')
+# 先跑 AI 深查，再渲染卡片——否则 PLEX 卡片永远拿不到当天的档案
+queue_pass()
+ai_research_pass()
 cards_win="".join(card_for(f) for f in new_findings if f.get("phase")=="window")
 cards_fresh="".join(card_for(f) for f in new_findings if f.get("phase")=="fresh")
 cards_old="".join(card_for(f) for f in new_findings if f.get("phase")=="old")
@@ -1511,7 +1620,27 @@ def shell(title, active, body):
 
 # ---- PLEX 首页 ----
 # 新线索自动深查（先查档，再渲染，页面里看到的就是查过的）
-ai_research_pass()
+def _ai_archive():
+    rows=[]
+    for c,d in sorted(PRODUCT_DOSSIERS.items(), key=lambda x: x[1].get("researched",""), reverse=True):
+        nm=d.get("name") or c
+        grade=d.get("grade",""); dem=d.get("demand","")
+        _gc={"高":"#d93025","中":"#b26a00","低":"#8494a4"}.get(grade,"#8494a4")
+        _dc={"是":"#137333","否":"#9aa7b4","待验证":"#b26a00"}.get(dem,"#b26a00")
+        ch=(d.get("chief") or "")[:90]
+        em=(d.get("email") or {}).get("to","")
+        rg=d.get("region") or "待确认"
+        link=(f'<a class="ev" style="color:#0b6bcb" href="{esc(d["src"])}" target="_blank">出处 ↗</a>' if d.get("src") else "—")
+        rows.append('<tr><td><b>'+esc(nm)+'</b><div style="font-size:11px;color:#8494a4">'+esc(c)+'</div></td>'
+                    '<td style="white-space:nowrap">'+esc(rg)+'</td>'
+                    '<td><span style="color:'+_gc+';font-weight:700">'+esc(grade)+'</span> · <span style="color:'+_dc+'">'+esc(dem)+'</span></td>'
+                    '<td>'+esc(ch)+' '+link+'</td>'
+                    '<td>'+((('<span style="color:#0b6bcb">'+esc(em)+'</span>')) if em else '<span style="color:#8494a4">—</span>')+'</td></tr>')
+    return ('<table style="width:100%;font-size:12px;border-collapse:collapse">'
+            '<tr><th style="text-align:left">公司</th><th style="text-align:left">总部大区</th>'
+            '<th style="text-align:left">判断</th><th style="text-align:left">决策人</th><th style="text-align:left">邮箱</th></tr>'
+            + "".join(rows) + '</table>')
+ai_archive_html=_ai_archive()
 plex_body=f"""
 <div class="top"><h1><img class="hdrlogo" src="logo-plex.png" alt=""> PLEX 每日商机 · 今天该干什么</h1></div>
 <div class="kpis">
@@ -1536,6 +1665,7 @@ plex_body=f"""
 <div style="margin-top:10px"><b>高优先</b></div>{''.join(card(c) for c in high)}
 <div style="margin-top:10px"><b>中优先</b></div>{''.join(card(c) for c in mid)}
 <div style="margin-top:10px"><b>低优先</b></div>{''.join(card(c) for c in low)}</details>
+<div class="sec"><div class="sec-h">🤖 AI 已深查档案（{len(PRODUCT_DOSSIERS)} 家 · 含即查队列结果，每天自动补）</div>{ai_archive_html or '<div class="empty">暂无</div>'}</div>
 <div class="sec"><div class="sec-h">否决池</div><table><tr><th>ID</th><th>公司</th><th>原因</th></tr>{reject_html}</table></div>
 <div class="foot">日志 logs/run_{datetime.date.today().strftime('%Y%m%d')}.log ｜ 标记跟进存在本机浏览器，换手机需重新标记</div>
 """
