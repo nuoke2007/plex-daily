@@ -24,6 +24,10 @@ jobs:
           SERVERCHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
           BARK_KEY: ${{ secrets.BARK_KEY }}
           SITE_URL: ${{ secrets.SITE_URL }}
+          GLM_KEY: ${{ secrets.GLM_KEY }}
+          TAVILY_KEY: ${{ secrets.TAVILY_KEY }}
+          AI_MAX: "4"
+
         run: python scripts/run_daily.py
       - name: commit dashboard
         run: |
