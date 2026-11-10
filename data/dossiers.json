@@ -1,0 +1,82 @@
+{
+ "600459": {
+  "role": "制造部门负责人",
+  "why": "该项目涉及生产制造，制造部门负责人负责生产线的升级和改造。",
+  "chief": "未具名（决策人）：已锁定转介人 —— 董事会秘书 陈国林。董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案",
+  "demand": "是",
+  "demand_reason": "贵研铂业控股子公司贵研中希（上海）新材料科技有限公司投资建设高精度高性能复合材料生产基地项目，需统一标准及升级改造。",
+  "signal": "贵研铂业控股子公司贵研中希（上海）新材料科技有限公司投资建设高精度高性能复合材料生产基地项目，投资额4.35亿元。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://notice.10jqka.com.cn/api/pdf/4aeed3d79333f5ea.pdf",
+  "referral": "陈国林",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "chenguolin@ipm.com.cn",
+   "alt": "chenguolin@ipm.com.cn（同域名变体：姓.名 / 名.姓）",
+   "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
+  }
+ },
+ "603906": {
+  "role": "信息中心主任",
+  "why": "根据材料，龙蟠科技可能需要提升海外业务的信息化管理能力，信息中心主任负责公司信息化建设，最适合对接。",
+  "chief": "🤖 AI 查证：董事长 石俊峰（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "龙蟠科技海外工厂拿下50亿大单，客户是亿纬锂能子公司，表明其海外业务扩张迅速，可能需要PTC Windchill (PLM)来支持多研发中心协同和数据管理。",
+  "signal": "龙蟠科技海外工厂拿下50亿大单，客户是亿纬锂能子公司（2025-06-02）",
+  "grade": "中",
+  "region": "华东·江苏",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=603906&id=12198535",
+  "referral": "",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "shifeng@lopal.cn",
+   "alt": "shifeng@lopal.cn（同域名变体：姓.名 / 名.姓）",
+   "note": "官网域名lopal.cn；按A股制造业惯例推断，首封先测退信"
+  }
+ },
+ "002469": {
+  "role": "信息化部门",
+  "why": "技改项目涉及信息化升级，信息化部门负责相关技术选型和实施。",
+  "chief": "未具名（决策人）：已锁定转介人 —— 董事会秘书 张军。董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案",
+  "demand": "是",
+  "demand_reason": "公司进行技改项目，可能需要设备互联、OEE透明化和预测性维护解决方案。",
+  "signal": "三维化学（002469）关于醋酸丁酸纤维素产品优化提升技改项目（年产5万吨异辛酸项目）进展的公告",
+  "grade": "中",
+  "region": "华东·山东",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=002469&id=12060008",
+  "referral": "张军",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "zhangjun@sdsunway.com.cn",
+   "alt": "zhangjun@sdsunway.com.cn（同域名变体：姓.名 / 名.姓）",
+   "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
+  }
+ },
+ "300318": {
+  "role": "生产管理部经理",
+  "why": "生产管理部经理负责生产系统的升级和优化。",
+  "chief": "🤖 AI 查证：公司负责人 沈治卫（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "博晖创新计划在曲靖血制基地进行二期扩建，并提升旧基地产能，这表明对生产管理系统有升级需求。",
+  "signal": "2026年Q3启动曲靖血制基地二期扩建，总投资约2.5亿元，2027年Q1投产。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=300318&id=12190086",
+  "referral": "",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "shenzw@bohui-tech.com",
+   "alt": "shenzw@bohui-tech.com（同域名变体：姓.名 / 名.姓）",
+   "note": "官网域名bohui-tech.com；按A股制造业惯例推断，首封先测退信"
+  }
+ }
+}
