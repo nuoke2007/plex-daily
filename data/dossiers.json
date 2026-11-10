@@ -562,5 +562,112 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
   }
+ },
+ "002843": {
+  "name": "泰嘉股份",
+  "role": "海外事业部负责人",
+  "why": "泰嘉股份正在推进海外生产基地建设，需要统一制造运营标准。",
+  "chief": "🤖 AI 查证：董事长兼总裁 方鸿（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）",
+  "demand": "是",
+  "demand_reason": "泰嘉股份在泰国孙公司增资用于生产基地建设，表明有海外建厂需求。",
+  "signal": "泰嘉股份对泰国孙公司增资5000万元获备案，标志着其海外生产基地建设进入实质性推进阶段。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://www.bichamp.com/index.php?m=home&c=View&a=index&aid=235",
+  "referral": "",
+  "chief_name": "方鸿",
+  "insider": null,
+  "tier": "拍板",
+  "phones": [],
+  "researched": "2026-11-10",
+  "email": {
+   "to": "fanghong@bichamp.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
+  }
+ },
+ "300791": {
+  "name": "仙乐健康",
+  "role": "信息技术部门",
+  "why": "新基地投产需要MES系统支持，信息技术部门负责此类项目。",
+  "chief": "🤖 AI 查证：副总经理兼财务负责人 郑丽群（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）",
+  "demand": "是",
+  "demand_reason": "仙乐健康在泰国建设生产基地二期工程，需快速MES落地以支持新基地投产。",
+  "signal": "仙乐健康宣布拟投资不超过3800万美元，在泰国春武里府现有厂区内建设二期工程。",
+  "grade": "高",
+  "region": "华南·广东",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=300791&id=12174326",
+  "referral": "",
+  "chief_name": "郑丽群",
+  "insider": null,
+  "tier": "拍板",
+  "phones": [
+   {
+    "num": "0754-89983800",
+    "src": "http://file.finance.sina.com.cn/211.154.219.97:9494/MRGG/CNSESZ_STOCK/2026/2026-8/2026-08-29/12573350.PDF",
+    "ctx": " 深圳证券交易所 联系人和联系方式 董事会秘书 证券事务代表 姓名 刘若阳 陈安妮 电话 "
+   },
+   {
+    "num": "0754-88810300",
+    "src": "http://notice.10jqka.com.cn/api/pdf/25165b410193e5fc.pdf",
+    "ctx": "汕头市泰山路83 号 电话 0754-89983800 0754-89983800 传真 "
+   }
+  ],
+  "researched": "2026-11-10"
+ },
+ "002429": {
+  "name": "兆驰股份",
+  "role": "生产运营部门",
+  "why": "生产运营部门负责生产基地的日常运营和管理，需要MES系统来支持。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "兆驰股份计划在墨西哥建设生产基地，需要快速MES落地以支持新基地的运营。",
+  "signal": "兆驰股份计划投资建设墨西哥生产基地，投资规模不超过3,833.00万美元。",
+  "grade": "高",
+  "region": "华东·上海",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [],
+  "researched": "2026-11-10"
+ },
+ "300818": {
+  "name": "耐普矿机",
+  "role": "生产部经理",
+  "why": "生产部经理负责生产管理和MES系统选型。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "耐普矿机海外业务扩张，需快速MES落地支持多工厂统一制造运营标准。",
+  "signal": "耐普矿机持续推进海外产能落地，构建全域覆盖的产业服务网络。",
+  "grade": "高",
+  "region": "华东·江西",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [
+   {
+    "num": "0793-8457210",
+    "src": "http://static.cninfo.com.cn/finalpage/2022-08-25/1214387691.PDF",
+    "ctx": "经济技术开发区吉 利大道18 号 江西省上饶市上饶经济技术开发区吉 利大道18 号 电话 "
+   },
+   {
+    "num": "0793-8461088",
+    "src": "https://file.finance.qq.com/finance/hs/pdf/2025/08/27/1224578268.PDF",
+    "ctx": "发区经开大 道318 号 电话 0793-8457210 0793-8457210 传真 "
+   }
+  ],
+  "researched": "2026-11-10"
  }
 }

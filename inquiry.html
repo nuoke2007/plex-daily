@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>即查结果</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#fff;color:#1a1a1a;font-size:13.5px;line-height:1.6}
+.wrap{max-width:1280px;margin:0 auto;padding:32px 36px 60px}
+.top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+h1{font-size:24px;color:#003DA5;letter-spacing:-.3px}
+.sub{color:#5a6b7d;font-size:12.5px;margin-bottom:20px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px}
+.kpi{border:1px solid #e3ebf3;border-radius:8px;padding:12px 16px;background:#fafcfe}
+.kpi .n{font-size:22px;font-weight:700;color:#003DA5}
+.kpi .l{font-size:11.5px;color:#5a6b7d;margin-top:2px}
+.sec{margin-bottom:30px}
+.sec-h{font-size:16px;color:#003DA5;border-bottom:2px solid #003DA5;padding-bottom:7px;margin-bottom:14px;font-weight:700}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-right:4px}
+.tag-seed{background:#e8f0fa;color:#0059b3}
+.tag-auto{background:#e8f6ee;color:#0a7f3f}
+.tag-manual{background:#fdf3e3;color:#b26a00}
+.card{border:1px solid #e3ebf3;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.card-h{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#f7fafd;cursor:pointer}
+.card-h .cid{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:#00B5E2;font-weight:700;min-width:38px}
+.card-h .nm{font-size:14px;font-weight:700;color:#003DA5}
+.card-h .code{font-size:11px;color:#8494a4}
+.card-h .base{font-size:12px;color:#5a6b7d;margin-left:4px}
+.card-h .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.feas{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:5px}
+.feas-高{background:#e8f6ee;color:#0a7f3f}
+.feas-中{background:#fdf3e3;color:#b26a00}
+.feas-低{background:#fdeaea;color:#b02a2a}
+.grade{font-size:11px;color:#8494a4}
+.card-b{padding:14px 16px;display:none}
+.card.open .card-b{display:block}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col{border-radius:8px;padding:12px 14px}
+.col-auto{background:#f4faf6;border-left:3px solid #0a7f3f}
+.col-manual{background:#fff9ec;border-left:3px solid #b26a00}
+.col h4{font-size:12.5px;margin-bottom:8px}
+.col-auto h4{color:#0a7f3f}
+.col-manual h4{color:#b26a00}
+.col ul{margin-left:18px;font-size:12.5px}
+.col li{margin-bottom:5px}
+.row{padding:4px 0;font-size:12.5px;color:#33475b}
+.row b{color:#1f2d3d}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px}
+th{background:#003DA5;color:#fff;padding:7px 9px;text-align:left;font-weight:600}
+td{padding:7px 9px;border-bottom:1px solid #e8eef5;vertical-align:top}
+tr:nth-child(even) td{background:#fafcfe}
+.empty{background:#f5f7fa;border:1px dashed #cdd9e5;border-radius:8px;padding:16px;color:#5a6b7d;font-size:12.5px}
+a{color:#0059b3;text-decoration:none}
+.foot{font-size:11.5px;color:#8494a4;border-top:1px solid #e8eef5;padding-top:12px;margin-top:20px}
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.lg{border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.55}
+.lg-h{background:#e8f6ee;border-left:3px solid #0a7f3f}
+.lg-m{background:#fdf3e3;border-left:3px solid #b26a00}
+.lg-l{background:#fdeaea;border-left:3px solid #b02a2a}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.btn{display:inline-block;padding:9px 14px;border-radius:7px;font-size:12.5px;font-weight:600;text-decoration:none;border:1px solid transparent}
+.btn-mail{background:#003DA5;color:#fff}
+.btn-link{background:#eef4fb;color:#003DA5;border-color:#c5d8ee}
+.step{margin:5px 0;font-size:12.5px;line-height:1.55}
+.step b{color:#003DA5;margin-right:4px}
+.ev{margin-top:6px;font-size:11.5px;color:#6b7d90;line-height:1.5}
+details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
+.navchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:18px;background:#003DA5;color:#fff;font-size:12.5px;font-weight:600;text-decoration:none;border:1px solid #003DA5}
+.chip.alt{background:#fff;color:#003DA5;border:1px solid #c5d8ee}
+.navlogo{height:18px;width:auto;display:block;background:#fff;border-radius:3px;padding:1px 3px}
+.chip .navlogo{background:#fff}
+.hdrlogo{height:34px;width:auto;vertical-align:middle;background:#fff;border-radius:4px;padding:2px 6px}
+.prod{border:1px solid #e3ebf3;border-radius:12px;margin-bottom:18px;overflow:hidden}
+.prod-h{padding:12px 16px;background:#003DA5;color:#fff;font-size:15px;font-weight:700}
+.prod-h small{font-weight:400;font-size:12px;opacity:.85;margin-left:8px}
+.prod-b{padding:14px 16px;display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+@media(max-width:760px){.prod-b{grid-template-columns:1fr}}
+.prod-sop .row{margin-bottom:7px;font-size:12.5px}
+.prod-sop .row b{color:#003DA5}
+.q{background:#f7fafd;border-radius:6px;padding:7px 10px;margin:4px 0;font-size:12px;color:#33475b}
+.hook{background:#fff9ec;border-left:3px solid #b26a00;border-radius:6px;padding:8px 11px;font-size:12.5px;margin-top:6px}
+.prod-signal{background:#fafcfe;border-radius:8px;padding:10px 12px;border:1px solid #e8eef5}
+.prod-signal h5{font-size:12.5px;color:#0a7f3f;margin-bottom:6px}
+.sighit{font-size:12px;padding:5px 0;border-bottom:1px dashed #e8eef5}
+.sighit a{font-weight:600}
+.sighit .nm{color:#8494a4;font-size:11px}
+.lead{border:1px solid #e3ebf3;border-radius:9px;padding:11px 13px;margin-bottom:9px;background:#fff}
+.lead-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.lead-top .lc{color:#8494a4;font-size:11px}
+.lead-top .indtag{margin-left:auto;background:#eef4fb;color:#003DA5;font-size:11px;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;color:#fff}
+.badge.gh{background:#0a7f3f}.badge.gm{background:#b26a00}.badge.gl{background:#9aa7b4}
+.lead-t{display:block;font-size:13px;font-weight:600;color:#003DA5;margin:3px 0}
+.why{font-size:12px;color:#33475b;margin:2px 0}
+.nxt{font-size:12px;color:#b26a00;margin:3px 0 7px}
+</style>
+<style>.fu-btn{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#003DA5;border-radius:6px;padding:4px 10px;font-size:12px;margin-left:4px}.fu-btn.done{background:#e6f4ea;color:#137333;border-color:#137333}.fu-item{background:#fff8e1;border:1px solid #f0c36d;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px}.fu-item button{margin-left:6px;cursor:pointer;border:none;border-radius:6px;padding:4px 10px;font-size:12px;background:#003DA5;color:#fff}</style>
+</head><body>
+<div class="wrap">
+<div class="navchips"><a class="chip" href="dashboard.html"><img class="navlogo" src="logo-plex.png" alt=""><span>PLEX</span></a><a class="chip alt" href="ftpc.html"><img class="navlogo" src="logo-ft.png" alt=""><span>FTPC</span></a><a class="chip alt" href="thingworx.html"><img class="navlogo" src="logo-twx.png" alt=""><span>ThingWorx</span></a><a class="chip alt" href="windchill.html"><img class="navlogo" src="logo-wind.png" alt=""><span>Windchill</span></a><a class="chip alt" href="datamosaix.html"><img class="navlogo" src="logo-ft.png" alt=""><span>DataMosaix</span></a></div>
+
+<div id="fu-banner"></div>
+<script>
+(function(){
+  var KEY='fu_marks_v1';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}}
+  function save(m){localStorage.setItem(KEY,JSON.stringify(m))}
+  function fmt(ts){var d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate();}
+  function paintBtns(){
+    document.querySelectorAll('.fu-btn').forEach(function(b){
+      var m=load()[b.getAttribute('data-fu')];
+      if(m){b.textContent='✅ 已标记 '+fmt(m.ts);b.classList.add('done');}
+      else{b.textContent='📌 标记今天跟进';b.classList.remove('done');}
+    });
+  }
+  function paintBanner(){
+    var m=load(), box=document.getElementById('fu-banner'), now=Date.now(), html='';
+    Object.keys(m).forEach(function(k){
+      var e=m[k]; if(e.snooze && e.snooze>now) return;
+      var days=(now-e.ts)/86400000;
+      if(days>=2){
+        html+='<div class="fu-item">🔔 <b>'+k+'</b> —— 你 '+Math.floor(days)+' 天前标记跟进，完成了吗？ '
+          +'<button data-act="done" data-k="'+k+'">✅ 已完成</button> '
+          +'<button data-act="snooze" data-k="'+k+'">⏰ 过两天再问</button></div>';
+      }
+    });
+    box.innerHTML=html;
+  }
+  document.body.addEventListener('click',function(ev){
+    var b=ev.target;
+    if(!b||!b.getAttribute) return;
+    var k=b.getAttribute('data-fu'), act=b.getAttribute('data-act');
+    if(k && b.classList.contains('fu-btn')){
+      var m=load();
+      if(m[k]){delete m[k];}else{m[k]={name:k,ts:Date.now()};}
+      save(m); paintBtns(); paintBanner();
+    }
+    else if(act){
+      var m=load();
+      if(act==='done'){delete m[k];}
+      else if(act==='snooze'){if(m[k])m[k].snooze=Date.now()+2*86400000;}
+      save(m); paintBanner();
+    }
+  });
+  paintBtns(); paintBanner();
+})();
+</script>
+
+<div class="top"><h1>🔎 即查结果（临时查询 · 不进主看板）</h1></div>
+<div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
+<div class="sec"><div class="sec-h">已查 0 家</div><div class="empty">还没有即查记录。到任意产品页用「交给 AI 自动查（排队）」提交一家公司，下次自动任务跑完就会出现在这里。</div></div>
+<div class="foot">每次自动任务（09:00 / 20:30）处理 queue 队列，查完即写入本页</div>
+<script>
+function flt2(v){var k=(v||'').toLowerCase(),n=0;
+ document.querySelectorAll('#list2 .lead').forEach(function(el){
+  var t=el.innerText.toLowerCase(),ok=(!k)||t.indexOf(k)>=0;el.style.display=ok?'':'none';if(ok)n++;});}
+</script>
+
+</div></body></html>
