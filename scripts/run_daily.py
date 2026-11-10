@@ -653,15 +653,27 @@ def render_product(p):
     chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(
         f'<button class="rg-chip" data-rg="{esc(rg)}">{esc(rg)}</button>' for rg in rg_order)
     rg_filter_js="""
-<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}</style>
+<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}.srch{width:100%;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:7px 11px;font-size:12.5px;color:#33475b;margin:2px 0 8px 0;outline:none}.srch:focus{border-color:#003DA5;box-shadow:0 0 0 3px rgba(0,61,165,.08)}.srch-empty{display:none;padding:10px;font-size:12px;color:#8494a4;text-align:center}</style>
 <script>
 (function(){var bar=document.getElementById('rgbar');if(!bar)return;
+var inp=bar.querySelector('.srch'), rg='全部';
+function apply(){
+ var q=(inp&&inp.value||'').trim().toLowerCase(), n=0;
+ document.querySelectorAll('.lead,.rg-head').forEach(function(el){
+   var okr=(rg==='全部'||el.getAttribute('data-rg')===rg);
+   var oks=true;
+   if(q){ oks=(el.textContent||'').toLowerCase().indexOf(q)>=0 && el.classList.contains('lead'); }
+   var show=okr&&oks;
+   if(show&&el.classList.contains('lead')) n++;
+   el.style.display=show?'':'none';});
+ var em=bar.parentNode.querySelector('.srch-empty');
+ if(em){ em.style.display=(q&&n===0)?'block':'none'; }
+}
 bar.querySelectorAll('.rg-chip').forEach(function(c){c.onclick=function(){
-bar.querySelectorAll('.rg-chip').forEach(function(x){x.classList.remove('active')});c.classList.add('active');
-var rg=c.getAttribute('data-rg');
-document.querySelectorAll('.lead,.rg-head').forEach(function(el){
-el.style.display=(rg==='全部'||el.getAttribute('data-rg')===rg)?'':'none';});
-};});})();
+ bar.querySelectorAll('.rg-chip').forEach(function(x){x.classList.remove('active')});c.classList.add('active');
+ rg=c.getAttribute('data-rg'); apply();};});
+if(inp){ inp.oninput=apply; }
+})();
 </script>"""
     if not cards:
         cards='<div class="empty" style="padding:14px;font-size:12.5px;color:#8494a4">今日无合格线索（已过滤财报/治理类公告，只留有新产能·并购·技改信号的；雷达每天自动扫）</div>'
@@ -673,7 +685,8 @@ el.style.display=(rg==='全部'||el.getAttribute('data-rg')===rg)?'':'none';});
   <div class="prod-b" style="grid-template-columns:1fr">
     <div>
       <div style="font-size:12.5px;color:#33475b;margin:2px 0 10px">🆕 今日自动线索 <b style="color:#003DA5">{total}</b> 条 · 已按优先级排序（高在前）</div>
-      <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}</div>
+      <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 安琪、600298）" autocomplete="off"></div>
+      <div class="srch-empty">没有匹配的线索，换个关键词试试</div>
       {cards}
       {rg_filter_js}
       <details style="margin-top:12px"><summary style="font-size:12px;color:#8494a4">📖 这款产品的打法参考（打谁/三问/钩子，平时不用看）</summary>
@@ -999,15 +1012,25 @@ for f in new_findings:
     if r not in _plex_rg: _plex_rg.append(r)
 _plex_chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(f'<button class="rg-chip" data-rg="{esc(r)}">{esc(r)}</button>' for r in _plex_rg)
 _plex_filter_js="""
-<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}</style>
+<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}.srch{width:100%;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:7px 11px;font-size:12.5px;color:#33475b;margin:2px 0 8px 0;outline:none}.srch:focus{border-color:#003DA5;box-shadow:0 0 0 3px rgba(0,61,165,.08)}.srch-empty{display:none;padding:10px;font-size:12px;color:#8494a4;text-align:center}</style>
 <script>
 (function(){var bar=document.getElementById('rgbar');if(!bar)return;
+var inp=bar.querySelector('.srch'), rg='全部';
+function apply(){
+ var q=(inp&&inp.value||'').trim().toLowerCase(), n=0;
+ document.querySelectorAll('.card[data-rg]').forEach(function(el){
+   var okr=(rg==='全部'||el.getAttribute('data-rg')===rg);
+   var oks=!q||(el.textContent||'').toLowerCase().indexOf(q)>=0;
+   if(okr&&oks) n++;
+   el.style.display=(okr&&oks)?'':'none';});
+ var em=bar.parentNode.querySelector('.srch-empty');
+ if(em){ em.style.display=(q&&n===0)?'block':'none'; }
+}
 bar.querySelectorAll('.rg-chip').forEach(function(c){c.onclick=function(){
-bar.querySelectorAll('.rg-chip').forEach(function(x){x.classList.remove('active')});c.classList.add('active');
-var rg=c.getAttribute('data-rg');
-document.querySelectorAll('.card[data-rg]').forEach(function(el){
-el.style.display=(rg==='全部'||el.getAttribute('data-rg')===rg)?'':'none';});
-};});})();
+ bar.querySelectorAll('.rg-chip').forEach(function(x){x.classList.remove('active')});c.classList.add('active');
+ rg=c.getAttribute('data-rg'); apply();};});
+if(inp){ inp.oninput=apply; }
+})();
 </script>"""
 
 reject_html="".join(f"<tr><td>{r['id']}</td><td>{r['name']} {r['code']}</td><td>{esc(r['why'])}</td></tr>" for r in REJECTED)
@@ -1082,7 +1105,8 @@ plex_body=f"""
   <div class="kpi"><div class="n">{n_window}</div><div class="l">🟢 正好选型窗口</div></div>
   <div class="kpi"><div class="n">{manual_total}</div><div class="l">待手动跟进</div></div>
 </div>
-<div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}</div>
+<div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 均普、600699）" autocomplete="off"></div>
+<div class="srch-empty">没有匹配的线索，换个关键词试试</div>
 <div class="sec"><div class="sec-h">🟢 高优先 · 正好选型窗口（公告后1-9个月，今天就打）{n_window} 家</div>{cards_win or '<div class="empty">今日无窗口期命中</div>'}</div>
 <div class="sec"><div class="sec-h">🟡 中优先 · 刚公告（≤1个月，先观察）</div>{cards_fresh or '<div class="empty">无</div>'}</div>
 <div class="sec"><div class="sec-h">🗄 低优先 · 超9个月（可能已选型，存量观察）</div>{cards_old or '<div class="empty">无</div>'}</div>
