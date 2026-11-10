@@ -719,6 +719,13 @@ def render_product(p):
                 _chief += f'<div style="font-size:12px;color:#0b6bcb;line-height:1.6;margin-top:2px">👤 {esc(_d["chief"])}</div>'
                 if _d.get("src"):
                     _chief += f'<div style="font-size:11.5px;margin-top:1px"><a class="ev" style="color:#0b6bcb" href="{esc(_d["src"])}" target="_blank">🔗 点开核实人名出处</a></div>'
+                _ins=_d.get("insider")
+                if _ins:
+                    _it=esc(_ins.get("title") or "内部线索人"); _inm=esc(_ins.get("name","")); _iu=esc(_ins.get("src",""))
+                    _chief += ('<div style="font-size:12px;color:#7a4b00;line-height:1.6;margin-top:2px">🧩 内部线索人：'
+                               + _it + ' <b>' + _inm + '</b>'
+                               + ' <span style="color:#8494a4">（可作引荐桥梁：同一条项目/技术线上的人，比冷邮件近一层）</span>'
+                               + ' <a class="ev" style="color:#0b6bcb" href="' + _iu + '" target="_blank">🔗 出处</a></div>')
                 if _d.get("email"):
                     import urllib.parse as _u2
                     _e=_d["email"]
@@ -1180,6 +1187,11 @@ _AI_SYS = (
  "输出严格 JSON，不要任何解释文字。人名必须逐字出现在材料中才可填，否则填空字符串。"
 )
 
+def _same_subject(nm, c):
+    """人名所在材料是否讲的就是这家公司：公司名后 4 字内出现'股份'，拦掉'浙大联科'这类同名不同家"""
+    if not (nm and c): return False
+    return re.search(re.escape(nm) + r"[^，。；\s]{0,4}股份", c) is not None
+
 def ai_dossier(code, nm, p, finding):
     """对一家公司做一次自动深查，返回 dossier dict；证据不足则返回 None"""
     if not (GLM_KEY and TVLY_KEY): return None
@@ -1188,7 +1200,9 @@ def ai_dossier(code, nm, p, finding):
     logs = []
     qs = [f"{nm} 海外 建厂 投资 新基地 扩产 2025 2026",
           f"{nm} 信息化 数字化 IT 负责人 MES 智能制造 项目",
-          f"{nm} 总部 地址 年报 董事会秘书 联系电话"]
+          f"{nm} 总部 地址 年报 董事会秘书 联系电话",
+          f'"{nm}" 信息总监 OR 数字化总监 OR 信息化负责人 OR 智能制造负责人',  # 实名+职务出现在媒体报道最稳
+          f'"{nm}" 中标 智能制造 项目 负责人 联系人']                        # 招投标材料常留项目联系人真名
     for q in qs:
         logs += tavily(q, 4)
     seen, hits = set(), []
@@ -1201,7 +1215,7 @@ def ai_dossier(code, nm, p, finding):
         return None
     urls = [h["url"] for h in hits]
     ctx = "\n".join(f"[{i+1}] {h['title']}\nURL: {h['url']}\n{h['content'][:700]}"
-                    for i, h in enumerate(hits))[:9000]
+                    for i, h in enumerate(hits))[:11000]
     playbook = (f"产品：{p['name']}｜定位：{p['pos']}\n目标客户：{p['who']}\n"
                 f"验证真需求的三问：{' / '.join(p['three'])}")
     user = f"""公司：{nm}（{code}），本次触发的公告标题：{finding.get('title','')}
@@ -1223,6 +1237,9 @@ def ai_dossier(code, nm, p, finding):
  "chief_name":"材料中逐字出现的负责人姓名；查不到填空字符串",
  "chief_title":"他的职务，如 信息中心主任",
  "chief_source":"chief_name 出现的那条材料的完整URL，必须来自上面列表；查不到填空字符串",
+ "insider_name":"专利发明人或招标公告里的项目联系人真名（只能是材料中逐字出现的，且不是董秘/董事长）；查不到填空字符串",
+ "insider_title":"他的身份，如 专利发明人 / 某项目联系人 / 技术中心主任",
+ "insider_source":"insider_name 出现的那条材料的完整URL，必须来自上面列表；查不到填空字符串",
  "domain":"该公司企业邮箱域名，如 angelyeast.com；查不到填空字符串",
  "email_guess":"按该域名与中文姓名拼音推断的最可能邮箱；查不到填空字符串"
 }}"""
@@ -1246,13 +1263,32 @@ def ai_dossier(code, nm, p, finding):
         cand += [h for h in hits if h["url"] != src]
         got = ""
         for h in cand:
-            if name in (h["content"] or "") and nm in (h["content"] or ""):
+            c = (h["content"] or "")
+            if name in c and _same_subject(nm, c):
                 got = h["url"]; break
         if got:
             src = got
         else:
             log(f"    人名「{name}」在检索原文中未命中 → 未具名")
             name = ""; src = ""
+
+    # —— 内部线索人（专利发明人/招标项目联系人）：同样要求原文逐字命中 ——
+    iname = (d.get("insider_name") or "").strip()
+    isrc = ""
+    if iname and not any(w in iname for w in bad_words) and len(iname) >= 2 and iname != name:
+        for h in hits:
+            c = (h["content"] or "")
+            if iname in c and _same_subject(nm, c):
+                isrc = h["url"]; break
+        if not isrc:
+            log(f"    内部线索人「{iname}」未在原文命中 → 丢弃"); iname = ""
+    else:
+        iname = ""
+    insider = None
+    if iname:
+        insider = {"name": iname,
+                   "title": (d.get("insider_title") or "内部线索人")[:40],
+                   "src": isrc}
 
     # —— 域名校验：必须真实出现在材料里 ——
     domain = (d.get("domain") or "").strip().lower().lstrip("@")
@@ -1276,8 +1312,11 @@ def ai_dossier(code, nm, p, finding):
         referral = name
     elif name:
         chief = f"🤖 AI 查证：{_title} {name}（来源可点开核实）"
+    elif insider and any(k in insider["title"] for k in ("联系人","项目负责","主任","经理","部长","总监")):
+        chief = (f"未具名（决策人）：但从招投标材料挖到项目线具名人 —— "
+                 f"{insider['title']} {insider['name']}。可直接按招标联系方式触达，比董秘更近一层")
     else:
-        chief = "未具名：AI 已跑 3 轮公开源（公告/官网/新闻/招聘），未见可靠具名负责人；走董秘转介 + 年报证券部直线"
+        chief = "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线"
 
     region = norm_region(d.get("region"))
     # 注意：不做"正文里扫省份"的兜底——会抓到公告里的子公司/项目所在地，
@@ -1294,6 +1333,7 @@ def ai_dossier(code, nm, p, finding):
           "src": src if name else "",
           "referral": referral,
           "chief_name": (referral or name),
+          "insider": insider,
           "researched": datetime.date.today().isoformat()}
     if email:
         if referral:
