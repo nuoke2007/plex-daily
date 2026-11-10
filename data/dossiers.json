@@ -282,5 +282,91 @@
   "chief_name": "",
   "insider": null,
   "researched": "2026-11-10"
+ },
+ "300125": {
+  "role": "技术部门负责人",
+  "why": "技术部门负责人负责项目的实施和技术选型。",
+  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
+  "demand": "是",
+  "demand_reason": "公司进行光伏电站技改项目，可能需要设备互联、OEE透明化和预测性维护解决方案。",
+  "signal": "关于子公司光伏电站技改项目的进展公告",
+  "grade": "中",
+  "region": "华东·安徽",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "researched": "2026-11-10"
+ },
+ "688179": {
+  "role": "生产部门负责人",
+  "why": "生产部门负责人直接负责生产线的升级和改造。",
+  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
+  "demand": "是",
+  "demand_reason": "阿拉丁终止投资建设阿拉丁药用科研试剂创新研发与生产基地项目，可能需要新的生产解决方案。",
+  "signal": "阿拉丁关于终止投资建设阿拉丁药用科研试剂创新研发与生产基地项目的公告",
+  "grade": "中",
+  "region": "华东·上海",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "researched": "2026-11-10"
+ },
+ "301353": {
+  "role": "智能制造部门",
+  "why": "新生产基地建设需要智能制造解决方案。",
+  "chief": "🤖 AI 查证：董事长 杨伟明（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "普莱得泰国新生产基地将引入自动化、数字化生产线和信息化管理系统，需FTPC企业级MES/MOM系统支持。",
+  "signal": "普莱得泰国新生产基地将引入自动化、数字化生产线和信息化管理系统（新浪财经_新浪网，URL: https://finance.sina.com.cn/wm/202",
+  "grade": "高",
+  "region": "华东·浙江",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://news.qq.com/rain/a/20261012A07QN900",
+  "referral": "",
+  "chief_name": "杨伟明",
+  "insider": {
+   "name": "郭康丽",
+   "title": "董秘",
+   "src": "https://news.qq.com/rain/a/20261012A07QN900"
+  },
+  "researched": "2026-11-10",
+  "email": {
+   "to": "yangweiming@prulde.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名prulde.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
+ },
+ "002078": {
+  "role": "技术部门/IT部门",
+  "why": "技改项目涉及生产效率和设备维护，需技术部门/IT部门支持。",
+  "chief": "🤖 AI 查证：法定代表人 李娜（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "太阳纸业拟投资建设广西南宁林浆纸一体化提质增效技改项目，需提升生产效率和设备维护。",
+  "signal": "太阳纸业拟投资建设广西南宁林浆纸一体化提质增效技改项目。",
+  "grade": "高",
+  "region": "华南·广西",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://static.cninfo.com.cn/finalpage/2025-08-28/1224599312.PDF",
+  "referral": "",
+  "chief_name": "李娜",
+  "insider": {
+   "name": "庞传顺",
+   "title": "董事会秘书",
+   "src": "http://static.cninfo.com.cn/finalpage/2025-08-28/1224599312.PDF"
+  },
+  "researched": "2026-11-10",
+  "email": {
+   "to": "lina@sunpaper.cn",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名sunpaper.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
  }
 }
