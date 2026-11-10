@@ -368,5 +368,139 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名sunpaper.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
   }
+ },
+ "600261": {
+  "role": "生产部门负责人",
+  "why": "生产部门负责人直接负责生产线的运营和管理，MES系统的选型将直接影响生产效率。",
+  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
+  "demand": "是",
+  "demand_reason": "阳光照明计划在泰国建设生产基地，需要快速MES落地以支持新基地的运营。",
+  "signal": "阳光照明拟以自有资金向全资子公司泰国阳光增资3.24亿元人民币，用于建设泰国生产基地。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "researched": "2026-11-10"
+ },
+ "002543": {
+  "role": "海外业务拓展部门",
+  "why": "该部门负责海外投资和制造基地建设，直接关联MES系统需求。",
+  "chief": "未具名：AI 已跑 5 路公开源（公告/官网/新闻/招聘/专利·招投标），未见可靠具名负责人；走董秘转介 + 年报证券部直线",
+  "demand": "是",
+  "demand_reason": "万和电气在泰国投资建设海外制造基地，符合快速MES落地需求。",
+  "signal": "万和电气副总裁杨颂文在致辞中表示，为了完善全球生产布局，去年年底相继决定在埃及和泰国投资建设海外制造基地。",
+  "grade": "高",
+  "region": "华南·广东",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "researched": "2026-11-10"
+ },
+ "Q30e92d65": {
+  "name": "安琪酵母",
+  "role": "生产部门负责人",
+  "why": "生产部门负责人直接负责生产线的建设和运营，对MES系统有直接需求。",
+  "chief": "🤖 AI 查证：法定代表人 熊涛（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "安琪酵母计划在俄罗斯新建年产2.2万吨酵母生产线，需快速MES落地。",
+  "signal": "安琪酵母计划在俄罗斯新建年产2.2万吨酵母生产线，项目建设期为24个月，预计2026年上半年开工。",
+  "grade": "高",
+  "region": "华东·湖北",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://stockn.xueqiu.com/SH600298/20240318217733.pdf",
+  "referral": "",
+  "chief_name": "熊涛",
+  "insider": {
+   "name": "孙豫湘",
+   "title": "副总经理",
+   "src": "http://basic.10jqka.com.cn/mobile/600298/managern.html"
+  },
+  "researched": "2026-11-10",
+  "email": {
+   "to": "xiongtao@angelyeast.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名angelyeast.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
+ },
+ "300852": {
+  "name": "四会富仕",
+  "role": "技术部门负责人",
+  "why": "泰国工厂投产涉及技术升级和产能扩张，需要MES系统支持。",
+  "chief": "🤖 AI 查证：法定代表人 刘天明（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "四会富仕泰国工厂一期已于2024年下半年投产，设计产能5万平米/月，未来计划提升至10万平米/月。",
+  "signal": "泰国工厂一期已于2024年下半年投产。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=300852&id=12047408",
+  "referral": "",
+  "chief_name": "刘天明",
+  "insider": null,
+  "researched": "2026-11-10",
+  "email": {
+   "to": "liutianming@fujipcb.cn",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名fujipcb.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
+ },
+ "001359": {
+  "name": "平安电工",
+  "role": "技术总监/项目经理",
+  "why": "负责新基地的建设和生产项目，需要MES系统支持。",
+  "chief": "🤖 AI 查证：法定代表人 潘渡江（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "平安电工在泰国投资设立子公司及建设生产项目，需要快速MES落地以支持新基地投产。",
+  "signal": "平安电工在泰国北柳府投资设立子公司及建设生产项目。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://notice.10jqka.com.cn/api/pdf/5e5bfbbfb6118983.pdf",
+  "referral": "",
+  "chief_name": "潘渡江",
+  "insider": null,
+  "researched": "2026-11-10",
+  "email": {
+   "to": "pandujiang@pamica.com.cn",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名pamica.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
+ },
+ "605277": {
+  "name": "新亚电子",
+  "role": "信息中心主任",
+  "why": "信息中心主任可能负责公司信息化建设，包括MES系统选型。",
+  "chief": "🤖 AI 查证：董事长 赵战兵（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "新亚电子股份有限公司有海外建厂计划，可能需要快速MES落地解决方案。",
+  "signal": "新亚电子股份有限公司关于变更泰国子公司投资金额的公告",
+  "grade": "中",
+  "region": "华东·浙江",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://www.xinya-cn.com",
+  "referral": "",
+  "chief_name": "赵战兵",
+  "insider": {
+   "name": "黄娟",
+   "title": "董事会秘书",
+   "src": "http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=605277&id=12535084"
+  },
+  "researched": "2026-11-10",
+  "email": {
+   "to": "zhaozhanbing@xinya-cn.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名xinya-cn.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
  }
 }
