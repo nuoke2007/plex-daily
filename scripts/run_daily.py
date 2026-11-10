@@ -573,6 +573,92 @@ def analyze(key, nm, title, ts=None):
     return (grade, why, f"杠杆：{lev}", agelab, ind)
 
 GRADE_CLS={"高":"gh","中":"gm","低":"gl"}
+PRODUCT_WHO_ROLE={
+ "FTPC":("集团制造/生产副总 或 信息化(IT)负责人",
+         "多工厂MES/MOM标准统一是制造与IT一把手联合拍板，找车间主任或纯IT运维都够不到预算"),
+ "TWX":("设备/自动化(OT)总监 或 工业互联网负责人",
+        "设备数采/OEE/预测维护是设备口的项目预算，找纯IT部门不触发"),
+ "WIND":("研发IT/PLM负责人 或 研发中心(技术)总监",
+         "BOM与工程变更归研发体系，找IT运维或车间都不对口"),
+ "DMX":("CDO/数字化转型负责人 或 数据团队负责人",
+        "跨站点数据上下文化是高管工程，找传统IT运维推不动"),
+ "PLEX":("集团制造/运营副总 或 生产计划(PMC/IT)负责人",
+         "PLEX 是制造运营与排产口径，拍板在制造一把手+计划/IT，销售或采购不决策"),
+}
+
+def qk_panel(key, who, three, hook, rhint):
+    """即查模式：任意公司名 → 立刻生成 6 条精准查询路径 + 该产品打法 + 一键复制AI深查指令"""
+    qs="".join(f'<div style="margin:2px 0">· {esc(q)}</div>' for q in three)
+    return f'''
+<div class="qk" id="qk-{key}">
+  <div style="font-size:13px;font-weight:700;color:#003DA5">🔎 查一家不在雷达里的公司（即查模式）</div>
+  <div style="font-size:12px;color:#5a6b7b;margin:3px 0 8px">输入公司名或股票代码，立刻给出这家公司该查什么、查哪几个源、找到人后怎么递话。真正查出具名人+邮箱那一步交给 AI（一键复制粘贴即可）。</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input class="qk-name" type="text" placeholder="公司名 / 股票代码，如 拓普集团、601689" autocomplete="off"
+      style="flex:1;min-width:210px;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:8px 11px;font-size:13px;outline:none">
+    <button class="qk-go" style="cursor:pointer;border:none;border-radius:8px;padding:8px 16px;font-size:13px;background:#003DA5;color:#fff;font-weight:600">生成查询路径</button>
+  </div>
+  <div class="qk-out" style="display:none;margin-top:10px;padding:11px;background:#f7f9fc;border:1px solid #dbe4ef;border-radius:8px">
+    <div class="qk-title" style="font-size:12.5px;font-weight:700;color:#003DA5;margin-bottom:6px"></div>
+    <div style="font-size:11.8px;color:#5a6b7b;margin-bottom:4px">① 先查这 6 个源（点开即搜，无需自己编关键词）：</div>
+    <div class="qk-links" style="margin:4px 0 10px"></div>
+    <div style="font-size:11.8px;color:#5a6b7b">② 拿着结果对照这款产品的打法：</div>
+    <div style="font-size:12px;line-height:1.75;color:#243b53;margin-top:3px">
+      <div>👉 <b>该找谁：</b>{esc(rhint)}</div>
+      <div>🎯 <b>打谁（ICP）：</b>{esc(who)}</div>
+      <div>❓ <b>三问验证真需求：</b>{qs}</div>
+    </div>
+    <div style="font-size:11.8px;color:#5a6b7b;margin-top:8px">③ 查到具名人后，按下面这条链递话：</div>
+    <div style="font-size:11.8px;line-height:1.75;color:#33414f;margin-top:3px">董秘/证券部公开问询转介 → 年报查证券部直线 → 行业论坛换名片 → 内部CRM找现有AM warm intro</div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="qk-copy" style="cursor:pointer;border:1px solid #003DA5;background:#fff;color:#003DA5;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">📋 复制「AI 深查指令」</button>
+      <span class="qk-tip" style="font-size:11.5px;color:#8494a4;align-self:center">复制后粘到对话里发我，我当场查完写真名+邮箱并部署上线</span>
+    </div>
+  </div>
+  <details style="margin-top:8px"><summary style="cursor:pointer;font-size:11.8px;color:#8494a4">钩子话术（查到人后用）</summary>
+    <div style="font-size:11.8px;line-height:1.7;color:#33414f;margin-top:4px">{esc(hook)}</div></details>
+</div>
+<style>.qk{{margin:10px 0;padding:12px;background:#fff;border:1px solid #dbe4ef;border-radius:10px;box-shadow:0 1px 3px rgba(0,61,165,.06)}}</style>
+<script>
+(function(){{
+ var box=document.getElementById('qk-{key}');if(!box)return;
+ var inp=box.querySelector('.qk-name'),out=box.querySelector('.qk-out'),
+     ttl=box.querySelector('.qk-title'),lk=box.querySelector('.qk-links'),
+     cp=box.querySelector('.qk-copy'),tip=box.querySelector('.qk-tip'),cur='';
+ var enc=function(s){{return encodeURIComponent(s);}};
+ function build(){{
+  var n=(inp.value||'').trim();
+  if(!n){{inp.focus();return;}}
+  cur=n;
+  var L=[
+   ['① 巨潮公告（查新基地/并购/技改/募投）','http://www.cninfo.com.cn/new/fulltextSearch?notautosubmit=&keyWord='+enc(n)],
+   ['② 官网/简介（查几大基地、海外布局）','https://www.baidu.com/s?wd='+enc(n+' 官网 公司简介 生产基地')],
+   ['③ 年报·董秘电话（第2步打证券部直线用）','https://www.baidu.com/s?wd='+enc(n+' 年报 董秘 联系电话')],
+   ['④ 出海/新厂/并购信号（近12个月）','https://www.baidu.com/s?wd='+enc(n+' 海外 建厂 投资 新基地 2025 2026')],
+   ['⑤ 在招岗（在招=正在选型，验证窗口）','https://www.zhipin.com/web/geek/job?query='+enc(n)],
+   ['⑥ 信息化/数字化负责人（找具名人）','https://www.baidu.com/s?wd='+enc(n+' 信息中心 数字化 负责人 MES 智能制造')]
+  ];
+  ttl.textContent='【'+n+'】的信号源与动作（产品：{key}）';
+  lk.innerHTML=L.map(function(x){{return '<a href="'+x[1]+'" target="_blank" style="display:inline-block;margin:0 8px 6px 0;padding:5px 11px;border:1px solid #c8d4e0;border-radius:14px;font-size:11.8px;color:#003DA5;text-decoration:none;background:#fff">'+x[0]+' ↗</a>';}}).join('');
+  out.style.display='block';
+ }}
+ box.querySelector('.qk-go').onclick=build;
+ inp.onkeydown=function(e){{if(e.key==='Enter')build();}};
+ cp.onclick=function(){{
+  var t='帮我深查【'+cur+'】这家公司，产品线是 {key}：\\n'
+   +'1) 近12个月有没有新基地投产/海外建厂/并购/技改/研发中心/数据平台类信号，判断它接下来会不会有 {key} 的选型需求，给明确判断（不要让我自己去判断）；\\n'
+   +'2) 总部所在省市→大区（用于区域筛选）；\\n'
+   +'3) 具名对接人：制造/信息化/研发/数字化负责人，写真实姓名+出处链接；查不到就标“未具名”，绝不编造；\\n'
+   +'4) 若查到具名人，推断其企业邮箱（标注“格式推断、首封先测退信”，附备选格式）并加“📧 发邮件”按钮；\\n'
+   +'5) 按该产品打法给出四步搭线动作链（董秘转介→证券部直线→行业论坛→内部CRM/AM转介），写明具体转介目标；\\n'
+   +'6) 把结果写进 scripts/run_daily.py 的 PRODUCT_DOSSIERS 并部署到 GitHub Pages。';
+  var done=function(){{tip.textContent='已复制 ✓ 粘到对话里发我即可';tip.style.color='#137333';}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){{navigator.clipboard.writeText(t).then(done,function(){{window.prompt('复制下面这段发给我：',t);}});}}
+  else{{window.prompt('复制下面这段发给我：',t);}}
+ }};
+}})();
+</script>'''
+
 
 def render_product(p):
     raw = product_findings.get(p["key"], [])
@@ -617,14 +703,7 @@ def render_product(p):
         cards+=f'<div class="rg-head" data-rg="{esc(rg)}" style="margin:12px 0 4px;font-size:13px;font-weight:700;color:#003DA5;border-left:4px solid #003DA5;padding-left:8px">🗺️ 总部区域：{esc(reg)}（{len(items)}家）</div>'
         for g,judge,lev,agelab,ind,nm,h in items:
             code=h.get("sec") or ""
-            _rw={"FTPC":("集团制造/生产副总 或 信息化(IT)负责人",
-                        "多工厂MES/MOM标准统一是制造与IT一把手联合拍板，找车间主任或纯IT运维都够不到预算") ,
-                 "TWX":("设备/自动化(OT)总监 或 工业互联网负责人",
-                        "设备数采/OEE/预测维护是设备口的项目预算，找纯IT部门不触发") ,
-                 "WIND":("研发IT/PLM负责人 或 研发中心(技术)总监",
-                        "BOM与工程变更归研发体系，找IT运维或车间都不对口") ,
-                 "DMX":("CDO/数字化转型负责人 或 数据团队负责人",
-                        "跨站点数据上下文化是高管工程，找传统IT运维推不动") }.get(p["key"],("信息化/数字化负责人","找对部门比找对公司更重要"))
+            _rw=PRODUCT_WHO_ROLE.get(p["key"],("信息化/数字化负责人","找对部门比找对公司更重要"))
             _d=PRODUCT_DOSSIERS.get(code)
             if _d:
                 _role,_why=_d["role"],_d["why"]
@@ -686,8 +765,9 @@ if(inp){ inp.oninput=apply; }
     <div>
       <div style="font-size:12.5px;color:#33475b;margin:2px 0 10px">🆕 今日自动线索 <b style="color:#003DA5">{total}</b> 条 · 已按优先级排序（高在前）</div>
       <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 安琪、600298）" autocomplete="off"></div>
-      <div class="srch-empty">没有匹配的线索，换个关键词试试</div>
+      <div class="srch-empty">没有匹配的线索 —— 用下面的「即查模式」查这家公司</div>
       {cards}
+      {qk_panel(p["key"], p["who"], p["three"], p["hook"], PRODUCT_WHO_ROLE.get(p["key"],("信息化/数字化负责人",""))[0])}
       {rg_filter_js}
       <details style="margin-top:12px"><summary style="font-size:12px;color:#8494a4">📖 这款产品的打法参考（打谁/三问/钩子，平时不用看）</summary>
         <div class="prod-sop" style="margin-top:8px">
@@ -1106,8 +1186,14 @@ plex_body=f"""
   <div class="kpi"><div class="n">{manual_total}</div><div class="l">待手动跟进</div></div>
 </div>
 <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 均普、600699）" autocomplete="off"></div>
-<div class="srch-empty">没有匹配的线索，换个关键词试试</div>
-<div class="sec"><div class="sec-h">🟢 高优先 · 正好选型窗口（公告后1-9个月，今天就打）{n_window} 家</div>{cards_win or '<div class="empty">今日无窗口期命中</div>'}</div>
+<div class="srch-empty">没有匹配的线索 —— 用下面的「即查模式」查这家公司</div>
+{qk_panel("PLEX",
+   "有海外建厂/新基地/并购扩张的上市制造企业；多工厂要统一制造运营标准",
+   ["新厂投产时间表定了吗？老厂与新厂是不是一套标准？",
+    "多工厂的排产与制造执行口径统一了吗？",
+    "这次扩产是照搬老厂方案，还是重新选型？"],
+   "PLEX 在汽车零部件与离散制造有大量多工厂落地；本页按公告后 1-9 个月选型窗口排序。",
+   PRODUCT_WHO_ROLE["PLEX"][0])}{cards_win or '<div class="empty">今日无窗口期命中</div>'}</div>
 <div class="sec"><div class="sec-h">🟡 中优先 · 刚公告（≤1个月，先观察）</div>{cards_fresh or '<div class="empty">无</div>'}</div>
 <div class="sec"><div class="sec-h">🗄 低优先 · 超9个月（可能已选型，存量观察）</div>{cards_old or '<div class="empty">无</div>'}</div>
 {_plex_filter_js}
