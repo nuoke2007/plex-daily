@@ -78,5 +78,80 @@
    "alt": "shenzw@bohui-tech.com（同域名变体：姓.名 / 名.姓）",
    "note": "官网域名bohui-tech.com；按A股制造业惯例推断，首封先测退信"
   }
+ },
+ "300831": {
+  "role": "研发部门负责人",
+  "why": "公告涉及研发合作，研发部门负责人最可能对此类合作有兴趣。",
+  "chief": "🤖 AI 查证：法人代表 卢道真（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "公告显示ST派瑞签订联合研发中心暨研究生联合培养基地共建合作框架性协议，表明公司有加强研发和设计流程的意图。",
+  "signal": "ST派瑞签订联合研发中心暨研究生联合培养基地共建合作框架性协议",
+  "grade": "中",
+  "region": "西北·陕西",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://q.stock.sohu.com/cn/300831/gsjj.shtml",
+  "referral": "",
+  "researched": "2026-11-10"
+ },
+ "001207": {
+  "role": "信息化部门负责人",
+  "why": "公司进行海外投资和生产基地建设，需要信息化系统支持。",
+  "chief": "未具名（决策人）：已锁定转介人 —— 董事会秘书 高新胜。董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案",
+  "demand": "是",
+  "demand_reason": "公司计划在埃及投资建设生产基地，需统一标准和新基地MES系统，符合FTPC企业级MES/MOM产品定位。",
+  "signal": "山东联科科技股份有限公司关于拟在境外投资设立公司并新建生产基地的公告",
+  "grade": "高",
+  "region": "华东·山东",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=001207&id=11985452",
+  "referral": "高新胜",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "gaoxinsheng@sdlianke.com",
+   "alt": "gaoxinsheng@sdlianke.com（同域名变体：姓.名 / 名.姓）",
+   "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
+  }
+ },
+ "300811": {
+  "role": "制造部经理",
+  "why": "制造部经理负责生产线的升级和改造，直接关联MES/MOM系统的选型。",
+  "chief": "🤖 AI 查证：董事长 杜江华（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "根据材料[2]和[3]，铂科新材新基地投产，产能扩大，需要统一标准和升级旧产线。",
+  "signal": "2025年，铂科新材惠东生产基地项目全部达产后，预计年产各类芯片电感约2亿颗。",
+  "grade": "高",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://static.cninfo.com.cn/finalpage/2024-08-27/1220986777.PDF",
+  "referral": "",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "dujianghua@pocomagnetic.com",
+   "alt": "dujianghua@pocomagnetic.com（同域名变体：姓.名 / 名.姓）",
+   "note": "官网域名pocomagnetic.com；按A股制造业惯例推断，首封先测退信"
+  }
+ },
+ "300748": {
+  "role": "信息中心主任",
+  "why": "集团化布局转型涉及多地研发中心协同，信息中心主任负责信息化和数字化建设，与PTC Windchill (PLM)产品相关。",
+  "chief": "🤖 AI 查证：董事长 蔡报贵（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "金力永磁完成集团化布局转型，多地研发中心协同运营，对产品数据统一源头和设计BOM一致性有需求。",
+  "signal": "2026年2月，公司完成对全资子公司金力赣州新材料的资产划转及增资事项，标志着公司成功完成从赣州单一生产基地上市主体向母公司为控股管理平台、各生产基地子公司协同",
+  "grade": "中",
+  "region": "华东·江西",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://www.hkexnews.hk/listedco/listconews/sehk/2022/0824/2022082401379_c.pdf",
+  "referral": "",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "caobaoji@jlmag.com.cn",
+   "alt": "caobaoji@jlmag.com.cn（同域名变体：姓.名 / 名.姓）",
+   "note": "官网域名jlmag.com.cn；按A股制造业惯例推断，首封先测退信"
+  }
  }
 }
