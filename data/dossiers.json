@@ -17,7 +17,8 @@
    "to": "chenguolin@ipm.com.cn",
    "alt": "chenguolin@ipm.com.cn（同域名变体：姓.名 / 名.姓）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
-  }
+  },
+  "chief_name": "陈国林"
  },
  "603906": {
   "role": "信息中心主任",
@@ -34,10 +35,11 @@
   "referral": "",
   "researched": "2026-11-10",
   "email": {
-   "to": "shifeng@lopal.cn",
-   "alt": "shifeng@lopal.cn（同域名变体：姓.名 / 名.姓）",
-   "note": "官网域名lopal.cn；按A股制造业惯例推断，首封先测退信"
-  }
+   "to": "shijunfeng@lopal.cn",
+   "alt": "s.hijunfeng@lopal.cn（若公司用'姓.名'格式）",
+   "note": "官网域名lopal.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
+  },
+  "chief_name": "石俊峰"
  },
  "002469": {
   "role": "信息化部门",
@@ -57,7 +59,8 @@
    "to": "zhangjun@sdsunway.com.cn",
    "alt": "zhangjun@sdsunway.com.cn（同域名变体：姓.名 / 名.姓）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
-  }
+  },
+  "chief_name": "张军"
  },
  "300318": {
   "role": "生产管理部经理",
@@ -74,10 +77,11 @@
   "referral": "",
   "researched": "2026-11-10",
   "email": {
-   "to": "shenzw@bohui-tech.com",
-   "alt": "shenzw@bohui-tech.com（同域名变体：姓.名 / 名.姓）",
-   "note": "官网域名bohui-tech.com；按A股制造业惯例推断，首封先测退信"
-  }
+   "to": "shenzhiwei@bohui-tech.com",
+   "alt": "s.henzhiwei@bohui-tech.com（若公司用'姓.名'格式）",
+   "note": "官网域名bohui-tech.com；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
+  },
+  "chief_name": "沈治卫"
  },
  "300831": {
   "role": "研发部门负责人",
@@ -112,7 +116,8 @@
    "to": "gaoxinsheng@sdlianke.com",
    "alt": "gaoxinsheng@sdlianke.com（同域名变体：姓.名 / 名.姓）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
-  }
+  },
+  "chief_name": "高新胜"
  },
  "300811": {
   "role": "制造部经理",
@@ -132,7 +137,8 @@
    "to": "dujianghua@pocomagnetic.com",
    "alt": "dujianghua@pocomagnetic.com（同域名变体：姓.名 / 名.姓）",
    "note": "官网域名pocomagnetic.com；按A股制造业惯例推断，首封先测退信"
-  }
+  },
+  "chief_name": "杜江华"
  },
  "300748": {
   "role": "信息中心主任",
@@ -149,9 +155,31 @@
   "referral": "",
   "researched": "2026-11-10",
   "email": {
-   "to": "caobaoji@jlmag.com.cn",
-   "alt": "caobaoji@jlmag.com.cn（同域名变体：姓.名 / 名.姓）",
-   "note": "官网域名jlmag.com.cn；按A股制造业惯例推断，首封先测退信"
+   "to": "caibaogui@jlmag.com.cn",
+   "alt": "c.aibaogui@jlmag.com.cn（若公司用'姓.名'格式）",
+   "note": "官网域名jlmag.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
+  },
+  "chief_name": "蔡报贵"
+ },
+ "600343": {
+  "role": "技术部门",
+  "why": "技改项目涉及技术层面，技术部门更对口。",
+  "chief": "🤖 AI 查证：法定代表人 孙彦堂（来源可点开核实）",
+  "demand": "是",
+  "demand_reason": "航天动力子公司投资技改项目，可能涉及设备互联、OEE透明化、预测性维护等需求。",
+  "signal": "航天动力关于子公司投资液力传动制造系统技改项目的公告",
+  "grade": "中",
+  "region": "西北·陕西",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://qxb-pdf-osscache.qixin.com/AnBaseinfo/fe62e2cd1ef1cc8c93b47b696f8fd171.pdf",
+  "referral": "",
+  "chief_name": "孙彦堂",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "sunyantang@china-htdl.com",
+   "alt": "s.unyantang@china-htdl.com（若公司用'姓.名'格式）",
+   "note": "官网域名china-htdl.com；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
   }
  }
 }
