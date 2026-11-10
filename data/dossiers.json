@@ -15,7 +15,7 @@
   "researched": "2026-11-10",
   "email": {
    "to": "chenguolin@ipm.com.cn",
-   "alt": "chenguolin@ipm.com.cn（同域名变体：姓.名 / 名.姓）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
   },
   "chief_name": "陈国林"
@@ -36,7 +36,7 @@
   "researched": "2026-11-10",
   "email": {
    "to": "shijunfeng@lopal.cn",
-   "alt": "s.hijunfeng@lopal.cn（若公司用'姓.名'格式）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名lopal.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
   },
   "chief_name": "石俊峰"
@@ -57,7 +57,7 @@
   "researched": "2026-11-10",
   "email": {
    "to": "zhangjun@sdsunway.com.cn",
-   "alt": "zhangjun@sdsunway.com.cn（同域名变体：姓.名 / 名.姓）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
   },
   "chief_name": "张军"
@@ -78,7 +78,7 @@
   "researched": "2026-11-10",
   "email": {
    "to": "shenzhiwei@bohui-tech.com",
-   "alt": "s.henzhiwei@bohui-tech.com（若公司用'姓.名'格式）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名bohui-tech.com；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
   },
   "chief_name": "沈治卫"
@@ -114,7 +114,7 @@
   "researched": "2026-11-10",
   "email": {
    "to": "gaoxinsheng@sdlianke.com",
-   "alt": "gaoxinsheng@sdlianke.com（同域名变体：姓.名 / 名.姓）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "转介用邮箱：发给董秘请他转对口部门，不是直接谈方案"
   },
   "chief_name": "高新胜"
@@ -135,7 +135,7 @@
   "researched": "2026-11-10",
   "email": {
    "to": "dujianghua@pocomagnetic.com",
-   "alt": "dujianghua@pocomagnetic.com（同域名变体：姓.名 / 名.姓）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名pocomagnetic.com；按A股制造业惯例推断，首封先测退信"
   },
   "chief_name": "杜江华"
@@ -156,7 +156,7 @@
   "researched": "2026-11-10",
   "email": {
    "to": "caibaogui@jlmag.com.cn",
-   "alt": "c.aibaogui@jlmag.com.cn（若公司用'姓.名'格式）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名jlmag.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
   },
   "chief_name": "蔡报贵"
@@ -178,18 +178,18 @@
   "researched": "2026-11-10",
   "email": {
    "to": "sunyantang@china-htdl.com",
-   "alt": "s.unyantang@china-htdl.com（若公司用'姓.名'格式）",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "官网域名china-htdl.com；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
   }
  },
  "301517": {
-  "role": "信息中心主任",
-  "why": "陕西华达科技股份有限公司主营业务与PTC Windchill (PLM)的产品定位不完全匹配，可能需要信息中心主任来评估。",
+  "role": "研发部门负责人",
+  "why": "研发部门负责人直接负责公司的研发工作，与PTC Windchill (PLM)产品应用场景相关。",
   "chief": "🤖 AI 查证：法定代表人 范军卫（来源可点开核实）",
-  "demand": "待验证",
-  "demand_reason": "陕西华达科技股份有限公司主营业务为电连接器及互连产品的研发、生产和销售，与PTC Windchill (PLM)的产品定位不完全匹配。",
+  "demand": "是",
+  "demand_reason": "陕西华达科技股份有限公司主营业务涉及电连接器及互连产品的研发、生产和销售，与PTC Windchill (PLM)产品定位相符。",
   "signal": "陕西华达科技股份有限公司主营业务为电连接器及互连产品的研发、生产和销售。",
-  "grade": "低",
+  "grade": "中",
   "region": "西北·陕西",
   "auto": true,
   "model": "glm-4-flash",
@@ -199,24 +199,29 @@
   "researched": "2026-11-10",
   "email": {
    "to": "fanjunwei@huada853.com.cn",
-   "alt": "f.anjunwei@huada853.com.cn（若公司用'姓.名'格式）",
-   "note": "官网域名huada853.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封先测退信"
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名huada853.com.cn；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
   }
  },
- "000657": {
-  "role": "技术部门",
-  "why": "技术部门负责产品的选型和实施。",
-  "chief": "🤖 AI 查证：公司法定代表人 李仲泽（来源可点开核实）",
+ "600176": {
+  "role": "智能制造部门",
+  "why": "负责智能制造和设备维护。",
+  "chief": "🤖 AI 查证：副董事长 张毓强（来源可点开核实）",
   "demand": "是",
-  "demand_reason": "公司拥有全球领先的PCB用精密微型钻头及刀具综合供应商金洲公司，存在对精密微型刀具的需求。",
-  "signal": "中钨高新(000657)_公司公告_中钨高新：2025年半年度报告新浪财经_新浪网",
+  "demand_reason": "中国巨石正推进多个扩产项目，需提高OEE和预测性维护能力。",
+  "signal": "中国巨石正推进多个扩产项目，如巨石集团成都有限公司年产20万吨高性能玻璃纤维生产线建设项目。",
   "grade": "高",
-  "region": "华中·湖南",
+  "region": "华东·浙江",
   "auto": true,
   "model": "glm-4-flash",
-  "src": "http://static.cninfo.com.cn/finalpage/2019-04-19/1206052955.PDF",
+  "src": "https://app.myzaker.com/news/article.php?pk=6ad584308e9f0931cc2f640e",
   "referral": "",
-  "chief_name": "李仲泽",
-  "researched": "2026-11-10"
+  "chief_name": "张毓强",
+  "researched": "2026-11-10",
+  "email": {
+   "to": "zhangyuqiang@jushi.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "官网域名jushi.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
+  }
  }
 }
