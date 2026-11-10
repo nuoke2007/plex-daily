@@ -669,5 +669,96 @@
    }
   ],
   "researched": "2026-11-10"
+ },
+ "301039": {
+  "name": "中集车辆",
+  "role": "信息化部门负责人",
+  "why": "信息化部门负责人负责公司的信息化建设，包括MES系统的选型和实施。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "中集车辆参与美国商务部针对墨西哥、加拿大和中国生产的Van-Type Trailers and Subassemblies Thereof发起的反补贴、反倾销调查，可能需要快速MES系统来应对海外建厂",
+  "signal": "中集车辆参与美国商务部反补贴、反倾销调查，2026-05-31",
+  "grade": "中",
+  "region": "华东·江苏",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [
+   {
+    "num": "0755-26802598",
+    "src": "https://www.cimcvehiclesgroup.com/upload/portal/20250326/1480/3%E3%80%812024%E5%B9%B4%E5%B9%B4%E5%BA%A6%E6%8A%A5%E5%91%8A.pdf",
+    "ctx": "址 中国深圳市南山区蛇口港湾大道2 号 中国深圳市南山区蛇口港湾大道2 号 电话 （86）"
+   }
+  ],
+  "researched": "2026-11-10"
+ },
+ "002454": {
+  "name": "松芝股份",
+  "role": "信息化部门负责人",
+  "why": "公司进行海外扩张，需要信息化系统支持，信息化部门负责人负责相关决策。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "松芝股份拟在墨西哥设立子公司进行增资，涉及海外建厂，符合罗克韦尔 PLEX（SaaS MES）的目标客户需求。",
+  "signal": "松芝股份拟通过全资子公司松芝国际控股有限公司对墨西哥松芝有限公司进行增资。",
+  "grade": "高",
+  "region": "华东·上海",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [],
+  "researched": "2026-11-10"
+ },
+ "605099": {
+  "name": "共创草坪",
+  "role": "生产管理部",
+  "why": "生产管理部负责生产流程和设备管理，与MES系统直接相关。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "共创草坪在墨西哥终止建设项目，可能需要快速MES系统来支持新基地的投产。",
+  "signal": "共创草坪终止投资墨西哥生产基地建设项目。",
+  "grade": "高",
+  "region": "华东·江苏",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [],
+  "researched": "2026-11-10"
+ },
+ "001380": {
+  "name": "华纬科技",
+  "role": "信息化部门负责人",
+  "why": "该部门负责公司信息化建设，可能涉及MES系统的选型。",
+  "chief": "🤖 AI 查证：董事长兼总经理 金雷（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）",
+  "demand": "是",
+  "demand_reason": "华纬科技有海外投资收购行为，可能需要MES系统支持新基地的快速落地。",
+  "signal": "华纬科技（001380）本次触发的公告标题：关于子公司对外投资收购MSSC墨西哥制造有限公司100%股权暨关联交易的公告",
+  "grade": "中",
+  "region": "华东·浙江",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://static.cninfo.com.cn/finalpage/2026-04-03/1225077131.PDF",
+  "referral": "",
+  "chief_name": "金雷",
+  "insider": null,
+  "tier": "拍板",
+  "phones": [],
+  "researched": "2026-11-10",
+  "email": {
+   "to": "jinlei@jsspring.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
+  }
  }
 }
