@@ -1239,13 +1239,13 @@ def _clean_ladder(x, limit=4, allowed=()):
         if re.fullmatch(r"[\u4e00-\u9fa5]{2,4}", t) and t not in allowed \
                 and not any(k in t for k in ("部","中心","组","科","处","室","岗","经理","总监","主任","负责人","团队","事业")):
             bad_nm.append(t)
-    # 另外从"XX分机号/XX邮箱/XX您好"这类句式里揪人名
+    # 从"XX分机号/XX的电话"这类句式里再揪一遍（注意只认分机号/电话，避免误伤"或邮箱"）
     for st in out:
         for f in ("to", "via", "say", "get"):
-            for m in re.finditer(r"([\u4e00-\u9fa5]{2,3})(?=的分机|分机号|的邮箱|邮箱|的手机|手机号|您好|先生|女士)", st[f]):
+            for m in re.finditer(r"([\u4e00-\u9fa5]{2,3})(?=的分机号|分机号|的电话|手机号|手机)", st[f]):
                 tk = m.group(1)
                 if tk not in allowed and tk not in bad_nm \
-                        and not any(k in tk for k in ("部","中心","岗","经理","总监","主任","负责人")):
+                        and not any(k in tk for k in ("部","中心","岗","经理","总监","主任","负责人","机","话")):
                     bad_nm.append(tk)
     for st in out:
         for tk in bad_nm:
