@@ -1052,7 +1052,7 @@ GLM_KEY = os.environ.get("GLM_KEY", "").strip()
 TVLY_KEY = os.environ.get("TAVILY_KEY", "").strip()
 AI_CACHE = DATA / "dossiers.json"
 AI_MAX = int(os.environ.get("AI_MAX", "3") or 3)   # 每次运行最多深查几家，护住免费额度
-AI_MODELS = ["glm-4-flash", "glm-4.7-flash"]
+AI_MODELS = ["glm-4-plus", "glm-4-flash"]
 REGION_RE = re.compile(r"^(长三角|珠三角|京津冀|华中|华南|西南|西北|华东|华北|东北)·[\u4e00-\u9fa5]{2,4}$")
 PROV_REGION = {
  "江苏":"长三角","浙江":"长三角","上海":"长三角","安徽":"华东","山东":"华东",
@@ -1220,6 +1220,98 @@ def _phones(nm, hits, limit=2):
         if len(out) >= limit: break
     return out
 
+def _clean_ladder(x, limit=4):
+    """搭线梯子：只留 4 步以内、字段齐全的，防止模型塞废话"""
+    out = []
+    if not isinstance(x, list): return out
+    for it in x[:limit]:
+        if not isinstance(it, dict): continue
+        to = str(it.get("to") or "").strip()[:60]
+        via = str(it.get("via") or "").strip()[:60]
+        say = str(it.get("say") or "").strip()[:80]
+        get = str(it.get("get") or "").strip()[:60]
+        if to or via:
+            out.append({"to": to, "via": via, "say": say, "get": get})
+    return out
+
+_DEPT_WORDS = ("信息中心","信息化","数字化","智能制造","制造运营","生产制造","生产计划","工艺","设备","IT部","IT 部","信息技术","生产管理","工程部","技术中心","供应链","物流","品质","质量")
+_LADDER_BAN = ("访问官网","官网查找","查找联系方式","官网","约会议","开会","进一步了解","决策者","我们想了解","罗克韦尔/PTC 的","我们可以满足","最终决策","负责人（","电话沟通")
+
+def _facts(nm, hits):
+    """从真实抓回材料里抽“硬事实”：部门名/电话/招聘岗位/招标公示/海外基地/时间点。
+    模型只能基于这些事实编搭线步骤，写不出具体通道就说明这家公司材料不够。"""
+    depts, phones, recruit, tender, sites, times, orgs = [], [], [], [], [], [], []
+    for h in hits:
+        c = (h.get("content") or "")
+        if not _same_subject(nm, c): continue
+        title = (h.get("title") or "")
+        for w in _DEPT_WORDS:
+            if w in c and w not in depts: depts.append(w)
+        for m in re.finditer(r"(0\d{2,3}[-－]?\d{7,8}|400[-－]\d{3}[-－]\d{4}|1[3-9]\d{9})", c):
+            num = re.sub(r"[-－]", "-", m.group(1))
+            if num not in [x[0] for x in phones]:
+                phones.append((num, c[max(0, m.start()-40):m.start()].replace("\n"," ")[-40:], h["url"]))
+        for kw in ("招聘","岗位","任职要求","汇报"):
+            for m in re.finditer(kw, c):
+                seg = c[max(0,m.start()-30):m.start()+70].replace("\n"," ")
+                if any(x in seg for x in ("MES","信息化","IT","数字化","制造","主管","经理","主任")) and seg not in recruit:
+                    recruit.append(seg[:90])
+        for kw in ("招标","中标","公示","联系人","询价","采购"):
+            for m in re.finditer(kw, c):
+                seg = c[max(0,m.start()-30):m.start()+80].replace("\n"," ")
+                if seg not in tender: tender.append(seg[:90])
+        for kw in ("墨西哥","捷克","泰国","越南","印度","匈牙利","波兰","马来西亚","印尼","巴西","德国","美国","新基地","新工厂","扩产","扩建","投产"):
+            if kw in c and kw not in sites: sites.append(kw)
+        for m in re.finditer(r"20\d{{2}}\s*年\s*\d{{1,2}}\s*月|20\d{{2}}\s*年底|20\d{{2}}\s*年上半年|投产", c):
+            seg = c[max(0,m.start()-24):m.start()+40].replace("\n"," ")
+            if seg not in times: times.append(seg[:70])
+    f = []
+    if sites: f.append("① 海外/新基地词：" + "、".join(sites[:8]))
+    if times: f.append("② 时间点原文：" + " ｜ ".join(times[:3]))
+    if depts: f.append("③ 材料中出现的部门/职能词：" + "、".join(depts[:10]))
+    if phones: f.append("④ 公开电话（含语境）：" + " ｜ ".join(n + "（" + ctx + "）" for n, ctx, _ in phones[:3]))
+    if recruit: f.append("⑤ 招聘/岗位原文：" + " ｜ ".join(recruit[:3]))
+    if tender: f.append("⑥ 招标/公示/联系人原文：" + " ｜ ".join(tender[:3]))
+    return ("\n".join(f))[:1600]
+
+def _ladder_bad(steps):
+    bad = []
+    for st in steps or []:
+        t = ((st.get("to") or "") + " " + (st.get("via") or "") + " " + (st.get("say") or "") + " " + (st.get("get") or ""))
+        for b in _LADDER_BAN:
+            if b in t: bad.append(b)
+        if not (st.get("via") or "").strip(): bad.append("空通道")
+    return bad
+
+def _plan_html(ds, escfn=None):
+    """怎么找人：窗口 → 该找哪个部门 → 搭线梯子 → 开场白 → 反证 → 今天做什么"""
+    esc = escfn or (lambda x: x)
+    rows = []
+    for i, st in enumerate(ds.get("ladder") or [], 1):
+        rows.append(
+            '<div style="margin:5px 0;padding:7px 9px;background:#fbfcfe;border-left:3px solid #7a5af8;border-radius:0 6px 6px 0">'
+            '<div style="font-size:12px;color:#243b53"><b>第' + str(i) + '步</b> · ' + esc(st.get("to","")) + '</div>'
+            '<div style="font-size:11.5px;color:#5a6b7b;line-height:1.7">通道：' + esc(st.get("via","")) + '</div>'
+            + (('<div style="font-size:11.5px;color:#8a4b00;line-height:1.7">开口：' + esc(st.get("say","")) + '</div>') if st.get("say") else '')
+            + (('<div style="font-size:11.5px;color:#137333;line-height:1.7">目标产出：' + esc(st.get("get","")) + '</div>') if st.get("get") else '')
+            + '</div>')
+    parts = []
+    if ds.get("window"):
+        parts.append('<div style="font-size:12.5px;color:#243b53"><b>\u23f1 窗口：</b>' + esc(ds["window"]) + '</div>')
+    if ds.get("dept"):
+        parts.append('<div style="font-size:12.5px;color:#243b53;margin-top:3px"><b>\U0001f3af 该找的部门：</b>' + esc(ds["dept"])
+                     + ((' <span style="color:#8494a4">（依据：' + esc(ds["dept_ev"]) + '）</span>') if ds.get("dept_ev") else '') + '</div>')
+    if rows:
+        parts.append('<div style="font-size:12.5px;color:#003DA5;font-weight:700;margin:8px 0 2px">\U0001fa9c 怎么搭上线（按顺序做）</div>' + ''.join(rows))
+    if ds.get("hook"):
+        parts.append('<div style="margin-top:6px;font-size:12.5px;color:#8a4b00;background:#fffdf5;border:1px solid #f0e0b6;border-radius:6px;padding:6px 9px"><b>\U0001f4ac 见到对口人第一句：</b>' + esc(ds["hook"]) + '</div>')
+    if ds.get("next"):
+        parts.append('<div style="margin-top:5px;font-size:12.5px;color:#137333"><b>\u25b6 今天先做：</b>' + esc(ds["next"]) + '</div>')
+    if ds.get("risk"):
+        parts.append('<div style="margin-top:4px;font-size:11.5px;color:#a04040"><b>\u26a0 反证：</b>' + esc(ds["risk"]) + '</div>')
+    if not parts: return ""
+    return '<div style="margin-top:6px;border-top:1px dashed #dbe4ef;padding-top:6px">' + ''.join(parts) + '</div>'
+
 def ai_dossier(code, nm, p, finding):
     """对一家公司做一次自动深查，返回 dossier dict；证据不足则返回 None"""
     if not (GLM_KEY and TVLY_KEY): return None
@@ -1246,12 +1338,35 @@ def ai_dossier(code, nm, p, finding):
     urls = [h["url"] for h in hits]
     ctx = "\n".join(f"[{i+1}] {h['title']}\nURL: {h['url']}\n{h['content'][:700]}"
                     for i, h in enumerate(hits))[:11000]
+    facts = _facts(nm, hits)
     playbook = (f"产品：{p['name']}｜定位：{p['pos']}\n目标客户：{p['who']}\n"
                 f"验证真需求的三问：{' / '.join(p['three'])}")
     user = f"""公司：{nm}（{code}），本次触发的公告标题：{finding.get('title','')}
 
 {playbook}
 
+材料硬事实（由程序从原文抽取，ladder 与 next 只能基于这些）：
+{facts or "（这家公司没有抓到可用的部门名/电话/招聘/招标原文）"}
+
+【怎么找人 · 硬规则】ladder 是这家公司专属的搭线路径，必须像老销售真的动手那样一步步写：
+可用通道只有这几类，选最贴合硬事实的，并写清具体号码/岗位/人名：
+ a 年报/公告里的证券事务部电话（只为要"转接"，不问业务）
+ b 招聘 JD 里的 HR 联系方式或投递邮箱（借"应聘/了解岗位汇报线"问出部门）
+ c 招标/中标/公示公告里的项目联系人（名正言顺问"这个项目")
+ d 总机转分机（写清拨哪个号码、报什么由头才不会被退回前台）
+ e 集团总部/母公司同类部门（子公司没入口时从上面压下来）
+ f 行业协会/展会/政府园区对接人（写清具体活动或机构）
+ g 已核证的具名联系人（只能是我给你的那位，不能新编）
+
+四步结构（每步都要能今天做）：
+ 第1步 进门：拿到"该找哪个部门、谁管"，通道用 a/b/c/d
+ 第2步 拿到人：拿到姓氏+分机/邮箱，且说明用什么由头让他愿意接
+ 第3步 建立可信：给一个他能验证的同类事实或行业口径（不许报我们自己客户名字）
+ 第4步 约见：给一个 15 分钟的具体议题，不是"介绍一下产品"
+
+say 的三条禁令：不提"我们想了解贵司需求"；不提我们产品名；不空泛寒暄。要说他此刻正头疼的具体事（爬坡、多厂标准不一、海外客户审核、追溯、换线效率），一句话。
+to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位名（用材料里的叫法，材料没有就写"（推断）"）。
+材料不够就少写，next 里说明先确认什么。宁可少，不许编，不许套模板。
 检索材料（含编号与URL，只能引用这些URL）：
 {ctx}
 
@@ -1271,9 +1386,34 @@ def ai_dossier(code, nm, p, finding):
  "insider_title":"他的身份，如 专利发明人 / 某项目联系人 / 技术中心主任",
  "insider_source":"insider_name 出现的那条材料的完整URL，必须来自上面列表；查不到填空字符串",
  "domain":"该公司企业邮箱域名，如 angelyeast.com；查不到填空字符串",
- "email_guess":"按该域名与中文姓名拼音推断的最可能邮箱；查不到填空字符串"
+ "email_guess":"按该域名与中文姓名拼音推断的最可能邮箱；查不到填空字符串",
+
+ "window":"时间窗：这个需求最晚什么时候必须定方案、卡在哪个节点（如投产前6个月定版MES）；40字内，无依据填空",
+ "dept":"该找的具体部门（用这家公司自己的叫法，如 集团信息中心/制造运营部/工艺设备部）：必须是材料里出现过的部门名，没出现就写行业通称并标注（推断）",
+ "dept_ev":"为什么是这个部门：依据哪条材料（招聘JD的部门名/公告署名/组织架构新闻），40字内",
+ "ladder":[   // 必须正好4步，第4步是"给15分钟具体议题"，不是"见面聊产品"
+   {{"purpose":"进门 · 拿到部门和分机","to":"找谁","via":"拨哪个号码、走哪条通道（招聘HR/招标联系人/证券事务部/总机+分机/集团总部）","say":"第一句（25字内，只说他的事）","get":"拿到什么（部门名称/姓氏/分机号/邮箱）"}},
+   {{"purpose":"拿人 · 拿到姓名与直拨","to":"...","via":"...","say":"...","get":"..."}},
+   {{"purpose":"建立可信 · 给一条他能验证的事实","to":"...","via":"...","say":"...","get":"..."}},
+   {{"purpose":"约见 · 15分钟两页纸","to":"...","via":"...","say":"...","get":"..."}}
+ ],
+ "hook":"递给真正对口人时的第一句话（25字内，讲他此刻的具体麻烦：爬坡/多厂标准/审核/追溯；禁止写“我们想了解贵司需求”和产品名）",
+ "risk":"反证：什么情况下这家不值得跟（30字内）；没有就填空",
+ "next":"今天就能做的一个动作（20字内，含对象和动作，如 打0571总机转信息中心问MES归谁管）"
 }}"""
     d, model = glm_json(_AI_SYS, user)
+    # —— 搭线通道空转就重试一次，逼模型落到真实通道上 ——
+    try:
+        bad = _ladder_bad(_clean_ladder((d or {}).get("ladder")))
+        if bad and (d or {}).get("demand"):
+            log("    搭线通道空转（" + "、".join(sorted(set(bad)))[:40] + "），重写一次")
+            fix = user + "\n\n【上一次输出不合格】你写的 ladder 里出现了空话：" + "、".join(sorted(set(bad))) + \
+                  "。请重写 ladder：每一步必须落到材料硬事实里的具体电话/岗位/部门/公告联系人上，写不出就减少步数并在 next 说明要先确认什么。"
+            d2, m2 = glm_json(_AI_SYS, fix)
+            if d2 and not _ladder_bad(_clean_ladder(d2.get("ladder"))):
+                d, model = d2, m2
+    except Exception as ex:
+        log("    搭线校验跳过：" + str(ex)[:50])
     if not d:
         log("    模型未返回有效 JSON")
         return None
@@ -1373,6 +1513,13 @@ def ai_dossier(code, nm, p, finding):
           "insider": insider,
           "tier": _tier(_title if name else ""),
           "phones": _phones(nm, hits),
+          "window": (d.get("window") or "")[:80],
+          "dept": (d.get("dept") or "")[:40],
+          "dept_ev": (d.get("dept_ev") or "")[:80],
+          "ladder": _clean_ladder(d.get("ladder")),
+          "hook": (d.get("hook") or "")[:60],
+          "risk": (d.get("risk") or "")[:80],
+          "next": (d.get("next") or "")[:40],
           "researched": datetime.date.today().isoformat()}
     if email:
         if referral:
@@ -1560,6 +1707,7 @@ def card_for(f):
         mail_html=(f'<div style="margin-top:6px"><a class="btn btn-mail" target="_blank" '
                    f'href="mailto:{esc(_e3["to"])}?subject={_sub3}&body={_body3}">{esc(_cta_label(ai))} · {esc(_e3["to"])}</a>'
                    f'<div style="font-size:11.5px;color:#8494a4;margin-top:2px">📮 推断邮箱 · {esc(_e3.get("note",""))} ｜ 备选：{esc(_e3.get("alt",""))}</div></div>')
+        mail_html += _plan_html(ai, esc)
         mail_html += _tel_html(ai, esc)
     rg=region_of(code).split("·")[0]
     return (f'<div class="card open" data-rg="{esc(rg)}">'
@@ -1833,8 +1981,9 @@ def _inq_html():
 <span class="indtag">{esc(pk)}</span><span class="indtag">🗺️ {esc(d.get('region','') or '待确认')}</span></div>
 <div style="font-size:12.5px;color:#3d4c5c;line-height:1.75;margin-top:4px">
 <b>判断：</b>{esc(d.get('demand','待验证'))} —— {esc(d.get('demand_reason',''))}<br>
-<b>信号：</b>{esc(d.get('signal',''))}<br>
-<b>联系人：</b>{esc(d.get('chief',''))}{srch}</div>
+<b>信号：</b>{esc(d.get('signal',''))}</div>
+{_plan_html(d, esc)}
+<div style="font-size:12.5px;color:#3d4c5c;line-height:1.75;margin-top:6px"><b>联系人：</b>{esc(d.get('chief',''))}{srch}</div>
 {('<div style="font-size:12px;color:#0b6bcb;margin-top:3px">📮 '+emh+'</div>') if emh else ''}
 {('<div style="font-size:12px;color:#8a6b1f;margin-top:3px">📞 '+ph+'</div>') if ph else ''}
 </div>""")
