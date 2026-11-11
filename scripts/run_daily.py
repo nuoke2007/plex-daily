@@ -1190,6 +1190,10 @@ def _phones(nm, hits, limit=2):
         if len(out) >= limit: break
     return out
 
+_MAIL_NOISE = ("forbeschina.com", "sina.com", "sina.cn", "sohu.com", "163.com", "qq.com", "people.com.cn",
+               "xinhuanet.com", "chinadaily.com.cn", "ce.cn", "eastmoney.com", "cnstock.com", "stcn.com",
+               "yicai.com", "jiemian.com", "thepaper.cn", "36kr.com", "huxiu.com", "pedaily.cn")
+
 def _mail_scan(nm, hits, limit=4):
     """从真实抓回材料里扫可用的公开邮箱（招聘JD的HR邮箱、招标公告联系人、官网公示等）"""
     out, seen = [], set()
@@ -1200,6 +1204,8 @@ def _mail_scan(nm, hits, limit=4):
             em = m.group(0).lower()
             if em in seen: continue
             if any(x in em for x in (".png", ".jpg", "example.com", "test.com", "sentry", "@2x")): continue
+            # 媒体/门户的转载联系邮箱不是这家公司的，别当线索发过去
+            if any(em.endswith("@" + d) for d in _MAIL_NOISE): continue
             ctx = c[max(0, m.start()-38):m.start()].replace("\n", " ")[-38:]
             seen.add(em)
             out.append({"to": em, "kind": "原文邮箱", "note": "抓回原文里真实出现的（语境：" + ctx + "）", "src": h["url"]})
@@ -1323,6 +1329,7 @@ def _mailbox_html(ds, escfn=None, mailto=True):
     rows = []
     for x in (ds.get("emails") or [])[:5]:
         if not x.get("to"): continue
+        if any((x["to"] or "").lower().endswith("@" + d) for d in _MAIL_NOISE): continue
         k = x.get("kind") or "实名推断"
         col = {"实名推断": "#0b6bcb", "原文邮箱": "#137333"}.get(k, "#8494a4")
         link = ('<a class="ev" style="color:#0b6bcb" href="' + esc(x.get("src","")) + '" target="_blank">🔗</a>') if x.get("src") else ""
@@ -2160,6 +2167,11 @@ inq_body=f"""
  if(c0) check();
 }})();
 </script>
+<div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
+{_pend_html}
+{_INQ_JS}
+<div class="sec"><div class="sec-h">历史已查记录 {len(_INQ)} 家（全部临时查询，与本次查询无关）</div>{_inq_html()}</div>
+<div class="foot">每次自动任务（09:00 / 20:30）处理 queue 队列，查完即写入本页</div>
 """
 (ROOT/"inquiry.html").write_text(shell("即查结果","PLEX",inq_body),encoding="utf-8")
 log(f"inquiry.html 已生成（即查 {len(_INQ)} 家）")
