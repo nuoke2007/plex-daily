@@ -145,10 +145,35 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 </script>
 
 <div class="top"><h1>🔎 即查结果（临时查询 · 不进主看板）</h1></div>
+<div class="sec" id="qkbox" style="display:none;border-color:#e3dcff;background:#faf8ff">
+  <div class="sec-h" id="qkttl">临时查询</div>
+  <div style="font-size:12.5px;color:#5a6b7b;line-height:1.8">这是临时查询，不会写进主看板，也不改任何代码。点下面按钮提交一次（GitHub 上点一下绿色 Commit），下次自动任务跑完，结果直接出现在本页。</div>
+  <div style="margin-top:8px"><a id="qkgo" class="ev" href="#" target="_blank" style="display:inline-block;background:#7a5af8;color:#fff;text-decoration:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600">🚀 提交给 AI 查（GitHub 一键提交）</a></div>
+</div>
 <div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
-<div class="sec"><div class="sec-h">已查 0 家</div><div class="empty">还没有即查记录。到任意产品页用「交给 AI 自动查（排队）」提交一家公司，下次自动任务跑完就会出现在这里。</div></div>
+
+<div class="sec"><div class="sec-h">已查 1 家</div><div class="srchwrap"><input class="srch" id="q2" placeholder="🔍 输入公司名 / 代码 / 产品" oninput="flt2(this.value)"><div class="rgbar" id="rgbar2"></div></div><div id="list2"><div class="lead" data-rg="华东·江苏">
+<div class="lead-top"><span class="badge">高</span><b>上声电子</b><span class="lc">Q39b95901</span>
+<span class="indtag">PLEX</span><span class="indtag">🗺️ 华东·江苏</span></div>
+<div style="font-size:12.5px;color:#3d4c5c;line-height:1.75;margin-top:4px">
+<b>判断：</b>是 —— 苏州上声电子股份有限公司正在海外生产基地（墨西哥、捷克）的扩产扩建，需要快速MES落地。<br>
+<b>信号：</b>苏州上声电子股份有限公司正在海外生产基地（墨西哥、捷克）的扩产扩建。<br>
+<b>联系人：</b>🤖 AI 查证：法定代表人 周建明（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口） <a class="ev" href="https://stockn.xueqiu.com/SH688533/20230427077050.pdf" target="_blank">🔗 出处</a></div>
+<div style="font-size:12px;color:#0b6bcb;margin-top:3px">📮 <code style="background:#eef4fb;padding:1px 5px;border-radius:4px">zhoujianming@sonavox-group.com</code> · <span style="font-size:11.5px;color:#8494a4">顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF</span></div>
+<div style="font-size:12px;color:#8a6b1f;margin-top:3px">📞 <div>· <b>0512-65795888</b> <a class="ev" href="https://stockn.xueqiu.com/SH688533/20230427077050.pdf" target="_blank">🔗</a></div><div>· <b>0512-65795999</b> <a class="ev" href="http://static.cninfo.com.cn/finalpage/2026-04-29/1225235201.PDF" target="_blank">🔗</a></div></div>
+</div></div></div>
 <div class="foot">每次自动任务（09:00 / 20:30）处理 queue 队列，查完即写入本页</div>
 <script>
+(function(){
+ var q=new URLSearchParams(location.search),c=q.get('c')||'',pk=(q.get('p')||'PLEX');
+ if(!c)return;
+ var box=document.getElementById('qkbox');
+ if(!box)return;
+ box.style.display='block';
+ document.getElementById('qkttl').textContent='临时查询：'+c+'（'+pk+'）';
+ document.getElementById('qkgo').href='https://github.com/nuoke2007/plex-daily/new/main?filename='
+   +encodeURIComponent('queue/'+c+'-'+pk+'.txt')+'&value='+encodeURIComponent(c+' | '+pk);
+})();
 function flt2(v){var k=(v||'').toLowerCase(),n=0;
  document.querySelectorAll('#list2 .lead').forEach(function(el){
   var t=el.innerText.toLowerCase(),ok=(!k)||t.indexOf(k)>=0;el.style.display=ok?'':'none';if(ok)n++;});}

@@ -760,5 +760,96 @@
    "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
    "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
   }
+ },
+ "603166": {
+  "name": "福达股份",
+  "role": "技术部门/智能制造部门",
+  "why": "公司有海外建厂计划，需要智能制造解决方案。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "公司计划在墨西哥设立全资子公司，涉及海外建厂。",
+  "signal": "福达股份拟以自有资金400万美元（折合人民币2,761.00万元）在墨西哥投资设立全资子公司。",
+  "grade": "高",
+  "region": "华东·广西",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [],
+  "researched": "2026-11-11"
+ },
+ "300183": {
+  "name": "东软载波",
+  "role": "研发部门",
+  "why": "创新中心项目涉及研发，研发部门最可能对PLM系统有需求。",
+  "chief": "🤖 AI 查证：总工程师 潘松（对口人｜可直接谈方案，这是真正的门）",
+  "demand": "是",
+  "demand_reason": "东软载波创新中心项目通过竣工验收备案，表明公司对研发和智能制造的投入，可能对PTC Windchill (PLM)有需求。",
+  "signal": "东软载波创新中心项目通过竣工验收备案暨投资进展",
+  "grade": "中",
+  "region": "华东·山东",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://vip.stock.finance.sina.com.cn/corp/view/vCI_CorpManagerInfo.php?stockid=300183&Pcode=30345488&Name=%EF%BF%BD%EF%BF%BD%EF%BF%BD%EF%BF%BD",
+  "referral": "",
+  "chief_name": "潘松",
+  "insider": null,
+  "tier": "对口",
+  "phones": [
+   {
+    "num": "0532-83676958",
+    "src": "https://stockn.xueqiu.com/SZ300183/20240814060677.pdf",
+    "ctx": "郭宋君 张燕 联系地址 青岛市市北区上清路16 号甲 青岛市市北区上清路16 号甲 电话 "
+   }
+  ],
+  "researched": "2026-11-11",
+  "email": {
+   "to": "pansong@eastsoft.com.cn",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "对口邮箱：可直接约15分钟，附同行业案例一页纸"
+  }
+ },
+ "600262": {
+  "name": "北方股份",
+  "role": "研发部门负责人",
+  "why": "研发部门负责人负责研发中心的设立和运营，需要多研发中心协同和设计BOM一致。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "北方股份设立成都研发中心，需要多研发中心协同和设计BOM一致。",
+  "signal": "内蒙古北方重型汽车股份有限公司关于设立成都研发中心（分公司）的公告",
+  "grade": "中",
+  "region": "华北·天津",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [],
+  "researched": "2026-11-11"
+ },
+ "002140": {
+  "name": "东华科技",
+  "role": "技术部门",
+  "why": "技术部门负责项目的技术实施和设备选型。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "东华科技控股子公司内蒙新材实施年产30万吨乙二醇项目技改，可能需要设备互联、OEE透明化和预测性维护解决方案。",
+  "signal": "东华科技控股子公司内蒙新材实施年产30万吨乙二醇项目技改",
+  "grade": "中",
+  "region": "华东·安徽",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [],
+  "researched": "2026-11-11"
  }
 }
