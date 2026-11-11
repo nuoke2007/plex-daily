@@ -1,1 +1,76 @@
-{}
+{
+ "Q39b95901": {
+  "name": "上声电子",
+  "role": "生产管理部",
+  "why": "负责生产管理与海外扩产实施",
+  "chief": "未具名（决策人）：已锁定转介人 —— 董事会秘书 朱文元。董秘只能转介，不是拍板人；先请他转制造/信息化负责人，再谈方案",
+  "demand": "是",
+  "demand_reason": "公司有海外扩产计划，需快速落地MES系统",
+  "signal": "2026年推进海外生产基地扩产扩建",
+  "grade": "高",
+  "region": "长三角·江苏",
+  "auto": true,
+  "model": "glm-4-plus",
+  "src": "http://static.cninfo.com.cn/finalpage/2026-04-29/1225235201.PDF",
+  "referral": "朱文元",
+  "chief_name": "朱文元",
+  "insider": {
+   "name": "丁晓峰",
+   "title": "副总经理",
+   "src": "https://vip.stock.finance.sina.com.cn/corp/view/vCI_CorpManagerInfo.php?stockid=688533&Pcode=30708568&Name=%EF%BF%BD%EF%BF%BD%EF%BF%BD%EF%BF%BD%EF%BF%BD%EF%BF%BD"
+  },
+  "tier": "拍板",
+  "phones": [
+   {
+    "num": "0512-65795888",
+    "src": "http://static.cninfo.com.cn/finalpage/2026-04-29/1225235201.PDF",
+    "ctx": "城区元和街道科技园中创 路333 号 苏州市相城区元和街道科技园中创 路333 号 电话 "
+   },
+   {
+    "num": "010602001261",
+    "src": "https://m.jobui.com/company/15351781/jobs/analysis",
+    "ctx": "  ### 珠海博威智能电网有限公司  ### 发现好公司，发现好客户  粤公网安备 44"
+   }
+  ],
+  "window": "海外工厂投产前6个月需确定MES方案",
+  "dept": "生产管理部",
+  "dept_ev": "材料中明确提到生产管理部负责扩产实施",
+  "ladder": [
+   {
+    "to": "证券事务部",
+    "via": "拨0512-65795888-8366转接",
+    "say": "您好，想了解贵司海外扩产项目进展",
+    "get": "生产管理部门负责人姓名"
+   },
+   {
+    "to": "生产管理部",
+    "via": "通过证券事务部分机转接",
+    "say": "您好，想请教海外扩产项目MES选型负责人",
+    "get": "丁晓峰分机号或邮箱"
+   },
+   {
+    "to": "丁晓峰",
+    "via": "直接联系",
+    "say": "了解到贵司正在推进墨西哥、捷克基地扩产",
+    "get": "确认其负责MES选型"
+   },
+   {
+    "to": "丁晓峰",
+    "via": "邮件预约",
+    "say": "想请教多工厂MES标准统一经验",
+    "get": "安排15分钟线上会议"
+   }
+  ],
+  "hook": "海外扩产如何快速统一多厂MES标准",
+  "risk": "若扩产计划推迟或预算削减",
+  "next": "打0512-65795888-8366转生产管理部",
+  "researched": "2026-11-11",
+  "email": {
+   "to": "zhuwenyuan@chinasonavox.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "转介用邮箱：只求转交对口部门，不要谈方案细节"
+  },
+  "product_key": "PLEX",
+  "inquiry": true
+ }
+}
