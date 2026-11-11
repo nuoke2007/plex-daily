@@ -764,6 +764,18 @@ FILEMAP={"PLEX":"dashboard.html","FTPC":"ftpc.html","TWX":"thingworx.html","WIND
 LOGO={"PLEX":"logo-plex.png","FTPC":"logo-ft.png","TWX":"logo-twx.png","WIND":"logo-wind.png","DMX":"logo-ft.png"}
 SHORT={"PLEX":"PLEX","FTPC":"FTPC","TWX":"ThingWorx","WIND":"Windchill","DMX":"DataMosaix"}
 NAVITEMS=[(FILEMAP[k], k) for k in ["PLEX","FTPC","TWX","WIND","DMX"]]
+AUTH_HASH = "3a244add8aa00cef959339a845be9cd2efb4d85a3b817126ff4506dbf0476e62"  # sha256("leon:123456")
+
+AUTH_GUARD = """<script>
+(function(){
+ var ok=false;
+ try{ ok=(localStorage.getItem('pd_auth')==='__AUTH_HASH__'); }catch(e){}
+ if(ok) return;
+ var back=location.pathname.split('/').pop()+location.search;
+ location.replace('index.html?next='+encodeURIComponent(back));
+})();
+</script>"""
+
 def nav_html(active):
     chips=""
     for f,k in NAVITEMS:
@@ -771,6 +783,8 @@ def nav_html(active):
         chips+=(f'<a class="{cls}" href="{f}">'
                 f'<img class="navlogo" src="{LOGO[k]}" alt="">'
                 f'<span>{SHORT[k]}</span></a>')
+    chips+=('<a class="chip alt" href="#" onclick="try{localStorage.removeItem(\'pd_auth\')}catch(e){};location.href=\'index.html\';return false"'
+            ' style="background:#f3f4f6;color:#6b7280">退出</a>')
     return f'<div class="navchips">{chips}</div>'
 
 high=[c for c in CASES if c["feas"]=="高"]
@@ -1658,11 +1672,68 @@ def shell(title, active, body):
 <title>{esc(title)}</title><style>{CSS}</style>
 <style>.fu-btn{{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#003DA5;border-radius:6px;padding:4px 10px;font-size:12px;margin-left:4px}}.fu-btn.done{{background:#e6f4ea;color:#137333;border-color:#137333}}.fu-item{{background:#fff8e1;border:1px solid #f0c36d;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px}}.fu-item button{{margin-left:6px;cursor:pointer;border:none;border-radius:6px;padding:4px 10px;font-size:12px;background:#003DA5;color:#fff}}</style>
 </head><body>
+{AUTH_GUARD.replace("__AUTH_HASH__", AUTH_HASH)}
 <div class="wrap">
 {nav_html(active)}
 {FU_JS}
 {body}
 </div></body></html>"""
+
+# ---- 登录页（index.html）----
+LOGIN_TPL = """<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>登录 · 销售线索雷达</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,#003DA5 0%,#0b6bcb 55%,#00B5E2 100%);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.card{width:min(92vw,360px);background:#fff;border-radius:16px;padding:30px 26px 24px;box-shadow:0 18px 50px rgba(0,20,60,.28)}
+.logo{font-size:13px;letter-spacing:.14em;color:#003DA5;font-weight:700;text-align:center}
+h1{margin:10px 0 3px;font-size:20px;color:#12263f;text-align:center;font-weight:700}
+.sub{margin:0 0 22px;font-size:12.5px;color:#8494a4;text-align:center}
+label{display:block;font-size:12px;color:#5a6b7b;margin:12px 0 5px}
+input{width:100%;padding:10px 12px;font-size:14px;border:1px solid #d5dde7;border-radius:9px;outline:none;transition:.15s}
+input:focus{border-color:#0b6bcb;box-shadow:0 0 0 3px rgba(11,107,203,.12)}
+button{width:100%;margin-top:20px;padding:11px;border:none;border-radius:9px;background:#003DA5;color:#fff;
+font-size:14.5px;font-weight:600;cursor:pointer;transition:.15s}
+button:hover{background:#0b52c4}
+button:disabled{opacity:.6;cursor:default}
+.err{margin-top:11px;font-size:12.5px;color:#c62828;text-align:center;min-height:17px}
+</style></head><body>
+<div class="card">
+  <div class="logo">ROCKWELL · PTC</div>
+  <h1>销售线索雷达</h1>
+  <p class="sub">请登录后查看</p>
+  <form id="f" autocomplete="off">
+    <label>用户名</label>
+    <input id="u" type="text" placeholder="请输入用户名" required>
+    <label>密码</label>
+    <input id="p" type="password" placeholder="请输入密码" required>
+    <button id="go" type="submit">登 录</button>
+  </form>
+  <div class="err" id="e"></div>
+</div>
+<script>
+var HASH="__HASH__";
+function hex(buf){return Array.prototype.map.call(new Uint8Array(buf),function(b){return ("0"+b.toString(16)).slice(-2)}).join("")}
+document.getElementById("f").addEventListener("submit",function(ev){
+ ev.preventDefault();
+ var u=document.getElementById("u").value.trim(),p=document.getElementById("p").value;
+ var btn=document.getElementById("go"),err=document.getElementById("e");
+ err.textContent="";btn.disabled=true;btn.textContent="登录中…";
+ var done=function(h){
+   if(h!==HASH){err.textContent="用户名或密码不正确";btn.disabled=false;btn.textContent="登 录";return;}
+   try{localStorage.setItem("pd_auth",HASH)}catch(e){}
+   var n=new URLSearchParams(location.search).get("next")||"dashboard.html";
+   location.replace(n);
+ };
+ if(window.crypto&&crypto.subtle&&crypto.subtle.digest){
+   crypto.subtle.digest("SHA-256",new TextEncoder().encode(u+":"+p)).then(function(b){done(hex(b))},function(){err.textContent="当前环境不支持登录校验，请用 https 访问";btn.disabled=false});
+ }else{err.textContent="当前环境不支持登录校验，请用 https 访问";btn.disabled=false;btn.textContent="登 录";}
+});
+</script></body></html>"""
+(ROOT/"index.html").write_text(LOGIN_TPL.replace("__HASH__", AUTH_HASH), encoding="utf-8")
+log("index.html 登录页已生成")
 
 # ---- PLEX 首页 ----
 # 新线索自动深查（先查档，再渲染，页面里看到的就是查过的）
