@@ -1232,13 +1232,28 @@ def _clean_ladder(x, limit=4, allowed=()):
         get = str(it.get("get") or "").strip()[:60]
         if to or via:
             out.append({"to": to, "via": via, "say": say, "get": get})
-    # 擦掉未核证的人名：to 是纯 2-4 字中文且不是部门/岗位词、又不在已核证名单 → 判为编造
+    # 擦掉未核证的人名：先认出可疑人名，再在全篇梯子里统一替换成岗位指代
+    bad_nm = []
     for st in out:
         t = st["to"]
         if re.fullmatch(r"[\u4e00-\u9fa5]{2,4}", t) and t not in allowed \
                 and not any(k in t for k in ("部","中心","组","科","处","室","岗","经理","总监","主任","负责人","团队","事业")):
-            for k in ("to","via","say","get"):
-                st[k] = st[k].replace(t, "对口负责人（姓名待电话确认）")
+            bad_nm.append(t)
+    # 另外从"XX分机号/XX邮箱/XX您好"这类句式里揪人名
+    for st in out:
+        for f in ("to", "via", "say", "get"):
+            for m in re.finditer(r"([\u4e00-\u9fa5]{2,3})(?=的分机|分机号|的邮箱|邮箱|的手机|手机号|您好|先生|女士)", st[f]):
+                tk = m.group(1)
+                if tk not in allowed and tk not in bad_nm \
+                        and not any(k in tk for k in ("部","中心","岗","经理","总监","主任","负责人")):
+                    bad_nm.append(tk)
+    for st in out:
+        for tk in bad_nm:
+            if tk and tk not in allowed:
+                for k in ("to","via","say","get"):
+                    st[k] = st[k].replace(tk, "对口负责人")
+                if st["to"].strip() == "对口负责人":
+                    st["to"] = "对口负责人（姓名待电话确认）"
     return out
 
 _DEPT_WORDS = ("信息中心","信息化","数字化","智能制造","制造运营","生产制造","生产计划","工艺","设备","IT部","IT 部","信息技术","生产管理","工程部","技术中心","供应链","物流","品质","质量")
