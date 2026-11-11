@@ -968,40 +968,10 @@ def auto_dossier(nm, title, rule, ind):
     return chief,lev,steps,loc
 
 def contact_links(code, nm, ask=None, role="", why="", grade=""):
-    """分析先行的搭线块：先讲清找谁/为什么是他/为什么现在，再给把话递进去的合规通道。"""
-    import urllib.parse as _u
-    code=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
-    ask=ask or "关注到贵司海外新厂建设，希望15分钟对接信息化/海外项目负责人交流MES方案"
-    if code.startswith("6"):
-        ir=f"https://sns.sseinfo.com/company/company.do?stockcode={code}"
-        ir_label="董秘/e互动直达（上交所）"
-    else:
-        ir=f"https://irm.cninfo.com.cn/ircs/company/companyDetail?stockcode={code}"
-        ir_label="董秘/互动易直达（深交所·可直接提问）"
-    job=f"https://www.zhipin.com/web/geek/job?query={_u.quote(nm)}"
-    baidu=f"https://www.baidu.com/s?wd={_u.quote(nm+' 董秘 电话 年报')}"
-    now={"高":"公告时点正好卡在选型/设备进场期，现在递话最容易被当回事",
-         "中":"项目刚启动，先把关系种进去，等方案阶段再深入",
-         "低":"大概率已定选型，只做存量/向上销售观察"}.get(grade,"")
-    tgt=role.split("（")[0].split("/")[0]  # 转介目标，取最前的部门/人
-    steps=[
-      f'① <b>董秘/证券部公开问询转介</b>（合规、对方不能装没看见）：在 <a class="ev" href="{esc(ir)}" target="_blank">{ir_label}</a> 公开发商务问询，请其转{esc(tgt)}；别写成广告，写“多基地制造/数字化标准统一，求商务对接窗口”。',
-      f'② <b>打证券部直线（不是总机）</b>：<a class="ev" href="{esc(baidu)}" target="_blank">年报查董秘办电话</a>，工作日上午一句“有个多基地方案想转{esc(tgt)}，给个商务对接邮箱”。',
-      f'③ <b>行业论坛换名片</b>：查下一场智能制造/工业互联网大会，看{esc(nm)}谁上台；你方是赞助商，茶歇以“同议题”同行交流破冰，不推销。',
-      f'④ <b>内部CRM找现有AM warm intro（你独有）</b>：查{esc(nm)}现有设备/经销商，让已在现场服务的AM转介{esc(tgt)}；并用 <a class="ev" href="{esc(job)}" target="_blank">BOSS看在招岗</a> 验证是否在建队（在招=窗口期）。',
-    ]
-    steps_html="".join('<div style="margin:3px 0">'+s+'</div>' for s in steps)
-    return (f'<div style="margin-top:8px;padding:10px;background:#f4f8ff;border:1px solid #d6e4ff;border-radius:8px">'
-            f'<b style="font-size:12.5px;color:#003DA5">🎯 搭线动作链（照着走就能拨通）</b>'
-            f'<div style="font-size:12px;line-height:1.7;margin-top:5px;color:#243b53">'
-            f'<div>👉 <b>该找谁：</b>{esc(role)}</div>'
-            f'<div>🧭 <b>为什么是他：</b>{esc(why)}</div>'
-            f'<div>⏱️ <b>为什么现在：</b>{esc(now)}</div>'
-            f'</div>'
-            f'<div style="margin-top:7px;padding-top:6px;border-top:1px dashed #c8d8ee;font-size:11.8px;line-height:1.8;color:#33414f">'
-            f'{steps_html}'
-            f'<div style="color:#5a6b7b;margin-top:4px">✍️ 开口话术：“我是罗克韦尔/PTC，{esc(ask)}。”</div>'
-            f'</div></div>')
+    """已停用：原来的"董秘转介→打证券部→论坛换名片→CRM warm intro"是每个 case 都一样的模板，
+    用户明确要求删掉。现在的搭线路径由 AI 按这家公司的事实逐步生成（_plan_html）。"""
+    return ""
+
 
 # 公司级真查档案（AI 逐家上网查证后写入；未入档的走产品级通用判断）
 # 字段: role=该找谁 why=为什么是他 chief=已具名查到的对接人/部门 + 证据
@@ -1243,12 +1213,13 @@ def _clean_ladder(x, limit=4, allowed=()):
     if not isinstance(x, list): return out
     for it in x[:limit]:
         if not isinstance(it, dict): continue
+        purpose = str(it.get("purpose") or "").split("·")[0].strip()[:14]
         to = str(it.get("to") or "").strip()[:60]
         via = str(it.get("via") or "").strip()[:60]
         say = str(it.get("say") or "").strip()[:80]
         get = str(it.get("get") or "").strip()[:60]
         if to or via:
-            out.append({"to": to, "via": via, "say": say, "get": get})
+            out.append({"purpose": purpose, "to": to, "via": via, "say": say, "get": get})
     # 擦掉未核证的人名：先认出可疑人名，再在全篇梯子里统一替换成岗位指代
     bad_nm = []
     for st in out:
@@ -1322,6 +1293,30 @@ def _ladder_bad(steps):
         if not (st.get("via") or "").strip(): bad.append("空通道")
     return bad
 
+_DUP_TXT = {}
+_DUP_FIELDS = ("window", "dept_ev", "hook", "risk", "next")
+
+def _norm_txt(x):
+    return re.sub(r"[\s，。；、！？：·（）()\"“”'']", "", (x or "").lower())
+
+def _init_dup():
+    """同一句话出现在几家公司：>=2 就是模板话术，渲染时不再显示"""
+    if _DUP_TXT: return
+    seen = {}
+    pool = list(PRODUCT_DOSSIERS.values()) + list(_INQ.values()) + list(_AI_CACHE.values())
+    for d in pool:
+        for f in _DUP_FIELDS:
+            v = _norm_txt(d.get(f))
+            if len(v) >= 6: seen[v] = seen.get(v, 0) + 1
+        for st in (d.get("ladder") or []):
+            for f in ("via", "say"):
+                v = _norm_txt(st.get(f))
+                if len(v) >= 8: seen[v] = seen.get(v, 0) + 1
+    _DUP_TXT.update(seen)
+
+def _dup(x):
+    return _DUP_TXT.get(_norm_txt(x), 0) >= 2
+
 def _mailbox_html(ds, escfn=None, mailto=True):
     """📮 邮箱区：实名推断 / 原文真实 / 部门推测，三类分开标，别让人误发"""
     esc = escfn or (lambda x: x)
@@ -1343,27 +1338,33 @@ def _plan_html(ds, escfn=None):
     """怎么找人：窗口 → 该找哪个部门 → 搭线梯子 → 开场白 → 反证 → 今天做什么"""
     esc = escfn or (lambda x: x)
     rows = []
+    _init_dup()
     for i, st in enumerate(ds.get("ladder") or [], 1):
+        if not st.get("to"): continue
+        if _dup(st.get("via")) and _dup(st.get("say")):
+            continue
         rows.append(
             '<div style="margin:5px 0;padding:7px 9px;background:#fbfcfe;border-left:3px solid #7a5af8;border-radius:0 6px 6px 0">'
-            '<div style="font-size:12px;color:#243b53"><b>第' + str(i) + '步</b> · ' + esc(st.get("to","")) + '</div>'
+            '<div style="font-size:12px;color:#243b53"><b>第' + str(i) + '步</b>'
+            + ((' · ' + esc(st["purpose"])) if st.get("purpose") else '') + ' · ' + esc(st.get("to","")) + '</div>'
             '<div style="font-size:11.5px;color:#5a6b7b;line-height:1.7">通道：' + esc(st.get("via","")) + '</div>'
             + (('<div style="font-size:11.5px;color:#8a4b00;line-height:1.7">开口：' + esc(st.get("say","")) + '</div>') if st.get("say") else '')
             + (('<div style="font-size:11.5px;color:#137333;line-height:1.7">目标产出：' + esc(st.get("get","")) + '</div>') if st.get("get") else '')
             + '</div>')
+    _init_dup()
     parts = []
-    if ds.get("window"):
+    if ds.get("window") and not _dup(ds.get("window")):
         parts.append('<div style="font-size:12.5px;color:#243b53"><b>\u23f1 窗口：</b>' + esc(ds["window"]) + '</div>')
-    if ds.get("dept"):
+    if ds.get("dept") and not (ds.get("dept_ev") and _dup(ds.get("dept_ev"))):
         parts.append('<div style="font-size:12.5px;color:#243b53;margin-top:3px"><b>\U0001f3af 该找的部门：</b>' + esc(ds["dept"])
                      + ((' <span style="color:#8494a4">（依据：' + esc(ds["dept_ev"]) + '）</span>') if ds.get("dept_ev") else '') + '</div>')
     if rows:
         parts.append('<div style="font-size:12.5px;color:#003DA5;font-weight:700;margin:8px 0 2px">\U0001fa9c 怎么搭上线（按顺序做）</div>' + ''.join(rows))
-    if ds.get("hook"):
+    if ds.get("hook") and not _dup(ds.get("hook")):
         parts.append('<div style="margin-top:6px;font-size:12.5px;color:#8a4b00;background:#fffdf5;border:1px solid #f0e0b6;border-radius:6px;padding:6px 9px"><b>\U0001f4ac 见到对口人第一句：</b>' + esc(ds["hook"]) + '</div>')
-    if ds.get("next"):
+    if ds.get("next") and not _dup(ds.get("next")):
         parts.append('<div style="margin-top:5px;font-size:12.5px;color:#137333"><b>\u25b6 今天先做：</b>' + esc(ds["next"]) + '</div>')
-    if ds.get("risk"):
+    if ds.get("risk") and not _dup(ds.get("risk")):
         parts.append('<div style="margin-top:4px;font-size:11.5px;color:#a04040"><b>\u26a0 反证：</b>' + esc(ds["risk"]) + '</div>')
     if not parts: return ""
     return '<div style="margin-top:6px;border-top:1px dashed #dbe4ef;padding-top:6px">' + ''.join(parts) + '</div>'
@@ -1445,7 +1446,7 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
  "domain":"该公司企业邮箱域名，如 angelyeast.com；查不到填空字符串",
  "email_guess":"按该域名与中文姓名拼音推断的最可能邮箱；查不到填空字符串",
 
- "window":"时间窗：这个需求最晚什么时候必须定方案、卡在哪个节点（如投产前6个月定版MES）；40字内，无依据填空",
+ "window":"这家公司材料里的具体时间节点（哪年哪月、哪条公告说了什么节点）；查不到就填空。禁止行业通则（如“投产前6个月定版”）。",
  "dept":"该找的具体部门（用这家公司自己的叫法，如 集团信息中心/制造运营部/工艺设备部）：必须是材料里出现过的部门名，没出现就写行业通称并标注（推断）",
  "dept_ev":"为什么是这个部门：依据哪条材料（招聘JD的部门名/公告署名/组织架构新闻），40字内",
  "ladder":[   // 必须正好4步，第4步是"给15分钟具体议题"，不是"见面聊产品"
@@ -1454,8 +1455,8 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
    {{"purpose":"建立可信 · 给一条他能验证的事实","to":"...","via":"...","say":"...","get":"..."}},
    {{"purpose":"约见 · 15分钟两页纸","to":"...","via":"...","say":"...","get":"..."}}
  ],
- "hook":"递给真正对口人时的第一句话（25字内，讲他此刻的具体麻烦：爬坡/多厂标准/审核/追溯；禁止写“我们想了解贵司需求”和产品名）",
- "risk":"反证：什么情况下这家不值得跟（30字内）；没有就填空",
+ "hook":"针对这家公司具体事实的一句开场（25字内，必须点到它的基地/产线/项目名或公告事实；禁止通用句、产品名、“我们想了解贵司需求”）",
+ "risk":"这家的具体不利证据（公告只提意向未定金额/已延期/竞品已中标等）；写不出就填空。禁止“若计划推迟、预算削减”这类到处都能用的废话。",
  "next":"今天就能做的一个动作（20字内，含对象和动作，如 打0571总机转信息中心问MES归谁管）"
 }}"""
     d, model = glm_json(_AI_SYS, user)
@@ -2198,7 +2199,7 @@ def notify():
         # 非周一：仅当出现新信号才即时推，安静日不打扰
         title = f"🆕 新销售信号 {len(fresh)} 条 {TODAY}"
         body = "\n".join(f"· [{pn}] {nm}\n  {tt}\n  {u}" for pn,nm,tt,u in fresh)
-        body += f"\n\n打开看板看搭线动作链：{site or ''}"
+        body += f"\n\n打开看板看今日线索和搭线路径：{site or ''}"
         _send_push(sc,bk,title,body)
     else:
         log("非周一且近48h无新信号，静默不推送")
