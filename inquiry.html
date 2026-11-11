@@ -161,7 +161,35 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 </div>
 <div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
 
-<div class="sec"><div class="sec-h">已查 1 家</div><div class="srchwrap"><input class="srch" id="q2" placeholder="🔍 输入公司名 / 代码 / 产品" oninput="flt2(this.value)"><div class="rgbar" id="rgbar2"></div></div><div id="list2"><div class="lead" data-rg="长三角·江苏">
+<script>
+(function(){
+  var q=(new URLSearchParams(location.search)).get('c');
+  if(!q) return;
+  var box=document.getElementById('q2');
+  if(box){ box.value=q; }
+  if(window.flt2){ flt2(q); }
+  setTimeout(function(){
+    var list=document.getElementById('list2'); if(!list) return;
+    var vis=[].slice.call(list.querySelectorAll('.lead')).filter(function(el){ return el.style.display!=='none'; });
+    if(vis.length===0){
+      var b=document.createElement('div'); b.className='sec';
+      b.style.cssText='border-color:#e3dcff;background:#faf8ff';
+      b.innerHTML='<div class="sec-h">⏳ 你查的 '+q+' 还没有结果</div><div style="font-size:12.5px;color:#5a6b7b;line-height:1.8">这家还没跑过 AI。点上面的「提交给 AI 查」，在打开的新页面里点一次绿色「Commit changes」才算真正入队；入队后每天 09:00 / 20:30 自动跑，跑完结果直接出现在本页。缩写/英文简称建议换成公司全称，检索命中率更高。</div>';
+      list.parentNode.insertBefore(b,list);
+    } else {
+      vis.forEach(function(el){
+        var t=el.querySelector('.lead-top');
+        if(t && !t.querySelector('.qtag')){
+          var sp=document.createElement('span'); sp.className='indtag qtag';
+          sp.style.cssText='background:#1f7a49;color:#fff';
+          sp.textContent='本次查询'; t.appendChild(sp);
+        }
+      });
+    }
+  },80);
+})();
+</script>
+<div class="sec"><div class="sec-h">历史已查记录 1 家（全部临时查询，与本次查询无关）</div><div class="srchwrap"><input class="srch" id="q2" placeholder="🔍 输入公司名 / 代码 / 产品" oninput="flt2(this.value)"><div class="rgbar" id="rgbar2"></div></div><div id="list2"><div class="lead" data-rg="长三角·江苏">
 <div class="lead-top"><span class="badge">高</span><b>上声电子</b><span class="lc">Q39b95901</span>
 <span class="indtag">PLEX</span><span class="indtag">🗺️ 长三角·江苏</span></div>
 <div style="font-size:12.5px;color:#3d4c5c;line-height:1.75;margin-top:4px">
