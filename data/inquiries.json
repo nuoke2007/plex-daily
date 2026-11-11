@@ -1,0 +1,44 @@
+{
+ "Q39b95901": {
+  "name": "上声电子",
+  "role": "制造部门负责人",
+  "why": "制造部门负责生产管理，直接关联MES系统的选型和实施。",
+  "chief": "🤖 AI 查证：法定代表人 周建明（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）",
+  "demand": "是",
+  "demand_reason": "苏州上声电子股份有限公司正在海外生产基地（墨西哥、捷克）的扩产扩建，需要快速MES落地。",
+  "signal": "苏州上声电子股份有限公司正在海外生产基地（墨西哥、捷克）的扩产扩建。",
+  "grade": "高",
+  "region": "华东·江苏",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://stockn.xueqiu.com/SH688533/20230427077050.pdf",
+  "referral": "",
+  "chief_name": "周建明",
+  "insider": {
+   "name": "朱文元",
+   "title": "董事会秘书（信息披露境内代表）",
+   "src": "https://stockn.xueqiu.com/SH688533/20230427077050.pdf"
+  },
+  "tier": "拍板",
+  "phones": [
+   {
+    "num": "0512-65795888",
+    "src": "https://stockn.xueqiu.com/SH688533/20230427077050.pdf",
+    "ctx": "城区元和街道科技园中创路 333 号 苏州市相城区元和街道科技园中创路 333 号 电话 "
+   },
+   {
+    "num": "0512-65795999",
+    "src": "http://static.cninfo.com.cn/finalpage/2026-04-29/1225235201.PDF",
+    "ctx": " 电话 0512-65795888-8366 0512-65795888-8366 传真 "
+   }
+  ],
+  "researched": "2026-11-11",
+  "email": {
+   "to": "zhoujianming@sonavox-group.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
+  },
+  "product_key": "PLEX",
+  "inquiry": true
+ }
+}
