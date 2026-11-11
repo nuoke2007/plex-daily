@@ -587,89 +587,33 @@ PRODUCT_WHO_ROLE={
 }
 
 def qk_panel(key, who, three, hook, rhint):
-    """即查模式：任意公司名 → 立刻生成 6 条精准查询路径 + 该产品打法 + 一键复制AI深查指令"""
-    qs="".join(f'<div style="margin:2px 0">· {esc(q)}</div>' for q in three)
-    return f'''
-<div class="qk" id="qk-{key}">
-  <div style="font-size:13px;font-weight:700;color:#003DA5">🔎 查一家不在雷达里的公司（即查模式）</div>
-  <div style="font-size:12px;color:#5a6b7b;margin:3px 0 8px">输入公司名或股票代码，立刻给出这家公司该查什么、查哪几个源、找到人后怎么递话。真正查出具名人+邮箱那一步交给 AI（一键复制粘贴即可）。</div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <input class="qk-name" type="text" placeholder="公司名 / 股票代码，如 拓普集团、601689" autocomplete="off"
+    """即查模式：输入公司名 → 落到临时页（inquiry.html），不进主看板、不改代码"""
+    tpl = """
+<div class="qk" id="qk-__KEY__">
+  <div style="font-size:13px;font-weight:700;color:#003DA5">🔎 查一家不在雷达里的公司（临时查询）</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:7px">
+    <input class="qk-name" type="text" placeholder="公司名 / 股票代码，如 上声电子、688533" autocomplete="off"
       style="flex:1;min-width:210px;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:8px 11px;font-size:13px;outline:none">
-    <button class="qk-go" style="cursor:pointer;border:none;border-radius:8px;padding:8px 16px;font-size:13px;background:#003DA5;color:#fff;font-weight:600">生成查询路径</button>
+    <button class="qk-go" style="cursor:pointer;border:none;border-radius:8px;padding:8px 16px;font-size:13px;background:#7a5af8;color:#fff;font-weight:600">🚀 查这家</button>
   </div>
-  <div class="qk-out" style="display:none;margin-top:10px;padding:11px;background:#f7f9fc;border:1px solid #dbe4ef;border-radius:8px">
-    <div class="qk-title" style="font-size:12.5px;font-weight:700;color:#003DA5;margin-bottom:6px"></div>
-    <div style="font-size:11.8px;color:#5a6b7b;margin-bottom:4px">① 先查这 6 个源（点开即搜，无需自己编关键词）：</div>
-    <div class="qk-links" style="margin:4px 0 10px"></div>
-    <div style="font-size:11.8px;color:#5a6b7b">② 拿着结果对照这款产品的打法：</div>
-    <div style="font-size:12px;line-height:1.75;color:#243b53;margin-top:3px">
-      <div>👉 <b>该找谁：</b>{esc(rhint)}</div>
-      <div>🎯 <b>打谁（ICP）：</b>{esc(who)}</div>
-      <div>❓ <b>三问验证真需求：</b>{qs}</div>
-    </div>
-    <div style="font-size:11.8px;color:#5a6b7b;margin-top:8px">③ 查到具名人后，按下面这条链递话：</div>
-    <div style="font-size:11.8px;line-height:1.75;color:#33414f;margin-top:3px">董秘/证券部公开问询转介 → 年报查证券部直线 → 行业论坛换名片 → 内部CRM找现有AM warm intro</div>
-    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="qk-queue" style="cursor:pointer;border:none;background:#7a5af8;color:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">🚀 交给 AI 自动查（排队）</button>
-      <a href="inquiry.html" target="_blank" style="align-self:center;font-size:12.5px;color:#7a5af8;text-decoration:none;font-weight:600">🔎 看即查结果</a>
-      <button class="qk-copy" style="cursor:pointer;border:1px solid #003DA5;background:#fff;color:#003DA5;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600">📋 复制指令（急用·分钟级）</button>
-      <span class="qk-tip" style="font-size:11.5px;color:#8494a4;align-self:center">排队＝每天 09:00 / 20:30 自动查完入档；急用就复制指令发我，当场查</span>
-    </div>
-  </div>
-  <details style="margin-top:8px"><summary style="cursor:pointer;font-size:11.8px;color:#8494a4">钩子话术（查到人后用）</summary>
-    <div style="font-size:11.8px;line-height:1.7;color:#33414f;margin-top:4px">{esc(hook)}</div></details>
+  <div style="margin-top:7px"><a href="inquiry.html" target="_blank" style="font-size:12.5px;color:#7a5af8;text-decoration:none;font-weight:600">🔎 看即查结果 →</a></div>
 </div>
-<style>.qk{{margin:10px 0;padding:12px;background:#fff;border:1px solid #dbe4ef;border-radius:10px;box-shadow:0 1px 3px rgba(0,61,165,.06)}}</style>
+<style>.qk{margin:10px 0;padding:12px;background:#fff;border:1px solid #dbe4ef;border-radius:10px;box-shadow:0 1px 3px rgba(0,61,165,.06)}</style>
 <script>
-(function(){{
- var box=document.getElementById('qk-{key}');if(!box)return;
- var inp=box.querySelector('.qk-name'),out=box.querySelector('.qk-out'),
-     ttl=box.querySelector('.qk-title'),lk=box.querySelector('.qk-links'),
-     cp=box.querySelector('.qk-copy'),tip=box.querySelector('.qk-tip'),cur='';
- var enc=function(s){{return encodeURIComponent(s);}};
- function build(){{
+(function(){
+ var box=document.getElementById('qk-__KEY__');if(!box)return;
+ var inp=box.querySelector('.qk-name');
+ function go(){
   var n=(inp.value||'').trim();
-  if(!n){{inp.focus();return;}}
-  cur=n;
-  var L=[
-   ['① 巨潮公告（查新基地/并购/技改/募投）','http://www.cninfo.com.cn/new/fulltextSearch?notautosubmit=&keyWord='+enc(n)],
-   ['② 官网/简介（查几大基地、海外布局）','https://www.baidu.com/s?wd='+enc(n+' 官网 公司简介 生产基地')],
-   ['③ 年报·董秘电话（第2步打证券部直线用）','https://www.baidu.com/s?wd='+enc(n+' 年报 董秘 联系电话')],
-   ['④ 出海/新厂/并购信号（近12个月）','https://www.baidu.com/s?wd='+enc(n+' 海外 建厂 投资 新基地 2025 2026')],
-   ['⑤ 在招岗（在招=正在选型，验证窗口）','https://www.zhipin.com/web/geek/job?query='+enc(n)],
-   ['⑥ 信息化/数字化负责人（找具名人）','https://www.baidu.com/s?wd='+enc(n+' 信息中心 数字化 负责人 MES 智能制造')]
-  ];
-  ttl.textContent='【'+n+'】的信号源与动作（产品：{key}）';
-  lk.innerHTML=L.map(function(x){{return '<a href="'+x[1]+'" target="_blank" style="display:inline-block;margin:0 8px 6px 0;padding:5px 11px;border:1px solid #c8d4e0;border-radius:14px;font-size:11.8px;color:#003DA5;text-decoration:none;background:#fff">'+x[0]+' ↗</a>';}}).join('');
-  out.style.display='block';
- }}
- box.querySelector('.qk-go').onclick=build;
- inp.onkeydown=function(e){{if(e.key==='Enter')build();}};
- var qb=box.querySelector('.qk-queue');
- if(qb)qb.onclick=function(){{
-  var n=(inp.value||'').trim();
-  if(!n){{inp.focus();return;}}
-  var fn='queue/'+enc(n)+'-{key}.txt';
-  var val=enc(n+' | {key}');
-  var url='https://github.com/nuoke2007/plex-daily/new/main?filename='+fn+'&value='+val;
-  window.open(url,'_blank');
-  tip.textContent='已打开 GitHub：点绿色「Commit changes」即加入队列';tip.style.color='#7a5af8';
- }};
- cp.onclick=function(){{
-  var t='帮我深查【'+cur+'】这家公司，产品线是 {key}：\\n'
-   +'1) 近12个月有没有新基地投产/海外建厂/并购/技改/研发中心/数据平台类信号，判断它接下来会不会有 {key} 的选型需求，给明确判断（不要让我自己去判断）；\\n'
-   +'2) 总部所在省市→大区（用于区域筛选）；\\n'
-   +'3) 具名对接人：制造/信息化/研发/数字化负责人，写真实姓名+出处链接；查不到就标“未具名”，绝不编造；\\n'
-   +'4) 若查到具名人，推断其企业邮箱（标注“格式推断、首封先测退信”，附备选格式）并加“📧 发邮件”按钮；\\n'
-   +'5) 按该产品打法给出四步搭线动作链（董秘转介→证券部直线→行业论坛→内部CRM/AM转介），写明具体转介目标；\\n'
-   +'6) 把结果写进 scripts/run_daily.py 的 PRODUCT_DOSSIERS 并部署到 GitHub Pages。';
-  var done=function(){{tip.textContent='已复制 ✓ 粘到对话里发我即可';tip.style.color='#137333';}};
-  if(navigator.clipboard&&navigator.clipboard.writeText){{navigator.clipboard.writeText(t).then(done,function(){{window.prompt('复制下面这段发给我：',t);}});}}
-  else{{window.prompt('复制下面这段发给我：',t);}}
- }};
-}})();
-</script>'''
+  if(!n){inp.focus();return;}
+  window.open('inquiry.html?c='+encodeURIComponent(n)+'&p=__KEY__','_blank');
+ }
+ box.querySelector('.qk-go').onclick=go;
+ inp.onkeydown=function(e){if(e.key==='Enter')go();};
+})();
+</script>
+"""
+    return tpl.replace("__KEY__", key)
 
 
 def render_product(p):
@@ -1465,13 +1409,18 @@ def queue_pass():
     files = sorted(qdir.glob("*.txt"))
     if not files: return
     log(f"即查队列：{len(files)} 个待查任务")
-    for fp in files[:max(1, AI_MAX)]:
+    done = 0
+    for fp in files:
+        if done >= max(1, AI_MAX): break
         try:
             raw = fp.read_text(encoding="utf-8").strip()
         except Exception:
             raw = ""
         if not raw:
             fp.unlink(missing_ok=True); continue
+        if "|" not in raw.replace("｜", "|"):
+            log(f"  队列：{fp.name} 非任务格式，跳过不删")
+            continue
         parts = [x.strip() for x in raw.replace("｜","|").split("|")]
         nm = parts[0]
         pk = (parts[1].upper() if len(parts) > 1 and parts[1] else "PLEX")
@@ -1489,6 +1438,7 @@ def queue_pass():
             ds["product_key"] = p["key"]
             ds["inquiry"] = True
             _INQ[code] = ds
+            done += 1
             log(f"    ✓ 即查完成（{ds['demand']}/{ds['grade']}）→ inquiry.html")
             fp.unlink(missing_ok=True)
             _save_inq()
@@ -1781,6 +1731,18 @@ for p in PRODUCTS:
     log(f"{fn} 已生成")
 
 # ---- 即查结果独立页（临时查的公司不进主看板）----
+def _inq_pending():
+    """queue 里还没跑的任务，先在临时页显示“排队中”，避免点了按钮一片空白"""
+    qdir = ROOT / "queue"
+    if not qdir.exists(): return []
+    out = []
+    for fp in sorted(qdir.glob("*.txt")):
+        try: raw = fp.read_text(encoding="utf-8").strip()
+        except Exception: continue
+        if "|" not in raw.replace("｜", "|"): continue
+        out.append(raw.replace("｜", "|").split("|")[0].strip())
+    return out
+
 def _inq_html():
     if not _INQ:
         return '<div class="empty">还没有即查记录。到任意产品页用「交给 AI 自动查（排队）」提交一家公司，下次自动任务跑完就会出现在这里。</div>'
@@ -1809,12 +1771,35 @@ def _inq_html():
             '<div class="rgbar" id="rgbar2"></div></div>'
             '<div id="list2">'+"".join(rows)+'</div>')
 
+_pend = _inq_pending()
+_pend_html = ""
+if _pend:
+    _pend_html = ('<div class="sec" style="border-color:#e3dcff;background:#faf8ff">'
+                  '<div class="sec-h">⏳ 排队中（' + str(len(_pend)) + ' 家 · 等自动任务）</div>'
+                  '<div style="font-size:12.5px;color:#5a6b7b;line-height:1.8">'
+                  + esc("、".join(_pend)) + '</div></div>')
 inq_body=f"""
 <div class="top"><h1>🔎 即查结果（临时查询 · 不进主看板）</h1></div>
+<div class="sec" id="qkbox" style="display:none;border-color:#e3dcff;background:#faf8ff">
+  <div class="sec-h" id="qkttl">临时查询</div>
+  <div style="font-size:12.5px;color:#5a6b7b;line-height:1.8">这是临时查询，不会写进主看板，也不改任何代码。点下面按钮提交一次（GitHub 上点一下绿色 Commit），下次自动任务跑完，结果直接出现在本页。</div>
+  <div style="margin-top:8px"><a id="qkgo" class="ev" href="#" target="_blank" style="display:inline-block;background:#7a5af8;color:#fff;text-decoration:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600">🚀 提交给 AI 查（GitHub 一键提交）</a></div>
+</div>
 <div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
+{_pend_html}
 <div class="sec"><div class="sec-h">已查 {len(_INQ)} 家</div>{_inq_html()}</div>
 <div class="foot">每次自动任务（09:00 / 20:30）处理 queue 队列，查完即写入本页</div>
 <script>
+(function(){{
+ var q=new URLSearchParams(location.search),c=q.get('c')||'',pk=(q.get('p')||'PLEX');
+ if(!c)return;
+ var box=document.getElementById('qkbox');
+ if(!box)return;
+ box.style.display='block';
+ document.getElementById('qkttl').textContent='临时查询：'+c+'（'+pk+'）';
+ document.getElementById('qkgo').href='https://github.com/nuoke2007/plex-daily/new/main?filename='
+   +encodeURIComponent('queue/'+c+'-'+pk+'.txt')+'&value='+encodeURIComponent(c+' | '+pk);
+}})();
 function flt2(v){{var k=(v||'').toLowerCase(),n=0;
  document.querySelectorAll('#list2 .lead').forEach(function(el){{
   var t=el.innerText.toLowerCase(),ok=(!k)||t.indexOf(k)>=0;el.style.display=ok?'':'none';if(ok)n++;}});}}
