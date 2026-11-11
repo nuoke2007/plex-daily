@@ -2075,6 +2075,35 @@ def _inq_html():
             '<div class="rgbar" id="rgbar2"></div></div>'
             '<div id="list2">'+"".join(rows)+'</div>')
 
+_INQ_JS = """<script>
+(function(){
+  var q=(new URLSearchParams(location.search)).get('c');
+  if(!q) return;
+  var box=document.getElementById('q2');
+  if(box){ box.value=q; }
+  if(window.flt2){ flt2(q); }
+  setTimeout(function(){
+    var list=document.getElementById('list2'); if(!list) return;
+    var vis=[].slice.call(list.querySelectorAll('.lead')).filter(function(el){ return el.style.display!=='none'; });
+    if(vis.length===0){
+      var b=document.createElement('div'); b.className='sec';
+      b.style.cssText='border-color:#e3dcff;background:#faf8ff';
+      b.innerHTML='<div class="sec-h">⏳ 你查的 '+q+' 还没有结果</div><div style="font-size:12.5px;color:#5a6b7b;line-height:1.8">这家还没跑过 AI。点上面的「提交给 AI 查」，在打开的新页面里点一次绿色「Commit changes」才算真正入队；入队后每天 09:00 / 20:30 自动跑，跑完结果直接出现在本页。缩写/英文简称建议换成公司全称，检索命中率更高。</div>';
+      list.parentNode.insertBefore(b,list);
+    } else {
+      vis.forEach(function(el){
+        var t=el.querySelector('.lead-top');
+        if(t && !t.querySelector('.qtag')){
+          var sp=document.createElement('span'); sp.className='indtag qtag';
+          sp.style.cssText='background:#1f7a49;color:#fff';
+          sp.textContent='本次查询'; t.appendChild(sp);
+        }
+      });
+    }
+  },80);
+})();
+</script>"""
+
 _pend = _inq_pending()
 _pend_html = ""
 if _pend:
@@ -2091,7 +2120,8 @@ inq_body=f"""
 </div>
 <div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
 {_pend_html}
-<div class="sec"><div class="sec-h">已查 {len(_INQ)} 家</div>{_inq_html()}</div>
+{_INQ_JS}
+<div class="sec"><div class="sec-h">历史已查记录 {len(_INQ)} 家（全部临时查询，与本次查询无关）</div>{_inq_html()}</div>
 <div class="foot">每次自动任务（09:00 / 20:30）处理 queue 队列，查完即写入本页</div>
 <script>
 (function(){{
