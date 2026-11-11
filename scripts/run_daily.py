@@ -1220,6 +1220,23 @@ def _phones(nm, hits, limit=2):
         if len(out) >= limit: break
     return out
 
+def _mail_scan(nm, hits, limit=4):
+    """从真实抓回材料里扫可用的公开邮箱（招聘JD的HR邮箱、招标公告联系人、官网公示等）"""
+    out, seen = [], set()
+    for h in hits:
+        c = (h.get("content") or "")
+        if not _same_subject(nm, c): continue
+        for m in re.finditer(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.(?:com\.cn|com|cn|net|org)", c):
+            em = m.group(0).lower()
+            if em in seen: continue
+            if any(x in em for x in (".png", ".jpg", "example.com", "test.com", "sentry", "@2x")): continue
+            ctx = c[max(0, m.start()-38):m.start()].replace("\n", " ")[-38:]
+            seen.add(em)
+            out.append({"to": em, "kind": "原文邮箱", "note": "抓回原文里真实出现的（语境：" + ctx + "）", "src": h["url"]})
+            if len(out) >= limit: break
+        if len(out) >= limit: break
+    return out
+
 def _clean_ladder(x, limit=4, allowed=()):
     """搭线梯子：只留 4 步以内、字段齐全的，防止模型塞废话"""
     out = []
@@ -1304,6 +1321,23 @@ def _ladder_bad(steps):
             if b in t: bad.append(b)
         if not (st.get("via") or "").strip(): bad.append("空通道")
     return bad
+
+def _mailbox_html(ds, escfn=None, mailto=True):
+    """📮 邮箱区：实名推断 / 原文真实 / 部门推测，三类分开标，别让人误发"""
+    esc = escfn or (lambda x: x)
+    rows = []
+    for x in (ds.get("emails") or [])[:5]:
+        if not x.get("to"): continue
+        k = x.get("kind") or "实名推断"
+        col = {"实名推断": "#0b6bcb", "原文邮箱": "#137333"}.get(k, "#8494a4")
+        link = ('<a class="ev" style="color:#0b6bcb" href="' + esc(x.get("src","")) + '" target="_blank">🔗</a>') if x.get("src") else ""
+        rows.append('<div style="margin:1px 0;font-size:12px"><code style="background:#eef4fb;padding:1px 5px;border-radius:4px">'
+                    + esc(x["to"]) + '</code> <span style="font-size:11px;color:' + col + '">' + k + '</span> '
+                    + '<span style="font-size:11px;color:#8494a4">' + esc(x.get("note","")) + '</span> ' + link + '</div>')
+    if not rows: return ""
+    return ('<div style="margin-top:4px;background:#f6faff;border:1px solid #dcebfb;border-radius:8px;padding:7px 10px">'
+            '<div style="font-size:12px;font-weight:700;color:#0b6bcb">📮 可用邮箱（从真到猜，按顺序试）</div>'
+            + "".join(rows) + '</div>')
 
 def _plan_html(ds, escfn=None):
     """怎么找人：窗口 → 该找哪个部门 → 搭线梯子 → 开场白 → 反证 → 今天做什么"""
@@ -1397,7 +1431,7 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
 {{
  "demand":"是|否|待验证",           // 该信号是否会引出上述产品的选型需求（你自己的判断）
  "demand_reason":"60字内，依据哪条材料做出的判断",
- "signal":"40字内，公告/材料里最关键的一条事实（带时间）",
+ "signal":"100-180字，把关键事实串成一段：哪条公告/材料（时间）、在哪个基地或项目、产能/金额/产品、投产或推进节点、原文原话。只写材料里有的，不许概括成一句话。",
  "region":"大区·省，如 长三角·浙江；大区只能是 长三角|珠三角|京津冀|华中|华南|西南|西北|华东|华北|东北",
  "grade":"高|中|低",                  // 现在打它的优先级
  "role":"该找的对口部门/岗位",
@@ -1526,7 +1560,7 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
           "chief": chief,
           "demand": d.get("demand") or "待验证",
           "demand_reason": (d.get("demand_reason") or "")[:100],
-          "signal": (d.get("signal") or "")[:80],
+          "signal": (d.get("signal") or "")[:240],
           "grade": d.get("grade") if d.get("grade") in ("高","中","低") else "中",
           "region": region if region else "",
           "auto": True, "model": model,
@@ -1544,6 +1578,28 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
           "risk": (d.get("risk") or "")[:80],
           "next": (d.get("next") or "")[:40],
           "researched": datetime.date.today().isoformat()}
+    mails = (email and [dict(email, kind="实名推断")]) or []
+    if not mails: mails = []
+    if email: mails[0]["kind"] = "实名推断"
+    scanned = _mail_scan(nm, hits)
+    have = {x["to"] for x in mails}
+    for x in scanned:
+        if x["to"] not in have:
+            mails.append(x); have.add(x["to"])
+    if domain and not email and referral:
+        py = _py_full(referral)
+        t = (py + "@" + domain) if py else ""
+        if py and re.match(r"^[a-z]+@", t) and t not in have:
+            mails.insert(0, {"to": t, "kind": "实名推断（转介人）",
+                             "note": "转介人姓名全拼由程序生成，转介用：只求转交对口部门"})
+            have.add(t)
+    if domain:
+        for pre in ("hr", "info", "mes"):
+            g = pre + "@" + domain
+            if g not in have and len(mails) < 4:
+                mails.append({"to": g, "kind": "推测待验证", "note": "按 " + pre + "@域名 惯例推断，发一封试探是否退信，别当主渠道"})
+                have.add(g)
+    ds["emails"] = mails[:5]
     if email:
         if referral:
             email["note"] = "转介用邮箱：只求转交对口部门，不要谈方案细节"
@@ -1732,8 +1788,8 @@ def card_for(f):
                          f"适合新厂赶投产节点、老厂不想再投几百万的传统 MES。\n"
                          f"想用 15 分钟聊聊：新厂 MES 时间表、与老厂是否一套标准。\n\n罗克韦尔自动化")
         mail_html=(f'<div style="margin-top:6px"><a class="btn btn-mail" target="_blank" '
-                   f'href="mailto:{esc(_e3["to"])}?subject={_sub3}&body={_body3}">{esc(_cta_label(ai))} · {esc(_e3["to"])}</a>'
-                   f'<div style="font-size:11.5px;color:#8494a4;margin-top:2px">📮 推断邮箱 · {esc(_e3.get("note",""))} ｜ 备选：{esc(_e3.get("alt",""))}</div></div>')
+                   f'href="mailto:{esc(_e3["to"])}?subject={_sub3}&body={_body3}">{esc(_cta_label(ai))} · {esc(_e3["to"])}</a></div>'
+                   + _mailbox_html(ai, esc))
         mail_html += _plan_html(ai, esc)
         mail_html += _tel_html(ai, esc)
     rg=region_of(code).split("·")[0]
@@ -2011,7 +2067,7 @@ def _inq_html():
 <b>信号：</b>{esc(d.get('signal',''))}</div>
 {_plan_html(d, esc)}
 <div style="font-size:12.5px;color:#3d4c5c;line-height:1.75;margin-top:6px"><b>联系人：</b>{esc(d.get('chief',''))}{srch}</div>
-{('<div style="font-size:12px;color:#0b6bcb;margin-top:3px">📮 '+emh+'</div>') if emh else ''}
+{_mailbox_html(d, esc)}
 {('<div style="font-size:12px;color:#8a6b1f;margin-top:3px">📞 '+ph+'</div>') if ph else ''}
 </div>""")
     return ('<div class="srchwrap"><input class="srch" id="q2" placeholder="🔍 输入公司名 / 代码 / 产品" oninput="flt2(this.value)">'
