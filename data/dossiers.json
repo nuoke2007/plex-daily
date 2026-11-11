@@ -851,5 +851,137 @@
   "tier": "对口",
   "phones": [],
   "researched": "2026-11-11"
+ },
+ "002340": {
+  "name": "格林美",
+  "role": "研发部门",
+  "why": "研发部门直接负责新技术和产品的研发，与PTC Windchill (PLM)的产品定位高度相关。",
+  "chief": "🤖 AI 查证：创始人 许开华（对口人｜可直接谈方案，这是真正的门）",
+  "demand": "是",
+  "demand_reason": "公司签署共建固态电池正极材料联合实验室暨固态锂电正极材料产业化关键技术联合攻关的合作协议，表明对研发和产业化有强烈需求。",
+  "signal": "格林美签署共建固态电池正极材料联合实验室暨固态锂电正极材料产业化关键技术联合攻关的合作协议。",
+  "grade": "高",
+  "region": "华中·湖北",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://stockn.xueqiu.com/SZ002340/20220427600246.pdf",
+  "referral": "",
+  "chief_name": "许开华",
+  "insider": null,
+  "tier": "对口",
+  "phones": [
+   {
+    "num": "0755-33386666",
+    "src": "https://static.cninfo.com.cn/finalpage/2025-08-29/1224615887.pdf",
+    "ctx": "海大厦A 栋20 层 深圳市宝安区宝安中心区兴华路南侧 荣超滨海大厦A 栋20 层 电话 "
+   },
+   {
+    "num": "0755-33895777",
+    "src": "https://stockn.xueqiu.com/SZ002340/20220427600246.pdf",
+    "ctx": "666 0755-33386666 格林美股份有限公司2021 年年度报告全文 8 传真 "
+   }
+  ],
+  "researched": "2026-11-11",
+  "email": {
+   "to": "xukaihua@gem.com.cn",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "对口邮箱：可直接约15分钟，附同行业案例一页纸"
+  }
+ },
+ "301577": {
+  "name": "美信科技",
+  "role": "研发部门负责人",
+  "why": "研发部门负责人直接负责公司的研发工作，对PLM系统的需求有直接决策权。",
+  "chief": "🤖 AI 查证：总经理 张定珍（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）",
+  "demand": "是",
+  "demand_reason": "美信科技获得CNAS实验室认可证书，表明其在研发和质量控制方面有较高要求，可能需要PTC Windchill (PLM)来支持多研发中心协同和数据一致性。",
+  "signal": "美信科技获得中国合格评定国家认可委员会（CNAS）实验室认可证书",
+  "grade": "中",
+  "region": "华南·广东",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "http://static.cninfo.com.cn/finalpage/2025-04-23/1223214527.PDF",
+  "referral": "",
+  "chief_name": "张定珍",
+  "insider": {
+   "name": "王丽娟",
+   "title": "董事会秘书",
+   "src": "http://static.cninfo.com.cn/finalpage/2025-04-23/1223214527.PDF"
+  },
+  "tier": "拍板",
+  "phones": [
+   {
+    "num": "0769-86766535",
+    "src": "http://static.cninfo.com.cn/finalpage/2025-04-23/1223214527.PDF",
+    "ctx": "事务代表 姓名 王丽娟 -联系地址 广东省东莞市企石镇新南金湖一路3 号1 号楼 -电话 "
+   },
+   {
+    "num": "14419007536",
+    "src": "https://q.stock.sohu.com/cn/301577/gsjj.shtml",
+    "ctx": "家： | 中国 | 省份： | 广东 | | 城市： | 东莞市 | 工商登记号： | 9"
+   }
+  ],
+  "researched": "2026-11-11",
+  "email": {
+   "to": "zhangdingzhen@fpe.com.cn",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
+  }
+ },
+ "688385": {
+  "name": "复旦微电",
+  "role": "研发部门负责人",
+  "why": "研发部门负责人直接负责公司的研发工作，对工程变更和产品数据管理有直接责任。",
+  "chief": "🤖 AI 查证：董事长、总经理 张卫（拍板人｜他不会读冷邮件，只做顶层转发或请秘书转对口）",
+  "demand": "是",
+  "demand_reason": "复旦微电与复旦大学合作共建集成电路工程技术融合创新中心，表明其对研发和工程变更管理有较高需求。",
+  "signal": "复旦微电与复旦大学、国盛投资签署联合共建“复旦大学集成电路工程技术融合创新中心”合作协议暨关联交易。",
+  "grade": "高",
+  "region": "华东·上海",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "https://www.fmsh.com/UpLoadFile/20260330/%E5%A4%8D%E6%97%A6%E5%BE%AE%E7%94%B5_2025%E5%B9%B4%E5%B9%B4%E5%BA%A6%E6%8A%A5%E5%91%8A-2026-03-28.pdf",
+  "referral": "",
+  "chief_name": "张卫",
+  "insider": null,
+  "tier": "拍板",
+  "phones": [
+   {
+    "num": "021-65659109",
+    "src": "http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=688385&id=10807356",
+    "ctx": "| 上海杨浦区国泰路127号4号楼 | 上海杨浦区国泰路127号4号楼 | | 电话 | "
+   },
+   {
+    "num": "029-81891198",
+    "src": "https://job.xidian.edu.cn/campus/view/id/757619",
+    "ctx": "加强自我保护，以任何理由索取财物，均涉嫌违法，请提高警惕！  ##### 招聘公告详情  "
+   }
+  ],
+  "researched": "2026-11-11",
+  "email": {
+   "to": "zhangwei@fmsh.com",
+   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
+   "note": "顶层邮箱：正文压到5行、只求转交制造/信息化负责人，附一页纸PDF"
+  }
+ },
+ "920027": {
+  "name": "交大铁发",
+  "role": "技术部门负责人",
+  "why": "技术部门负责人负责公司的技术研发和创新，与PLM产品的选型需求直接相关。",
+  "chief": "未具名：AI 已跑 7 路公开源（公告/官网/新闻/招聘/高管/招投标/公示），未见可靠具名负责人；走总机转接 + 董秘转介",
+  "demand": "是",
+  "demand_reason": "交大铁发专注于轨道交通基础设施安全领域，与西南交通大学共建联合创新中心，可能需要多研发中心协同和设计BOM一致等PLM功能。",
+  "signal": "交大铁发与西南交通大学签署共建联合创新中心框架协议暨关联交易公告",
+  "grade": "中",
+  "region": "",
+  "auto": true,
+  "model": "glm-4-flash",
+  "src": "",
+  "referral": "",
+  "chief_name": "",
+  "insider": null,
+  "tier": "对口",
+  "phones": [],
+  "researched": "2026-11-11"
  }
 }

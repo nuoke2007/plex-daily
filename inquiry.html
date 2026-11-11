@@ -94,8 +94,17 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 </style>
 <style>.fu-btn{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#003DA5;border-radius:6px;padding:4px 10px;font-size:12px;margin-left:4px}.fu-btn.done{background:#e6f4ea;color:#137333;border-color:#137333}.fu-item{background:#fff8e1;border:1px solid #f0c36d;border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px}.fu-item button{margin-left:6px;cursor:pointer;border:none;border-radius:6px;padding:4px 10px;font-size:12px;background:#003DA5;color:#fff}</style>
 </head><body>
+<script>
+(function(){
+ var ok=false;
+ try{ ok=(localStorage.getItem('pd_auth')==='3a244add8aa00cef959339a845be9cd2efb4d85a3b817126ff4506dbf0476e62'); }catch(e){}
+ if(ok) return;
+ var back=location.pathname.split('/').pop()+location.search;
+ location.replace('index.html?next='+encodeURIComponent(back));
+})();
+</script>
 <div class="wrap">
-<div class="navchips"><a class="chip" href="dashboard.html"><img class="navlogo" src="logo-plex.png" alt=""><span>PLEX</span></a><a class="chip alt" href="ftpc.html"><img class="navlogo" src="logo-ft.png" alt=""><span>FTPC</span></a><a class="chip alt" href="thingworx.html"><img class="navlogo" src="logo-twx.png" alt=""><span>ThingWorx</span></a><a class="chip alt" href="windchill.html"><img class="navlogo" src="logo-wind.png" alt=""><span>Windchill</span></a><a class="chip alt" href="datamosaix.html"><img class="navlogo" src="logo-ft.png" alt=""><span>DataMosaix</span></a></div>
+<div class="navchips"><a class="chip" href="dashboard.html"><img class="navlogo" src="logo-plex.png" alt=""><span>PLEX</span></a><a class="chip alt" href="ftpc.html"><img class="navlogo" src="logo-ft.png" alt=""><span>FTPC</span></a><a class="chip alt" href="thingworx.html"><img class="navlogo" src="logo-twx.png" alt=""><span>ThingWorx</span></a><a class="chip alt" href="windchill.html"><img class="navlogo" src="logo-wind.png" alt=""><span>Windchill</span></a><a class="chip alt" href="datamosaix.html"><img class="navlogo" src="logo-ft.png" alt=""><span>DataMosaix</span></a><a class="chip alt" href="#" onclick="try{localStorage.removeItem('pd_auth')}catch(e){};location.href='index.html';return false" style="background:#f3f4f6;color:#6b7280">退出</a></div>
 
 <div id="fu-banner"></div>
 <script>
