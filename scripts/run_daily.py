@@ -1220,7 +1220,7 @@ def _phones(nm, hits, limit=2):
         if len(out) >= limit: break
     return out
 
-def _clean_ladder(x, limit=4):
+def _clean_ladder(x, limit=4, allowed=()):
     """搭线梯子：只留 4 步以内、字段齐全的，防止模型塞废话"""
     out = []
     if not isinstance(x, list): return out
@@ -1232,6 +1232,13 @@ def _clean_ladder(x, limit=4):
         get = str(it.get("get") or "").strip()[:60]
         if to or via:
             out.append({"to": to, "via": via, "say": say, "get": get})
+    # 擦掉未核证的人名：to 是纯 2-4 字中文且不是部门/岗位词、又不在已核证名单 → 判为编造
+    for st in out:
+        t = st["to"]
+        if re.fullmatch(r"[\u4e00-\u9fa5]{2,4}", t) and t not in allowed \
+                and not any(k in t for k in ("部","中心","组","科","处","室","岗","经理","总监","主任","负责人","团队","事业")):
+            for k in ("to","via","say","get"):
+                st[k] = st[k].replace(t, "对口负责人（姓名待电话确认）")
     return out
 
 _DEPT_WORDS = ("信息中心","信息化","数字化","智能制造","制造运营","生产制造","生产计划","工艺","设备","IT部","IT 部","信息技术","生产管理","工程部","技术中心","供应链","物流","品质","质量")
@@ -1367,6 +1374,7 @@ def ai_dossier(code, nm, p, finding):
 say 的三条禁令：不提"我们想了解贵司需求"；不提我们产品名；不空泛寒暄。要说他此刻正头疼的具体事（爬坡、多厂标准不一、海外客户审核、追溯、换线效率），一句话。
 to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位名（用材料里的叫法，材料没有就写"（推断）"）。
 材料不够就少写，next 里说明先确认什么。宁可少，不许编，不许套模板。
+6) ladder 里严禁出现任何人名（人名只能出现在 chief_name / insider_name 字段，且必须已在材料核证）。要指人时写"生产管理部负责人""信息中心主任"这类岗位，不许写"张三"。
 检索材料（含编号与URL，只能引用这些URL）：
 {ctx}
 
@@ -1516,7 +1524,7 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
           "window": (d.get("window") or "")[:80],
           "dept": (d.get("dept") or "")[:40],
           "dept_ev": (d.get("dept_ev") or "")[:80],
-          "ladder": _clean_ladder(d.get("ladder")),
+          "ladder": _clean_ladder(d.get("ladder"), allowed=(name, iname) if iname else (name,)),
           "hook": (d.get("hook") or "")[:60],
           "risk": (d.get("risk") or "")[:80],
           "next": (d.get("next") or "")[:40],
@@ -1547,7 +1555,11 @@ def _load_inq():
     try:
         if INQ_CACHE.exists():
             d = json.loads(INQ_CACHE.read_text(encoding="utf-8"))
-            _INQ.update(d)
+            for k, v in d.items():
+                # 老记录里的人名同样过一遍防编造：梯子里只允许已核证的具名
+                if v.get("ladder"):
+                    v["ladder"] = _clean_ladder(v["ladder"], allowed=(v.get("chief_name") or "",))
+                _INQ[k] = v
             log(f"即查结果载入 {len(d)} 家")
     except Exception as e:
         log(f"即查结果读取失败：{str(e)[:60]}")
