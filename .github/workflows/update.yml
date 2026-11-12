@@ -35,5 +35,6 @@ jobs:
           git config user.email "plex-bot@users.noreply.github.com"
           git add dashboard.html lead.html ftpc.html thingworx.html windchill.html datamosaix.html inquiry.html leads.xlsx logs/
           git commit -m "daily update" || echo "nothing to commit"
-          git push
+          git push || (git pull --rebase --autostash && git push)
+
 
