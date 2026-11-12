@@ -379,6 +379,23 @@ for p in PRODUCTS:
 def esc(s):
     return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
+
+def _brief(txt, maxlen=70):
+    """一句话摘要：优先取完整首句；非要截断时落在标点处并补省略号，
+    避免出现"……用于"这种话说一半就断的效果。"""
+    t = re.sub(r"[\s\n]+", " ", (txt or "")).strip()
+    if not t: return ""
+    m = re.match(r"^(.{6,}?[。；!？!?])", t)
+    if m and len(m.group(1)) <= maxlen:
+        return m.group(1)
+    if len(t) <= maxlen:
+        return t
+    cut = t[:maxlen]
+    k = max(cut.rfind("，"), cut.rfind("、"), cut.rfind("；"), cut.rfind("。"))
+    if k >= int(maxlen * 0.55):
+        cut = cut[:k]
+    return cut.rstrip("，、；。") + "…"
+
 # 手动项总数
 manual_total = sum(len(c["manual"]) for c in CASES)
 
@@ -727,13 +744,13 @@ def render_product(p):
                      f'{contact_links(code,nm,ask,role=_role,why=_why,grade=g)}'
                      f'<div style="margin-top:8px"><a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a></div>')
             LEADS.setdefault(_lk, {"n": nm, "s": code, "g": g, "loc": _loc or "—",
-                                   "rg": rg, "sum": judge[:46], "b": _body, "p": h["url"],
+                                   "rg": rg, "sum": _brief(judge, 90), "b": _body, "p": h["url"],
                                    "pk": p["key"]})
             cards+=(f'<a class="lead lead-row" data-rg="{esc(rg)}" href="lead.html?c={esc(_lk)}">'
               f'<span class="lr-g">{g}</span><span class="lr-nm">{esc(nm)}</span>'
               f'<span class="lr-code">{esc(code)}</span>'
               f'<span class="lr-base">🏭 {esc(ind)}</span>'
-              f'<span class="lr-sum">{esc(judge[:46])}</span>'
+              f'<span class="lr-sum">{esc(_brief(judge, 90))}</span>'
               f'<span class="lr-rg">🗺️ {esc(rg)}</span>'
               f'<span class="lr-go">详情 →</span></a>')
     # 区域筛选条
@@ -2107,7 +2124,7 @@ def card_for(f):
                        f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
                        f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>')
     rg=region_of(code).split("·")[0]
-    _sum = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))[:46]
+    _sum = _brief((ai or {}).get("signal") or f.get("title") or "", 90)
     rg=region_of(code).split("·")[0]
     _body = (f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
              f'<div class="row">{badge}</div>'
