@@ -1836,7 +1836,7 @@ def _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION):
                 gap = (datetime.date.today() - datetime.date.fromisoformat(r0)).days
             except Exception:
                 gap = 99
-            if gap < 2: continue
+            if gap < (0 if os.environ.get("BACKFILL") else 2): continue
             _stale.append((gap, c0, ds0))
         _stale.sort(key=lambda x: -x[0])
         _n = 0
@@ -1966,8 +1966,17 @@ def card_for(f):
         mail_html=(f'<div style="margin-top:6px"><a class="btn btn-mail" target="_blank" '
                    f'href="mailto:{esc(_e3["to"])}?subject={_sub3}&body={_body3}">{esc(_cta_label(ai))} · {esc(_e3["to"])}</a></div>'
                    + _mailbox_html(ai, esc))
+    # 关键：没有推断邮箱时也要出"总部/决策链/杠杆点/验证三问/今日动作"，否则卡片还是只有法人+邮箱
+    if ai:
         mail_html += _plan_html(ai, esc)
         mail_html += _tel_html(ai, esc)
+    if ai and (ai.get("lever") or ai.get("verify") or ai.get("act")):
+        legacy_rows = ""      # 新四段已覆盖，老模板行整段不显示，避免每个 case 都重复同一套话
+    else:
+        legacy_rows = (f'<div class="row"><b>决策人：</b>{esc(chief)}</div>'
+                       f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
+                       f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
+                       f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>')
     rg=region_of(code).split("·")[0]
     return (f'<div class="card open" data-rg="{esc(rg)}">'
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
@@ -1978,11 +1987,8 @@ def card_for(f):
       f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
       f'<div class="row">{badge}</div>'
       f'{ai_html}'
-      f'<div class="row"><b>决策人：</b>{esc(chief)}</div>'
-      f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
-      f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
+      f'{(legacy_rows)}'
       f'{mail_html}'
-      f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>'
       f'{contact_links(code,nm)}'
       f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
       f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>'
