@@ -499,34 +499,6 @@
   },
   "tier": "拍板"
  },
- "605277": {
-  "name": "新亚电子",
-  "role": "信息中心主任",
-  "why": "信息中心主任可能负责公司信息化建设，包括MES系统选型。",
-  "chief": "🤖 AI 查证：董事长 赵战兵（来源可点开核实）",
-  "demand": "是",
-  "demand_reason": "新亚电子股份有限公司有海外建厂计划，可能需要快速MES落地解决方案。",
-  "signal": "新亚电子股份有限公司关于变更泰国子公司投资金额的公告",
-  "grade": "中",
-  "region": "华东·浙江",
-  "auto": true,
-  "model": "glm-4-flash",
-  "src": "https://www.xinya-cn.com",
-  "referral": "",
-  "chief_name": "赵战兵",
-  "insider": {
-   "name": "黄娟",
-   "title": "董事会秘书",
-   "src": "http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=605277&id=12535084"
-  },
-  "researched": "2026-11-10",
-  "email": {
-   "to": "zhaozhanbing@xinya-cn.com",
-   "alt": "其他常见格式：名.姓 / 姓+名首字母（如 shenzw）",
-   "note": "官网域名xinya-cn.com；姓名全拼由程序生成，按A股制造业惯例推断，首封必测退信"
-  },
-  "tier": "拍板"
- },
  "002815": {
   "name": "崇达技术",
   "role": "海外业务拓展部门",
