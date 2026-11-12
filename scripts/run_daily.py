@@ -410,16 +410,21 @@ def _chain_list_leads():
             if k and k not in _seen_o and len(k) <= 26:
                 _seen_o.add(k); _segs.append(k)
         _os_line = "、".join(_segs[:3]) or os_txt[:40]
+        _yr_txt = os_st + " " + os_txt
+        _near = any(2025 <= int(y) <= 2027 for y in re.findall(r"20\d{2}", _yr_txt)) or any(
+            k in _yr_txt for k in ("在建", "建设", "调试", "规划", "奠基", "封顶", "拟", "预计"))
         rules = [f"🔗 来源：特斯拉供应链名单（用户提供·交叉验证版）· {r.get('segment') or '配套'} · 画像：{tier_lab}"]
         rules.append(f"🧩 产品：{_p1[:60]}" if _p1 else "🧩 产品：名单未填")
         if has_os and os_txt:
             rules.append(f"🏭 海外：{_os_line}" + (f"（{os_st[:20]}）" if os_st else ""))
         else:
             rules.append("🏭 海外：名单标为无海外工厂/未填，优先级靠后")
+        rules.append(("⏱ 窗口：名单显示 2025-2027 在建/投产 —— 设备进场前后正是选型期" if _near
+                      else "⏱ 窗口：名单未显示近期投产，按存量客户观察"))
         rules.append(("⚠ 名单是二手整理，海外工厂状态与投产年份需逐家核实后再生效" if has_os
                       else "⚠ 无海外产能，除非新立项否则不是我们画像"))
         rules.append(f"🎯 画像：{'已上市' if code else '未上市公司'}，{tier_lab}，{_p1[:24] or '汽车零部件'}"
-                     + ("；海外工厂在建/投产正是 MES 选型窗口" if has_os else ""))
+                     + ("；海外新厂在建/投产是 MES 选型窗口" if _near else ""))
         out.append(dict(
             sec=code, ukey="TSL" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:6].upper(),
             name=nm, src="tesla", city="",
@@ -427,11 +432,11 @@ def _chain_list_leads():
             date=time.time() * 1000,
             url="https://so.eastmoney.com/news/s?keyword=" + urllib.parse.quote(nm),
             phase=("fresh" if is_t1 else "window"), overseas=bool(has_os),
-            conf="高" if (has_os and is_t2) else "中",
-            rule=rules,
+            conf="高" if (has_os and is_t2 and _near) else "中",
+            rule=rules, near=_near,
         ))
-    # 二级+有海外 > 二级无海外 > T1
-    out.sort(key=lambda x: (0 if (x["phase"] == "window" and x["overseas"]) else
+    # Tier2/3 近期在建投产 > 其他 Tier2/3 > T1
+    out.sort(key=lambda x: (0 if (x["phase"] == "window" and x.get("near")) else
                             1 if x["phase"] == "window" else 2))
     log(f"特斯拉供应链：名单入雷达 {len(out)} 家（其中名单标注有海外工厂 {sum(1 for x in out if x['overseas'])} 家）")
     return out
