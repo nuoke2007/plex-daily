@@ -51,6 +51,9 @@ h1{font-size:24px;color:#003DA5;letter-spacing:-.3px}
 .iq-q{background:#f7fafd;border-radius:8px;padding:9px 12px;margin-top:4px;font-size:12.5px;line-height:1.8}
 .iq-src{font-size:12px;line-height:1.85;color:#3d4c5c;margin-top:3px}
 .iq-src a{color:#003DA5;text-decoration:none;border-bottom:1px dotted #9db4cc}
+.iq-ents{margin:2px 0 10px;font-size:12.5px;line-height:2}
+.iq-chip{display:inline-block;background:#f4f7fa;border-radius:6px;padding:2px 9px;margin:0 6px 4px 0;color:#3d4c5c;font-size:12px}
+.iq-chip.on{background:#003DA5;color:#fff}
 .iq-note{font-size:12px;color:#8a93a0;line-height:1.8;margin-top:10px}
 .feas{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:5px}
 .feas-高{background:#e8f6ee;color:#0a7f3f}
@@ -193,7 +196,7 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function nrm(x){
-    return String(x||'').replace(/(北京|上海|苏州|深圳|广州|杭州|宁波|东莞|佛山|常州|无锡|南京|天津|重庆|成都|武汉|合肥|青岛|厦门|郑州|西安|长沙|大连|沈阳|济南|烟台|嘉兴|绍兴|台州)/g,'')
+    return String(x||'').split(/[\s,，]+/)[0].replace(/(北京|上海|苏州|深圳|广州|杭州|宁波|东莞|佛山|常州|无锡|南京|天津|重庆|成都|武汉|合肥|青岛|厦门|郑州|西安|长沙|大连|沈阳|济南|烟台|嘉兴|绍兴|台州)/g,'')
       .replace(/(股份有限公司|有限责任公司|有限公司|集团|控股|科技|电子|电气|汽车|精密|智能|技术|股份|公司)/g,'').trim();
   }
   function hit(name){
@@ -226,8 +229,7 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
   function suggest(name){
     var u='https://searchapi.eastmoney.com/api/suggest/get?input='+encodeURIComponent(name)+'&type=14&token=D43BF722C8E33BDC906FB84D85E326E8&count=6';
     return jsonp(u).then(function(d){
-      var arr=(d&&d.QuotationCodeTable&&d.QuotationCodeTable.Data)||[];
-      var out=null;
+      var arr=(d&&d.QuotationCodeTable&&d.QuotationCodeTable.Data)||[], out=null;
       arr.forEach(function(x){
         if(out) return;
         if(String(x.SecurityTypeName||'').indexOf('债')>=0) return;
@@ -236,21 +238,38 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
       return out;
     }).catch(function(){ return null; });
   }
-  function news(name){
+  function news(name,size){
     var param={uid:'',keyword:name,type:['cmsArticleWebOld'],client:'web',clientType:'web',clientVersion:'curr',
-      param:{cmsArticleWebOld:{searchScope:'default',sort:'time',pageIndex:1,pageSize:20,preTag:'',postTag:''}}};
+      param:{cmsArticleWebOld:{searchScope:'default',sort:'time',pageIndex:1,pageSize:size||20,preTag:'',postTag:''}}};
     var u='https://search-api-web.eastmoney.com/search/jsonp?param='+encodeURIComponent(JSON.stringify(param));
     return jsonp(u).then(function(d){
-      var arr=((d||{}).result||{}).cmsArticleWebOld||[];
-      var key=name.replace(/(股份有限公司|有限公司|集团|股份|科技|公司)/g,'').slice(0,4)||name;
-      var out=[];
+      var arr=((d||{}).result||{}).cmsArticleWebOld||[], out=[];
       arr.forEach(function(x){
-        if(out.length>=6) return;
-        var t=x.title||'', c=(x.content||'').replace(/[\s\u3000]+/g,' ').trim();
-        if(t.indexOf(name)>=0||c.indexOf(name)>=0||(key&&t.indexOf(key)>=0)) out.push({d:(x.date||'').slice(0,10),m:x.mediaName||'',t:t,u:x.url||'',c:c.slice(0,120)});
+        out.push({d:(x.date||'').slice(0,10),m:x.mediaName||'',t:x.title||'',
+          c:String(x.content||'').replace(/[\s\u3000]+/g,' ').trim().slice(0,200),u:x.url||''});
       });
       return out;
     }).catch(function(){ return []; });
+  }
+  /* 从报道里找同名主体：公司名 + 常见字号后缀，按"是不是制造业"权重排 */
+  var SUF=['置业','华芯','钢铁','智算','集团','科技','电子','汽车','精密','零件','半导体','新材','新能源','智能','制造','机械','装备','模具','包装','食品','医药','工业','机电','设备','控股','实业','重工','纺织','玻璃','陶瓷','电池','光电','通信','软件','数据','地产','基金','资本','物流','贸易','建设','材料','化工','五金','部件','器件','仪器','电器','家居','门业','管道','轴承'];
+  var MFGS=['华芯','钢铁','电子','汽车','精密','零件','半导体','新材','新能源','制造','机械','装备','模具','包装','食品','医药','工业','机电','设备','重工','纺织','玻璃','陶瓷','电池','光电','通信','材料','化工','五金','部件','器件','仪器','电器','家居','门业','管道','轴承','实业','智能'];
+  var NONS=['置业','地产','基金','资本','智算','软件','数据','物流','贸易','建设'];
+  function pickEntities(items,name){
+    var cnt={}, snip={};
+    items.forEach(function(x){
+      var t=(x.t||'')+' '+(x.c||'');
+      SUF.forEach(function(s){
+        var k=name+s;
+        if(t.indexOf(k)>=0){ cnt[k]=(cnt[k]||0)+1; if(!snip[k]||snip[k].length<110) snip[k]=(x.t||'').slice(0,110); }
+      });
+    });
+    var arr=Object.keys(cnt).map(function(k){
+      return {n:k,c:cnt[k],snip:snip[k]||'',mfg:MFGS.some(function(s){return k.indexOf(s)>=0;}),
+              non:NONS.some(function(s){return k.indexOf(s)>=0;})};
+    });
+    arr.sort(function(a,b){ return ((b.mfg?1:0)-(a.mfg?1:0))||(b.c-a.c); });
+    return arr;
   }
 
   function head(a){
@@ -260,9 +279,19 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
       +(a.hq?'<span class="ld-meta">📍 '+esc(a.hq)+'</span>':'')
       +'<span class="ld-meta" style="color:#8a93a0">临时查询·不入库</span></div>';
   }
+  function entBlock(cands,chosen){
+    if(!cands||!cands.length) return '';
+    var chips=cands.slice(0,6).map(function(x){
+      var on=(x.n===chosen);
+      return '<span class="iq-chip'+(on?' on':'')+'">'+esc(x.n)
+        +'<span style="color:'+(x.mfg?'#0a7a45':'#8a93a0')+';margin-left:5px">'+(x.mfg?'制造':'非制造')+'·'+x.c+'条</span></span>';
+    }).join('');
+    return '<div class="iq-ents"><b>同名主体：</b>'+chips
+      +'<div class="iq-note">按"是不是制造企业"排的序，绿字为可能适用 PLEX 的，灰字基本不用看。</div></div>';
+  }
   function srcList(items){
-    if(!items||!items.length) return '<div style="color:#8a93a0;font-size:12px">没搜到公开报道，判断只能靠模型记忆，可信度低。</div>';
-    return items.map(function(x){
+    if(!items||!items.length) return '<div style="color:#8a93a0;font-size:12px">没搜到公开报道。</div>';
+    return items.slice(0,6).map(function(x){
       return '<div class="iq-src">· <span style="color:#8a93a0">'+esc(x.d)+'</span> '+esc(x.m)+' — '
         +(x.u?'<a href="'+esc(x.u)+'" target="_blank">'+esc(x.t)+'</a>':esc(x.t))+'</div>';
     }).join('');
@@ -270,7 +299,7 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
   function showKnown(e){
     box.innerHTML=head({g:e.g,n:e.n,c:e.c,hq:'',pk:e.pk})+'<div class="ld-body" style="padding:10px 12px">'+e.b+'</div>';
   }
-  function showAI(o, na, items, code){
+  function showAI(o, na, items, code, cands){
     var v=o.verdict||'待验证', g=(v==='是'?'高':(v==='否'?'低':'中'));
     var ver=(o.verify||[]).map(function(x){
       return '<div class="iq-vv"><b>'+esc(x.q||'')+'</b><div style="color:#5a6b7d">'+esc(x.how||'')+'</div>'
@@ -278,8 +307,20 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
     }).join('');
     var act=(o.act||[]).length?'<ul style="margin:4px 0 0 18px;padding:0">'+o.act.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':'<span style="color:#8a93a0">未给出</span>';
     var chain=(o.chain||[]).length?'<ul style="margin:4px 0 0 18px;padding:0">'+o.chain.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':'<span style="color:#8a93a0">未确认</span>';
-    box.innerHTML=head({g:g,n:o.company||na,c:o.code||code||'',hq:o.hq||'',pk:sel.value})
+    var ex=(o.exclude||[]).length?'<div class="iq-note"><b>同名里排除掉的：</b>'+esc(o.exclude.join('；'))+'</div>':'';
+    box.innerHTML=head({g:g,n:o.entity||o.company||na,c:o.code||code||'',hq:o.hq||'',pk:sel.value})
       +'<div class="ld-body" style="padding:12px 14px;font-size:13px;line-height:1.85">'
+      +entBlock(cands,o.entity||na)
+      +(function(){
+        var ex=(o.extraCandidates||[]).filter(function(x){return x&&x.name;});
+        var fn=(o.fromNews||[]);
+        if(!ex.length&&!fn.length) return '';
+        var h='<div class="iq-ents"><b>其他同名主体（点一下就按它重查）：</b>';
+        fn.slice(0,6).forEach(function(n){ h+='<span class="iq-chip" data-q="'+esc(n)+'">'+esc(n)+'<span style="color:#8a93a0;margin-left:5px">新闻里出现过</span></span>'; });
+        ex.slice(0,6).forEach(function(x){ h+='<span class="iq-chip" data-q="'+esc(x.name)+'">'+esc(x.name)+'<span style="color:#b07d1a;margin-left:5px">未核验·'+esc(x.行业||x.industry||'待确认')+'</span></span>'; });
+        h+='</div>';
+        return h;
+      })()
       +'<div class="ld-sum">'+esc(o.why||'')+'</div>'
       +'<div style="margin-bottom:8px"><b>依据（最近公开报道）</b>'+srcList(items)+'</div>'
       +'<div style="margin-top:8px"><b>信号：</b>'+esc(o.signal||'')+'</div>'
@@ -289,32 +330,40 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
       +'<div style="margin-top:10px"><b>先验证这三问：</b>'+ver+'</div>'
       +'<div style="margin-top:10px"><b>今天先做：</b>'+act+'</div>'
       +(o.opener?'<div style="margin-top:10px"><b>开场话术：</b><div class="iq-q">'+esc(o.opener)+'</div></div>':'')
+      +ex
       +((o.unknown&&o.unknown.length)?'<div class="iq-note"><b>还没确认的：</b>'+esc(o.unknown.join('；'))+'</div>':'')
       +'<div class="iq-note" style="margin-top:12px;border-top:1px dashed #dfe6ef;padding-top:8px">'
-      +'临时查询：新闻来自东方财富公开检索，判断由 AI 综合，入库前请按上面三问自己核一遍。这条只存你本机浏览器。</div>'
+      +'临时查询：新闻来自东方财富公开检索，主体筛选与判断由 AI 完成，入库前请自己核一遍。这条只存你本机浏览器。</div>'
       +'</div>';
   }
 
-  var SYSTEM='你是罗克韦尔 PLEX（SaaS MES）与 PTC（ThingWorx/Windchill）的售前情报助理。任务：给定一家公司、它的股票信息与最近公开报道，判断它有没有 MES/PLM 类需求，并给出推进建议。'
-    +'重要：客户新闻里几乎不会出现软件产品名，所以不要用"报道没提到 PLEX"作为判断依据，也不要因此判否。看的是结构性信号：新增或扩建产线、新工厂、产能爬坡、募资投项目、新产品导入、出海建厂、并购整合、质量或交付问题、多基地协同、数字化或智能制造试点。有其中一项就说明有 MES 需求土壤。'
-    +'只输出 JSON 对象，不要解释文字、不要 markdown 代码块。字段：company(公司全称)、code(股票代码或空串)、hq(总部城市，能推断就写)、'
-    +'verdict("是"/"待验证"/"否"：有明确扩产或数字化信号给"是"，只有日常经营给"待验证"，非制造企业才给"否")、'
-    +'why(30字内，写需求从哪来)、signal(1-2句，把报道里的具体事实和日期写进去)、'
-    +'dept(该找的部门，按它的业务给，如信息化部/制造运营部/工艺部)、chain(2-3条，每条写清谁拍板)、'
-    +'lever(2-3句，写这家的哪条业务线最可能先上 MES、为什么现在动)、'
+  var SYSTEM='你是罗克韦尔 PLEX（SaaS MES）与 PTC（ThingWorx/Windchill）的售前情报助理。用户输入一个公司名（可能只是简称，同名公司很多），以及这个名字在新闻里出现的所有主体与报道。'
+    +'第一件事是甄别主体：候选主体既包括报道里出现的，也包括你知识里的同名公司（未上市企业往往不在财经新闻里，但它很可能才是用户想找的那家）。从候选主体里挑出最可能是 PLEX 客户的那家——制造型（汽车零部件、电子、半导体、装备、材料、食品、医药等有产线和车间的）优先，房地产、基金、投资、纯软件、物流这类直接排除。选不出来时宁可说未识别，也不要硬套一家不相干的。'
+    +'第二件事是判断需求：客户新闻里几乎不会出现软件产品名，所以不要用"报道没提到 PLEX"判否。看结构性信号：新增或扩建产线、新工厂、产能爬坡、募资投项目、新产品导入、出海建厂、并购整合、质量或交付问题、多基地协同、数字化或智能制造试点。'
+    +'只输出 JSON 对象，不要解释文字、不要 markdown 代码块。字段：'
+    +'entity(你选定的那家公司全称，附带城市更好；选不出来写空串)、code(股票代码或空串)、hq(总部或所在城市)、'
+    +'verdict("是"/"待验证"/"否")、why(30字内写清这家为什么可能有或没有 MES 需求)、'
+    +'signal(1-2句，把报道里的具体事实和日期写进去)、dept(该找的部门)、chain(2-3条，谁拍板)、'
+    +'lever(2-3句，哪条业务线最可能先上 MES、为什么现在动)、'
     +'verify(恰好3条，{q:要确认的问题,how:怎么确认,pass:什么情况算通过})、'
-    +'act(2-3条今天能做、不用等对方回复的动作)、opener(40字内第一句话，要有信息量，别写客套)、'
-    +'unknown(数组，列还没把握的点)。严禁编造人名、手机号、邮箱、金额。';
+    +'act(2-3条今天能做、不用等回复的动作)、opener(40字内有信息量的第一句话)、'
+    +'company(用户大概想问的那家公司全称，不确定写空串)、fromNews(数组，报道里出现的同名主体)、'
+    +'extraCandidates(数组，每条{name:全称,行业:一句话,why:"为什么更可能是这家"}，用你自己的知识补充其他同名主体，尤其是制造业的，允许你没把握但要标清)、'
+    +'exclude(数组，把你排除掉的同名主体和一句话理由)、unknown(数组，还没把握的点)。严禁编造人名、手机号、邮箱、金额。';
 
-  function ask(name, product, facts, codeInfo){
+  function ask(name, product, facts, codeInfo, cands, hint){
     var ctl=new AbortController(), t=setTimeout(function(){ctl.abort();}, 50000);
     var fc=facts.length?facts.map(function(x,i){return (i+1)+'. ['+x.d+' '+x.m+'] '+x.t+'。'+x.c;}).join('\n'):'（没有检索到相关公开报道）';
+    var cs=cands.length?cands.slice(0,8).map(function(x){return x.n+'（'+(x.mfg?'制造类':'非制造')+'，报道里出现'+x.c+'次）';}).join('；'):'（没有识别到同名主体）';
+    var msg='用户输入：'+(hint?name+'（补充说明：'+hint+'）':name)+'；目标产品：'+product+'；今天 2026-11-12。'
+      +'股票信息：'+((codeInfo&&codeInfo.code)?(codeInfo.code+' '+codeInfo.name+' '+(codeInfo.market||'')):'未匹配到A股上市主体')+'。'
+      +'新闻里出现的同名主体：'+cs+'。'
+      +'\n公开报道：\n'+fc;
     return fetch('https://text.pollinations.ai/openai',{method:'POST',credentials:'omit',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'openai-fast',messages:[{role:'system',content:SYSTEM},
-        {role:'user',content:'公司：'+name+'；产品：'+product+'；今天 2026-11-12。股票信息：'+((codeInfo&&codeInfo.code)?(codeInfo.code+' '+codeInfo.name+' '+(codeInfo.market||'')):'未匹配到A股上市主体')+'。\n公开报道：\n'+fc}],temperature:0.3}),
+      body:JSON.stringify({model:'openai-fast',messages:[{role:'system',content:SYSTEM},{role:'user',content:msg}],temperature:0.3}),
       signal:ctl.signal})
-    .then(function(r){ if(!r.ok) throw new Error(r.status===402?'通道排队（免费额度 45 秒一条）':'HTTP '+r.status); return r.json(); })
+    .then(function(r){ if(!r.ok) throw new Error(r.status===402?'免费通道排队中（45 秒一条）':'HTTP '+r.status); return r.json(); })
     .then(function(j){ clearTimeout(t); return parse(j.choices[0].message.content); })
     .catch(function(e){ clearTimeout(t); throw e; });
   }
@@ -327,38 +376,60 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
 
   var busy=false;
   function run(){
-    var name=(inp&&inp.value||q||'').trim(), product=(sel&&sel.value)||p||'PLEX';
-    if(!name){ if(inp) inp.focus(); return; }
+    var raw=(inp&&inp.value||q||'').trim();
+    if(!raw){ if(inp) inp.focus(); return; }
     if(busy) return;
+    var parts=raw.split(/[\s,，]+/), name=parts[0], hint=parts.slice(1).join(' ');
+    var product=(sel&&sel.value)||p||'PLEX';
     var known=hit(name);
     if(known){ showKnown(known); return; }
-    var key='pd_iq3|'+name+'|'+product;
+    var key='pd_iq4|'+name+'|'+product;
     var cached=null; try{ cached=localStorage.getItem(key); }catch(e){}
     busy=true;
-    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(name)+'</b>：先查公司代码与最近公开报道，再整理成档案…</div>';
+    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(raw)+'</b>：先查同名主体，再锁定最可能是 PLEX 客户的那家，然后拉它最近的报道…</div>';
     suggest(name).then(function(st){
-      return news(name).then(function(items){
-        if(cached){ try{ var o=JSON.parse(cached); busy=false; showAI(o,name,items,st&&st.code); return; }catch(e){} }
-        return ask(name,product,items,st).then(function(o){
-          busy=false; try{ localStorage.setItem(key, JSON.stringify(o)); }catch(e){}
-          if(inp&&!inp.value) inp.value=name;
-          showAI(o,name,items,st&&st.code);
-        }).catch(function(e){
-          busy=false;
-          box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(name)+'</b>：'
-            +esc(e&&e.message||'这次没跑出来')+'。<br><a href="javascript:void(0)" id="iqretry" style="color:#7a5af8;font-weight:700">点这里再查一次 →</a>'
-            +'（免费通道约 45 秒一条，等半分钟再点）<div style="margin-top:10px"><b>先把查到的公开报道给你：</b>'+srcList(items)+'</div></div>';
-          var rb=document.getElementById('iqretry'); if(rb) rb.onclick=run;
+      return news(name,30).then(function(all){
+        var cands=pickEntities(all,name);
+        var target=(cands.length&&cands[0].n)||name;
+        var same=all.filter(function(x){ return (x.t+' '+x.c).indexOf(target)>=0; });
+        var sub=(same.length?same:all.filter(function(x){ return (x.t+' '+x.c).indexOf(name)>=0; }));
+        var go=(target!==name && same.length)?news(target,30).then(function(more){
+              var s2=more.filter(function(x){ return (x.t+' '+x.c).indexOf(target)>=0; });
+              return s2.length?s2:more;
+            }).catch(function(){ return sub; }):Promise.resolve(sub);
+        return go.then(function(items){
+          if(cached){ try{ var o=JSON.parse(cached); busy=false; showAI(o,name,items,st&&st.code,cands); return; }catch(e){} }
+          return ask(name,product,items,st,cands,hint).then(function(o){
+            busy=false; try{ localStorage.setItem(key, JSON.stringify(o)); }catch(e){}
+            if(inp&&!inp.value) inp.value=name;
+            showAI(o,name,items,st&&st.code,cands);
+          }).catch(function(e){
+            busy=false;
+            box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(raw)+'</b>：'+esc(e&&e.message||'这次没跑出来')+'。<br>'
+              +'<a href="javascript:void(0)" id="iqretry" style="color:#7a5af8;font-weight:700">点这里再查一次 →</a>（免费通道约 45 秒一条，等半分钟再点）'
+              +(cands.length?'<div class="iq-ents" style="margin-top:10px"><b>新闻里的同名主体：</b>'
+                +cands.slice(0,6).map(function(x){return '<span class="iq-chip">'+esc(x.n)+'<span style="color:'+(x.mfg?'#0a7a45':'#8a93a0')+';margin-left:5px">'+(x.mfg?'制造':'非制造')+'</span></span>';}).join('')+'</div>':'')
+              +'<div style="margin-top:10px"><b>先把查到的公开报道给你：</b>'+srcList(items)+'</div></div>';
+            var rb=document.getElementById('iqretry'); if(rb) rb.onclick=run;
+          });
         });
       });
     }).catch(function(e){ busy=false; box.innerHTML='查询失败：'+esc(e&&e.message||''); });
   }
 
+  document.addEventListener('click',function(e){
+    var t=e.target.closest?e.target.closest('.iq-chip[data-q]'):null;
+    if(!t) return;
+    var nm=t.getAttribute('data-q');
+    if(inp) inp.value=nm;
+    try{ localStorage.removeItem('pd_iq4|'+nm+'|'+((sel&&sel.value)||p)); }catch(err){}
+    run();
+  });
   if(btn) btn.onclick=run;
   if(inp) inp.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } };
   if(q) run();
   else if(keys.length) showKnown(D[keys[keys.length-1]]);
-  else box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">上面填一个公司名，点「查」就有了。</div>';
+  else box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">上面填一个公司名，重名的可以加城市，例：海威 苏州。</div>';
 })();
 </script>
 
