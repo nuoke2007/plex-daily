@@ -1330,6 +1330,7 @@ def chain_dossier(f):
     listed = bool(re.search(r"\d{6}", f.get("sec") or ""))
     fa = _load_chain_facts().get(nm) or {}
 
+    _hunt = fa.get("hunt") or []
     chief = (f"未具名。{nm}这种{'上市' if listed else '未上市中小'}配套厂，建海外新厂时决策口通常不在总部IT，"
              f"而在“海外新厂项目组”：工艺/设备归制造副总，IT 由技术副总或总经理直接兼管（小厂往往没有独立 IT 部门）。"
              f"第一个电话建议打给推动这个新厂立项的人，而不是采购部。")
@@ -1362,6 +1363,10 @@ def chain_dossier(f):
             (f"到企查查看它「{fa.get('base','')}」对应的境外子公司主体：注册资本、成立时间、经营范围——"
              f"几百万当地货币那种多是贸易壳，有土地/厂房/设备进口记录的才是真基地。"),
         ] + steps
+    if _hunt:
+        # 有公开可查的入口就用真的：谁在管这个厂、去哪查主体、园区/招聘怎么接人
+        chief = _hunt[0]
+        steps = _hunt[1:4] or steps
     return chief, lev, steps, (f.get("city") or "")
 
 
