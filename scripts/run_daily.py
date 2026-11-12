@@ -1029,7 +1029,8 @@ TVLY_KEY = os.environ.get("TAVILY_KEY", "").strip()
 AI_CACHE = DATA / "dossiers.json"
 AI_MAX = int(os.environ.get("AI_MAX", "3") or 3)
 REFRESH_MAX = int(os.environ.get("REFRESH_MAX", "3") or 3)   # 每次运行滚动刷新几家老档案
-AI_MODELS = ["glm-4-plus", "glm-4-flash"]
+# 智谱是主力通道（同一个 key，四档模型按质量排：plus 最好，flash 只写空话放最后）
+AI_MODELS = ["glm-4-plus", "glm-4-air", "glm-4-flash-250414", "glm-4-flash"]
 REGION_RE = re.compile(r"^(长三角|珠三角|京津冀|华中|华南|西南|西北|华东|华北|东北)·[\u4e00-\u9fa5]{2,4}$")
 PROV_REGION = {
  "江苏":"长三角","浙江":"长三角","上海":"长三角","安徽":"华东","山东":"华东",
