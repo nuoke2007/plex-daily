@@ -1172,6 +1172,8 @@ def _ai_providers():
     if os.environ.get("DASHSCOPE_KEY"):
         ps.append(("qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
                    os.environ["DASHSCOPE_KEY"], os.environ.get("DASHSCOPE_MODEL", "qwen-plus")))
+    # 免注册、免 key 的公共服务（匿名层），作为最后的兜底
+    ps.append(("pollinations", "https://text.pollinations.ai/openai", "", "openai-fast"))
     if os.environ.get("OPENROUTER_KEY"):
         ps.append(("openrouter", "https://openrouter.ai/api/v1/chat/completions",
                    os.environ["OPENROUTER_KEY"], os.environ.get("OPENROUTER_MODEL", "deepseek/deepseek-chat-v3-0324:free")))
@@ -1188,7 +1190,7 @@ def glm_json(system, user):
                 {"model": model, "messages": [{"role":"system","content":system},
                                               {"role":"user","content":user}],
                  "temperature": 0.1, "stream": False, "max_tokens": 3600},
-                {"Authorization": f"Bearer {key}"}, timeout=100)
+                ({"Authorization": f"Bearer {key}"} if key else {}), timeout=120)
             msg = (d.get("choices") or [{}])[0].get("message") or {}
             txt = (msg.get("content") or msg.get("reasoning_content") or "")
             txt = re.sub(r"```json|```", "", txt).strip()
