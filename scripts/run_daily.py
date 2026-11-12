@@ -270,8 +270,11 @@ def _em_search(kw, size=20):
 
 def _em_code(name):
     """拿公司名反查 A 股代码；全称查不到就剥掉“股份有限公司”等尾巴再查。查不到返回空串"""
-    core = re.sub(r"(股份有限公司|有限责任公司|有限公司|集团|控股|股份|公司)$", "", (name or "").strip())
-    for q in ([name] if name else []) + ([core] if core and core != name else []):
+    t = (name or "").strip()
+    core = re.sub(r"(股份有限公司|有限责任公司|有限公司|集团|控股|股份|公司)$", "", t)
+    core2 = re.sub(r"(科技|工业|制造|精密|实业|新材料|智能|装备)$", "", core)
+    cands = [x for x in (t, core, core2, core2[:4] if len(core2) >= 4 else "") if x]
+    for q in cands:
         c = _em_code1(q)
         if c: return c
     return ""
@@ -370,20 +373,21 @@ def _tesla_probe(nm, core):
     return dict(exist=exist, rel=rel, os=osi)
 
 def discover_tesla_chain():
-    """特斯拉供应链视角：目标是 Tier2/Tier3（给特斯拉或它的 Tier1 配套的中小厂），
-    优先有海外新产能的。模型先按环节给候选 → 逐家回公开报道做三层核验 → 不达标的丢弃或降级。"""
+    """特斯拉供应链视角（Tier2/Tier3 优先）：模型按环节给候选 → 东财公开报道尽可能补证据。
+    证据分三档：①报道里看得到海外新产能 ②报道里看得到客户关系 ③只有模型知识（标未核验）。
+    没有一条线索会因为“搜不到”被丢掉——非上市小厂本来就不在财经新闻里。"""
     system = ("你是汽车零部件行业的线索分析员，服务对象是罗克韦尔 PLEX（订阅制 SaaS MES）售前。"
-      "我们要的画像很明确：给特斯拉（上海/柏林/得州/墨西哥工厂、Megapack、Optimus）或它的 Tier1 供应商配套的"
-      "中国 Tier2 / Tier3 中小制造企业，年营收大概 3-30 亿、多数未上市、组织没那么健全、"
-      "并且最好最近两年在海外（泰国/墨西哥/匈牙利/越南/印尼/塞尔维亚/波兰/摩洛哥等）新建或扩建了工厂——"
-      "这种才是 PLEX 最合适的客户。"
+      "我们要的画像：给特斯拉（上海/柏林/得州/墨西哥工厂、Megapack、Optimus）或它的 Tier1 配套的"
+      "中国 Tier2 / Tier3 中小制造企业，年营收大概 3-30 亿、多数未上市、组织没那么健全；"
+      "如果最近两年在海外（泰国/墨西哥/匈牙利/越南/印尼/塞尔维亚/波兰/摩洛哥等）新建或扩建了工厂，那就是最理想画像。"
       "不要给宁德时代、汇川、立讯、拓普、三花、银轮、科达利、东山精密、均胜、华域、"
-      "广东鸿图、宁波华翔、文灿、旭升、新泉、继峰、爱柯迪、天汽模这类已上市的一级龙头。"
-      "不要编造公司名；写不准就换一家你确定存在的。按环节铺开：压铸件、机加工/精密件、内外饰、"
+      "广东鸿图、宁波华翔、文灿、旭升、新泉、继峰、爱柯迪这类已上市一级龙头。"
+      "只能写你确实知道存在的公司，不确定的不要写。按环节铺开：压铸件、机加工/精密件、内外饰、"
       "线束连接器、PCB/FPC、模具工装、自动化产线与检测装备、包装与物流器具、表面处理、注塑件。"
       "只输出一个 JSON 对象：{\"items\":[{\"name\":\"企业全称或常用名\",\"biz\":\"一句话主营\","
       "\"city\":\"总部城市\",\"chain\":\"所属环节\",\"tier\":\"Tier2或Tier3\","
-      "\"overseas\":\"已知的海外基地，没有就空串\",\"customer\":\"给谁配套，写特斯拉或具体Tier1名称\"}]}，20 条左右。")
+      "\"overseas\":\"已知的海外基地，没有就空串\",\"customer\":\"给谁配套\","
+      "\"confidence\":\"高或中\"}]}，20 条左右。")
     d, used = glm_json(system, "今天 2026-11-12。按环节铺开给 Tier2/Tier3 候选，未上市优先，有海外新厂的优先。")
     cands = (d or {}).get("items") or []
     log(f"特斯拉供应链：模型给出 Tier2/3 候选 {len(cands)} 家（{used or '无模型'}）")
@@ -392,48 +396,45 @@ def discover_tesla_chain():
         nm = _strip_geo((c.get("name") or "").strip())
         if len(nm) < 3 or nm in seen: continue
         if any(b in nm for b in TIER1_SKIP):
-            log(f"    {nm}：属 Tier1/巨头，跳过（组织齐全、不是我们的画像）")
+            log(f"    {nm}：属 Tier1/巨头，跳过")
             continue
         seen.add(nm)
         core = re.sub(r"(股份有限公司|有限责任公司|有限公司|集团|控股|股份|公司)$", "", nm)
-        pr = _tesla_probe(nm, core)
-        if not pr.get("exist"):
-            log(f"    {nm}：检索里找不到这家企业，按编造丢弃")
-            continue
+        pr = _tesla_probe(nm, core)          # 只做补证，不再拿它当门槛
         rel, osi = pr.get("rel"), pr.get("os")
-        if not rel and not osi:
-            log(f"    {nm}：既看不出客户关系、也查不到海外新产能 → 丢弃")
-            continue
+        claimed_os = (c.get("overseas") or "").strip()
         code = _em_code(nm)
-        src_bits = [f"🔗 来源：特斯拉供应链 · {c.get('chain') or '配套环节'} · 画像：{c.get('tier') or 'Tier2/3'}"]
         if osi:
-            src_bits[0] += " · ✅有海外新产能"
-        elif rel:
-            src_bits[0] += f" · 关系强度{rel[2]}"
+            label = "✅ 报道佐证有海外新产能"
+            ev = f"🏭 海外：{osi[1][:70]}（{osi[0]['m']} {osi[0]['d']}）"
+        elif claimed_os:
+            label = f"⚠ 模型称有海外基地（{claimed_os[:28]}），未核验"
+            ev = "🏭 海外：报道里没查到，需深挖确认"
         else:
-            src_bits[0] += " · 画像待核"
-        rules = [src_bits[0]]
-        if osi:
-            rules.append(f"🏭 海外：{osi[1][:70]}（{osi[0]['m']} {osi[0]['d']}）")
+            label = "⚠ 未见海外产能证据（模型未提及）"
+            ev = "🏭 海外：报道里没查到，需深挖确认"
+        rules = [f"🔗 来源：特斯拉供应链 · {c.get('chain') or '配套环节'} · 画像：{c.get('tier') or 'Tier2/3'} · {label}"]
+        rules.append(ev)
         if rel:
-            rules.append(f"🤝 客户：{rel[1][:70]}（{rel[0]['m']} {rel[0]['d']}）")
+            rules.append(f"🤝 客户：{rel[1][:70]}（{rel[0]['m']} {rel[0]['d']}，证据强度{rel[2]}）")
         else:
-            rules.append(f"🤝 客户：报道里未见明确客户关系（模型称 {c.get('customer') or '配套特斯拉/Tier1'}，未核验）")
-        rules.append(f"🎯 画像：{'未上市' if not code else '已上市'}{c.get('tier') or 'Tier2/3'}，"
-                     f"{c.get('biz') or '中小制造'}；"
-                     + ("海外新厂正是 MES 设备进场前后选型窗口" if osi else "若确认有海外新产能，就是 PLEX 的典型窗口"))
-        pick = osi[0] if osi else (rel[0] if rel else pr["exist"])
+            rules.append(f"🤝 客户：模型称 {c.get('customer') or '配套特斯拉/Tier1'}，报道未见 → 未核验")
+        rules.append(f"🎯 画像：{'未上市' if not code else '已上市'}{c.get('tier') or 'Tier2/3'}，{c.get('biz') or '中小制造'}；"
+                     + ("海外新厂正是 MES 设备进场前后选型窗口" if osi else "先确认海外基地是否在建，再定切入时点"))
+        pick = osi[0] if osi else (rel[0] if rel else pr.get("exist"))
         out.append(dict(
             sec=code, ukey="TSL" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:6].upper(),
             name=nm, src="tesla", city=(c.get("city") or ""),
             title=f"特斯拉供应链 {c.get('tier') or 'Tier2/3'}：{c.get('biz') or nm}",
             date=time.time() * 1000,
-            url=pick["u"] or ("https://so.eastmoney.com/news/s?keyword=" + urllib.parse.quote(nm)),
-            phase="window", overseas=bool(osi),
+            url=(pick or {}).get("u") or ("https://so.eastmoney.com/news/s?keyword=" + urllib.parse.quote(nm)),
+            phase="window", overseas=bool(osi) or bool(claimed_os),
+            conf=(c.get("confidence") or "中"),
             rule=rules,
         ))
-    out.sort(key=lambda x: 0 if x.get("overseas") else 1)      # 有海外新产能的排前面
-    log(f"特斯拉供应链：入雷达 {len(out)} 家（候选 {len(cands)} 家，其中有海外新产能 {sum(1 for x in out if x.get('overseas'))} 家）")
+        log(f"    {nm}：{label}")
+    out.sort(key=lambda x: (0 if x.get("overseas") else 1, 0 if x.get("conf") == "高" else 1))
+    log(f"特斯拉供应链：入雷达 {len(out)} 家（其中有海外产能线索 {sum(1 for x in out if x.get('overseas'))} 家）")
     return out
 
 new_findings = []
