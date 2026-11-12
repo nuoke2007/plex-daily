@@ -372,6 +372,25 @@ def _tesla_probe(nm, core):
                 rel = (it, seg, "高" if strong else "中")
     return dict(exist=exist, rel=rel, os=osi)
 
+CHAIN_FACTS = {}
+
+
+def _load_chain_facts():
+    """读 data/chain_facts.json：海外项目的公告/研报口径事实（基地/投资/开工/阶段/投产/产能/来源）。"""
+    global CHAIN_FACTS
+    if CHAIN_FACTS:
+        return CHAIN_FACTS
+    for p in (Path("data/chain_facts.json"), Path("chain_facts.json")):
+        try:
+            if p.exists():
+                CHAIN_FACTS = json.loads(p.read_text(encoding="utf-8"))
+                log(f"供应链项目事实：载入 {len(CHAIN_FACTS)} 家（{p}）")
+                return CHAIN_FACTS
+        except Exception as e:
+            log(f"供应链项目事实载入失败 {p}: {e}")
+    return CHAIN_FACTS
+
+
 def _chain_list_leads():
     """用 data/tesla_chain.csv（用户提供的特斯拉中国供应链名单）当候选池。
     这条路的价值：名单是企业名+层级+产品+海外工厂状态都写好的，不靠模型回忆，
@@ -421,10 +440,23 @@ def _chain_list_leads():
             rules.append("🏭 海外：名单标为无海外工厂/未填，优先级靠后")
         rules.append(("⏱ 窗口：名单显示 2025-2027 在建/投产 —— 设备进场前后正是选型期" if _near
                       else "⏱ 窗口：名单未显示近期投产，按存量客户观察"))
-        rules.append(("⚠ 名单是二手整理，海外工厂状态与投产年份需逐家核实后再生效" if has_os
-                      else "⚠ 无海外产能，除非新立项否则不是我们画像"))
+        rules.append(("✅ 海外项目已核（公告/研报口径，见下方事实与来源）" if _facts
+                      else ("⚠ 名单是二手整理，海外工厂状态与投产年份需逐家核实后再生效" if has_os
+                      else "⚠ 无海外产能，除非新立项否则不是我们画像")))
         rules.append(f"🎯 画像：{'已上市' if code else '未上市公司'}，{tier_lab}，{_p1[:24] or '汽车零部件'}"
                      + ("；海外新厂在建/投产是 MES 选型窗口" if _near else ""))
+        _facts = _load_chain_facts().get(nm) or {}
+        if _facts:
+            _fl = [f"🏭 海外基地：{_facts.get('base','')}"]
+            for _k, _lab in (("invest","💰 投资/规模"),("start","📅 开工·公告"),("stage","🚧 当前阶段"),
+                             ("plan","⏱ 计划/实际投产"),("capacity","🏗 产能"),("latest","📰 最新进展")):
+                if _facts.get(_k):
+                    _fl.append(f"{_lab}：{_facts.get(_k)}")
+            if _facts.get("src_name"):
+                _fl.append("🔗 事实来源：" + _facts.get("src_name") + (" " + _facts.get("src","") if _facts.get("src") else ""))
+            rules.extend(_fl)
+            if str(_facts.get("plan","")).startswith(("2025","2026","2027")):
+                _near = True
         out.append(dict(
             sec=code, ukey="TSL" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:6].upper(),
             name=nm, src="tesla", city="",
@@ -1295,6 +1327,7 @@ def chain_dossier(f):
     verified = "报道佐证" in txt or "✅" in txt
     in_list = bool("名单" in txt and m3 and "没查到" not in (m3.group(1) or ""))
     listed = bool(re.search(r"\d{6}", f.get("sec") or ""))
+    fa = _load_chain_facts().get(nm) or {}
 
     chief = (f"未具名。{nm}这种{'上市' if listed else '未上市中小'}配套厂，建海外新厂时决策口通常不在总部IT，"
              f"而在“海外新厂项目组”：工艺/设备归制造副总，IT 由技术副总或总经理直接兼管（小厂往往没有独立 IT 部门）。"
@@ -1312,11 +1345,22 @@ def chain_dossier(f):
                   (f"模型称其在{overseas}有基地，这一条还没被公开报道证实，是本轮最该先核实的事实。" if overseas and not verified else
                    "海外产能这条目前只有推断，还没落到具体国家/基地。")))
 
+    if fa and tier != "Tier1/巨头":
+        lev += (f" 它海外项目的确切状态是「{fa.get('stage','')}」，投产口径{fa.get('plan','') or '未公开'}——"
+                f"这决定了窗口是‘土建期’还是‘设备进场/试产期’。")
     steps = [
         f"核实是否真有海外基地：企查查/天眼查看【{nm}】“对外投资”，找名字里带泰国/墨西哥/越南/匈牙利等地的子公司，并看注册资本——几百万泰铢那种是贸易壳，不是工厂。",
         f"找现场痕迹：官网“全球布局”页、当地招聘（搜【{nm}】+海外工厂IT/制造工程师/PMC/关务）、行业展会（法兰克福汽配展、墨西哥/泰国中资工业园名单）——招人=设备进场前后，正是选型窗口。",
         f"找入口：脉脉/Boss 上这家的项目、工艺、IT 岗位；或用它在国内的 T1 客户（博世/拓普等）的采购对接人做一次转介，比自己陌拜效率高。",
     ]
+    if fa:
+        steps = [
+            (f"先把这家的项目底账钉死：{fa.get('start','')} → 当前「{fa.get('stage','')}」→ 投产口径 {fa.get('plan','') or '未公开'}；"
+             f"投资/产能：{fa.get('invest','') or '见公告'}；{fa.get('capacity','')}。"
+             f"来源：{fa.get('src_name','')}。"),
+            (f"到企查查看它「{fa.get('base','')}」对应的境外子公司主体：注册资本、成立时间、经营范围——"
+             f"几百万当地货币那种多是贸易壳，有土地/厂房/设备进口记录的才是真基地。"),
+        ] + steps
     return chief, lev, steps, (f.get("city") or "")
 
 
@@ -2411,7 +2455,9 @@ def card_for(f):
     elif f.get("src") == "tesla":
         chief,lev,steps,loc=chain_dossier(f)   # 供应链线索没有公告，走专用档案，不套公告模板
         hook="“你们海外这个厂，MES 是打算照搬国内那套，还是当地单独找一套？照搬过去半年才上线，当地找一套又没人维护。”"
-        badge='<span class="ev" style="color:#b26a00">⚠ 供应链推断（客户关系与海外基地未核验）</span>'
+        badge=('<span class="ev" style="color:#137333">✓ 海外项目已核（公告/研报）</span>'
+               if _load_chain_facts().get(nm)
+               else '<span class="ev" style="color:#b26a00">⚠ 供应链推断（客户关系与海外基地未核验）</span>')
     else:
         chief,lev,steps,loc=auto_dossier(nm, f["title"], f["rule"], ind)
         if f.get("city"): loc=f["city"]        # 用所在地，不套“海外（国别见公告）”
