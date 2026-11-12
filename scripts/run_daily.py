@@ -411,7 +411,8 @@ def discover_tesla_chain():
         else:
             label = "⚠ 未见海外产能证据（模型未提及）"
             ev = "🏭 海外：报道里没查到，需深挖确认"
-        rules = [f"🔗 来源：特斯拉供应链 · {c.get('chain') or '配套环节'} · 画像：{c.get('tier') or 'Tier2/3'} · {label}"]
+        _tlab = "Tier1/巨头（中优先级）" if is_t1 else (c.get("tier") or "Tier2/3")
+        rules = [f"🔗 来源：特斯拉供应链 · {c.get('chain') or '配套环节'} · 画像：{_tlab} · {label}"]
         rules.append(ev)
         if rel:
             rules.append(f"🤝 客户：{rel[1][:70]}（{rel[0]['m']} {rel[0]['d']}，证据强度{rel[2]}）")
@@ -425,7 +426,7 @@ def discover_tesla_chain():
         out.append(dict(
             sec=code, ukey="TSL" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:6].upper(),
             name=nm, src="tesla", city=(c.get("city") or ""),
-            title=f"特斯拉供应链 {('T1·中优先' if is_t1 else (c.get('tier') or 'Tier2/3'))}：{c.get('biz') or nm}",
+            title=f"特斯拉供应链 {_tlab}：{c.get('biz') or nm}",
             date=time.time() * 1000,
             url=(pick or {}).get("u") or ("https://so.eastmoney.com/news/s?keyword=" + urllib.parse.quote(nm)),
             phase=("fresh" if is_t1 else "window"), overseas=bool(osi) or bool(claimed_os),
