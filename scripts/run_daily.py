@@ -1799,6 +1799,18 @@ def queue_pass():
         else:
             log(f"    队列：{nm} 未查到，保留文件待下次重试")
 
+def _sec_name(code):
+    """按股票代码反查公司简称（老档案 name 为空时用），查不到返回空串"""
+    for col in ("szse", "sse"):
+        try:
+            data = fetch_cninfo(code, column=col, days=365, page_size=5)
+            for a in (data.get("announcements") or []):
+                if (a.get("secCode") or "").zfill(6) == str(code).zfill(6) and a.get("secName"):
+                    return a["secName"].strip()
+        except Exception:
+            continue
+    return ""
+
 def _infer_pk(ds):
     """老档案没存产品 key 时按信号/岗位/理由推断，避免把 Windchill/FTPC 的线索当 PLEX 重查"""
     t = ((ds.get("signal") or "") + " " + (ds.get("role") or "") + " " + (ds.get("why") or "") + " "
@@ -1832,8 +1844,12 @@ def _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION):
             if _n >= _RF: break
             p0 = _PBK.get(ds0.get("pk") or _infer_pk(ds0))
             if not p0: continue
-            log(f"  滚动刷新（{gap}天未更新）：{ds0.get('name')} [{p0['key']}]")
-            ds1 = ai_dossier(c0, ds0.get("name") or c0, p0, {"title": ds0.get("signal") or ""})
+            _nm0 = (ds0.get("name") or "").strip() or _sec_name(c0)
+            if not _nm0:
+                log(f"  跳过 {c0}：按代码查不到公司名")
+                continue
+            log(f"  滚动刷新（{gap}天未更新）：{_nm0} [{p0['key']}]")
+            ds1 = ai_dossier(c0, _nm0, p0, {"title": ds0.get("signal") or ""})
             _n += 1; done += 1
             if ds1:
                 PRODUCT_DOSSIERS[c0] = ds1
