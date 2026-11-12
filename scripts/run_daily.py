@@ -2361,31 +2361,31 @@ def card_for(f):
 # 先跑 AI 深查，再渲染卡片——否则 PLEX 卡片永远拿不到当天的档案
 def _ci_push_data():
     """CI 里把 data/（档案/队列/即查）和生成好的页面一起回写仓库。
-    为什么页面也在这里推：workflow 的 commit 步骤与脚本的回写会抢同一个 main，
-    两边同时 push 必有一边被 `fetch first` 拒掉（曾整轮标红）。统一在这里推一次，
-    workflow 那步就变成 nothing to commit 的空操作。
-    push 失败（远端被别人先推了）时先 pull --rebase 再重推，最多 3 次。"""
+    页面是每次全量重新生成的，所以推送前先 fetch + reset --soft 到远端最新，
+    再把自己的生成物重新提交——避免和并行运行/API 提交撞出 leads.xlsx 二进制冲突。
+    workflow 的 commit 步骤随后会发现“nothing to commit”，不会再有一次 push。"""
     if os.environ.get("GITHUB_ACTIONS") != "true": return
     try:
         import subprocess
         if not Path("data").exists(): return
-        pages = ["dashboard.html","lead.html","ftpc.html","thingworx.html",
-                 "windchill.html","datamosaix.html","inquiry.html","leads.xlsx","logs"]
-        subprocess.run(["git","add","data"] + [x for x in pages if Path(x).exists()],
-                       check=False, capture_output=True)
-        r = subprocess.run(["git","commit","-m","daily update: pages + data"],
-                           capture_output=True, text=True)
-        if r.returncode != 0:
-            log("数据与页面无变化，跳过回写")
-            return
+        paths = ["data"] + [x for x in ["dashboard.html","lead.html","ftpc.html","thingworx.html",
+                                        "windchill.html","datamosaix.html","inquiry.html",
+                                        "index.html","leads.xlsx","logs"] if Path(x).exists()]
         for attempt in range(3):
+            subprocess.run(["git","fetch","origin","main"], check=False, capture_output=True)
+            # 对齐远端：工作区文件不动，只把本地提交基线挪到 origin/main
+            subprocess.run(["git","reset","--soft","origin/main"], check=False, capture_output=True)
+            subprocess.run(["git","add"] + paths, check=False, capture_output=True)
+            r = subprocess.run(["git","commit","-m","daily update: pages + data"],
+                               capture_output=True, text=True)
+            if r.returncode != 0:
+                log("回写仓库：生成物与远端一致，无需提交")
+                return
             pr = subprocess.run(["git","push"], capture_output=True, text=True)
             if pr.returncode == 0:
                 log("回写仓库：成功" + ("" if attempt == 0 else f"（第{attempt+1}次）"))
                 return
-            subprocess.run(["git","pull","--rebase","--autostash"],
-                           check=False, capture_output=True)
-            log(f"push 被拒（远端有新提交），已 rebase，重试第{attempt+2}次")
+            log(f"回写仓库：push 被拒（{pr.stderr.strip().splitlines()[-1][:60] if pr.stderr.strip() else '未知'}），重试")
         log("回写仓库：3 次重试仍失败")
     except Exception as ex:
         log("回写失败：" + str(ex)[:60])
