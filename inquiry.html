@@ -49,6 +49,8 @@ h1{font-size:24px;color:#003DA5;letter-spacing:-.3px}
 .iq-card{max-width:900px}
 .iq-vv{border-left:3px solid #e3ebf3;padding:6px 0 6px 11px;margin-top:8px;font-size:12.5px;line-height:1.75}
 .iq-q{background:#f7fafd;border-radius:8px;padding:9px 12px;margin-top:4px;font-size:12.5px;line-height:1.8}
+.iq-src{font-size:12px;line-height:1.85;color:#3d4c5c;margin-top:3px}
+.iq-src a{color:#003DA5;text-decoration:none;border-bottom:1px dotted #9db4cc}
 .iq-note{font-size:12px;color:#8a93a0;line-height:1.8;margin-top:10px}
 .feas{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:5px}
 .feas-高{background:#e8f6ee;color:#0a7f3f}
@@ -187,7 +189,7 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
   var inp=document.getElementById('iqc'), sel=document.getElementById('iqp'), btn=document.getElementById('iqgo');
   var D=window.PD_INQ||{}, keys=Object.keys(D);
   if(inp&&q) inp.value=q;
-  if(sel&&p) sel.value=p;
+  if(sel&&p&&sel.querySelector('option[value="'+p+'"]')) sel.value=p;
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function hit(name){
@@ -200,81 +202,120 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
     });
     return got;
   }
+
+  var seq=0;
+  function jsonp(url){
+    return new Promise(function(res,rej){
+      var id='pdcb'+(++seq)+Date.now().toString(36);
+      var s=document.createElement('script'), done=false;
+      var to=setTimeout(function(){ if(!done){ cleanup(); rej(new Error('检索超时')); } },12000);
+      function cleanup(){ clearTimeout(to); try{delete window[id];}catch(e){} if(s.parentNode) s.parentNode.removeChild(s); }
+      window[id]=function(data){ done=true; cleanup(); res(data); };
+      s.onerror=function(){ if(!done){ done=true; cleanup(); rej(new Error('检索接口不通')); } };
+      s.src=url+(url.indexOf('?')>=0?'&':'?')+'cb='+id;
+      document.head.appendChild(s);
+    });
+  }
+  function suggest(name){
+    var u='https://searchapi.eastmoney.com/api/suggest/get?input='+encodeURIComponent(name)+'&type=14&token=D43BF722C8E33BDC906FB84D85E326E8&count=6';
+    return jsonp(u).then(function(d){
+      var arr=(d&&d.QuotationCodeTable&&d.QuotationCodeTable.Data)||[];
+      var out=null;
+      arr.forEach(function(x){
+        if(out) return;
+        if(String(x.SecurityTypeName||'').indexOf('债')>=0) return;
+        out={code:x.Code,name:x.Name,market:x.SecurityTypeName||''};
+      });
+      return out;
+    }).catch(function(){ return null; });
+  }
+  function news(name){
+    var param={uid:'',keyword:name,type:['cmsArticleWebOld'],client:'web',clientType:'web',clientVersion:'curr',
+      param:{cmsArticleWebOld:{searchScope:'default',sort:'time',pageIndex:1,pageSize:20,preTag:'',postTag:''}}};
+    var u='https://search-api-web.eastmoney.com/search/jsonp?param='+encodeURIComponent(JSON.stringify(param));
+    return jsonp(u).then(function(d){
+      var arr=((d||{}).result||{}).cmsArticleWebOld||[];
+      var key=name.replace(/(股份有限公司|有限公司|集团|股份|科技|公司)/g,'').slice(0,4)||name;
+      var out=[];
+      arr.forEach(function(x){
+        if(out.length>=6) return;
+        var t=x.title||'', c=(x.content||'').replace(/[\s\u3000]+/g,' ').trim();
+        if(t.indexOf(name)>=0||c.indexOf(name)>=0||(key&&t.indexOf(key)>=0)) out.push({d:(x.date||'').slice(0,10),m:x.mediaName||'',t:t,u:x.url||'',c:c.slice(0,120)});
+      });
+      return out;
+    }).catch(function(){ return []; });
+  }
+
   function head(a){
-    var g=a.g||'待验证';
-    return '<div class="ld-h"><span class="tag" style="background:#eef4fb;color:#003DA5">'+esc(g)+'</span>'
+    return '<div class="ld-h"><span class="tag" style="background:#eef4fb;color:#003DA5">'+esc(a.g||'待验证')+'</span>'
       +'<b class="ld-nm">'+esc(a.n)+'</b>'+(a.c?'<span class="ld-code">'+esc(a.c)+'</span>':'')
       +'<span class="ld-meta">'+esc(a.pk||'PLEX')+'</span>'
       +(a.hq?'<span class="ld-meta">📍 '+esc(a.hq)+'</span>':'')
       +'<span class="ld-meta" style="color:#8a93a0">临时查询·不入库</span></div>';
   }
-  function li(arr){return '<ul style="margin:4px 0 0 18px;padding:0">'+(arr||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';}
-
-  /* 一致命中已查过的档案：直接显示完整详情（不联网） */
-  function showKnown(e){
-    box.innerHTML=head({g:e.g,n:e.n,c:e.c,hq:'',pk:e.pk})
-      +'<div class="ld-body" style="padding:10px 12px">'+e.b+'</div>';
+  function srcList(items){
+    if(!items||!items.length) return '<div style="color:#8a93a0;font-size:12px">没搜到公开报道，判断只能靠模型记忆，可信度低。</div>';
+    return items.map(function(x){
+      return '<div class="iq-src">· <span style="color:#8a93a0">'+esc(x.d)+'</span> '+esc(x.m)+' — '
+        +(x.u?'<a href="'+esc(x.u)+'" target="_blank">'+esc(x.t)+'</a>':esc(x.t))+'</div>';
+    }).join('');
   }
-
-  function showAI(o){
+  function showKnown(e){
+    box.innerHTML=head({g:e.g,n:e.n,c:e.c,hq:'',pk:e.pk})+'<div class="ld-body" style="padding:10px 12px">'+e.b+'</div>';
+  }
+  function showAI(o, na, items, code){
     var v=o.verdict||'待验证', g=(v==='是'?'高':(v==='否'?'低':'中'));
-    var chain=(o.chain||[]).map(function(x){return '<li>'+esc(typeof x==='string'?x:(x.r||'')+(x.w?' — '+x.w:''))+'</li>';}).join('');
     var ver=(o.verify||[]).map(function(x){
       return '<div class="iq-vv"><b>'+esc(x.q||'')+'</b><div style="color:#5a6b7d">'+esc(x.how||'')+'</div>'
-        +(x.pass?'<div style="color:#0a7a45">✅ 判据：'+esc(x.pass)+'</div>':'')+'</div>';
+        +(x.pass?'<div style="color:#0a7a45">✅ 算通过：'+esc(x.pass)+'</div>':'')+'</div>';
     }).join('');
-    var unk=(o.unknown||[]).length?'<div class="iq-note"><b>还不确定的：</b>'+esc((o.unknown||[]).join('；'))+'</div>':'';
-    box.innerHTML=head({g:g,n:o.company||inp.value,c:o.code||'',hq:o.hq||'未确认',pk:sel.value})
+    var act=(o.act||[]).length?'<ul style="margin:4px 0 0 18px;padding:0">'+o.act.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':'<span style="color:#8a93a0">未给出</span>';
+    var chain=(o.chain||[]).length?'<ul style="margin:4px 0 0 18px;padding:0">'+o.chain.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':'<span style="color:#8a93a0">未确认</span>';
+    box.innerHTML=head({g:g,n:o.company||na,c:o.code||code||'',hq:o.hq||'',pk:sel.value})
       +'<div class="ld-body" style="padding:12px 14px;font-size:13px;line-height:1.85">'
       +'<div class="ld-sum">'+esc(o.why||'')+'</div>'
-      +'<div style="margin-top:8px"><b>依据：</b>'+esc(o.signal||'（模型记忆，未联网核验）')+'</div>'
+      +'<div style="margin-bottom:8px"><b>依据（最近公开报道）</b>'+srcList(items)+'</div>'
+      +'<div style="margin-top:8px"><b>信号：</b>'+esc(o.signal||'')+'</div>'
       +'<div style="margin-top:8px"><b>该找谁：</b>'+esc(o.dept||'未确认')+'</div>'
-      +'<div style="margin-top:8px"><b>决策链：</b><ul style="margin:4px 0 0 18px;padding:0">'+chain+'</ul></div>'
+      +'<div style="margin-top:8px"><b>决策链：</b>'+chain+'</div>'
       +'<div style="margin-top:8px"><b>杠杆点：</b>'+esc(o.lever||'')+'</div>'
       +'<div style="margin-top:10px"><b>先验证这三问：</b>'+ver+'</div>'
-      +'<div style="margin-top:10px"><b>今天先做：</b>'+li(o.act)+'</div>'
+      +'<div style="margin-top:10px"><b>今天先做：</b>'+act+'</div>'
       +(o.opener?'<div style="margin-top:10px"><b>开场话术：</b><div class="iq-q">'+esc(o.opener)+'</div></div>':'')
-      +unk
+      +((o.unknown&&o.unknown.length)?'<div class="iq-note"><b>还没确认的：</b>'+esc(o.unknown.join('；'))+'</div>':'')
       +'<div class="iq-note" style="margin-top:12px;border-top:1px dashed #dfe6ef;padding-top:8px">'
-      +'以上是 AI 现场判断，没有联网核验，正式用之前按上面三问自己确认一遍。这条只存在你本机浏览器里，不进 GitHub、不进雷达。</div>'
+      +'临时查询：新闻来自东方财富公开检索，判断由 AI 综合，入库前请按上面三问自己核一遍。这条只存你本机浏览器。</div>'
       +'</div>';
   }
 
-  var SYSTEM='你是罗克韦尔/PTC 售前顾问的情报助理。用户给一个公司名和一个产品，你要判断这家公司对该产品有没有真实采购机会，并给出下一步怎么推进。'
-    +'只输出一个 JSON 对象，不要任何解释文字、不要 markdown 代码块。字段：'
-    +'company(公司全称，若只有简称且你不确定是哪家就原样返回)、code(股票代码或空串)、hq(总部城市或"未确认")、'
-    +'verdict("是"/"待验证"/"否")、why(一句话结论，30字内)、signal(你依据的信息，若只是模型记忆就写"模型记忆，未联网核验")、'
-    +'dept(该找的部门)、chain(2-3条，每条一句话写清谁拍板)、lever(2-3句，写这家公司为什么会买/为什么卡住)、'
-    +'verify(恰好3条，每条{q:要确认的问题,how:怎么确认,pass:什么情况算通过})、act(2-3条今天就能做且不用等回复的动作)、'
-    +'opener(客户听得进去的第一句话，40字内)、unknown(数组，列出你没把握的点)。'
-    +'严禁编造人名、手机号、邮箱，不知道就写进 unknown。';
+  var SYSTEM='你是罗克韦尔 PLEX（SaaS MES）与 PTC（ThingWorx/Windchill）的售前情报助理。任务：给定一家公司、它的股票信息与最近公开报道，判断它有没有 MES/PLM 类需求，并给出推进建议。'
+    +'重要：客户新闻里几乎不会出现软件产品名，所以不要用"报道没提到 PLEX"作为判断依据，也不要因此判否。看的是结构性信号：新增或扩建产线、新工厂、产能爬坡、募资投项目、新产品导入、出海建厂、并购整合、质量或交付问题、多基地协同、数字化或智能制造试点。有其中一项就说明有 MES 需求土壤。'
+    +'只输出 JSON 对象，不要解释文字、不要 markdown 代码块。字段：company(公司全称)、code(股票代码或空串)、hq(总部城市，能推断就写)、'
+    +'verdict("是"/"待验证"/"否"：有明确扩产或数字化信号给"是"，只有日常经营给"待验证"，非制造企业才给"否")、'
+    +'why(30字内，写需求从哪来)、signal(1-2句，把报道里的具体事实和日期写进去)、'
+    +'dept(该找的部门，按它的业务给，如信息化部/制造运营部/工艺部)、chain(2-3条，每条写清谁拍板)、'
+    +'lever(2-3句，写这家的哪条业务线最可能先上 MES、为什么现在动)、'
+    +'verify(恰好3条，{q:要确认的问题,how:怎么确认,pass:什么情况算通过})、'
+    +'act(2-3条今天能做、不用等对方回复的动作)、opener(40字内第一句话，要有信息量，别写客套)、'
+    +'unknown(数组，列还没把握的点)。严禁编造人名、手机号、邮箱、金额。';
 
-  function ask(name, product){
-    var ctl=new AbortController(), t=setTimeout(function(){ctl.abort();}, 55000);
+  function ask(name, product, facts, codeInfo){
+    var ctl=new AbortController(), t=setTimeout(function(){ctl.abort();}, 50000);
+    var fc=facts.length?facts.map(function(x,i){return (i+1)+'. ['+x.d+' '+x.m+'] '+x.t+'。'+x.c;}).join('\n'):'（没有检索到相关公开报道）';
     return fetch('https://text.pollinations.ai/openai',{method:'POST',credentials:'omit',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'openai-fast',messages:[{role:'system',content:SYSTEM},
-        {role:'user',content:'公司：'+name+'；产品：'+product+'；今天是 2026 年 11 月。'}],temperature:0.3}),
+        {role:'user',content:'公司：'+name+'；产品：'+product+'；今天 2026-11-12。股票信息：'+((codeInfo&&codeInfo.code)?(codeInfo.code+' '+codeInfo.name+' '+(codeInfo.market||'')):'未匹配到A股上市主体')+'。\n公开报道：\n'+fc}],temperature:0.3}),
       signal:ctl.signal})
-    .then(function(r){if(!r.ok) throw new Error('HTTP '+r.status); return r.json();})
-    .then(function(j){clearTimeout(t); return parse(j.choices[0].message.content);})
-    .catch(function(e){clearTimeout(t); throw e;});
+    .then(function(r){ if(!r.ok) throw new Error(r.status===402?'通道排队（免费额度 45 秒一条）':'HTTP '+r.status); return r.json(); })
+    .then(function(j){ clearTimeout(t); return parse(j.choices[0].message.content); })
+    .catch(function(e){ clearTimeout(t); throw e; });
   }
   function parse(txt){
-    var s=String(txt||'').replace(/```json/g,'```').split('```').join('').trim();
+    var s=String(txt||'').replace(/```/g,'').trim();
     var a=s.indexOf('{'), b=s.lastIndexOf('}');
-    if(a<0||b<=a) throw new Error('no json');
+    if(a<0||b<=a) throw new Error('模型没按格式返回');
     return JSON.parse(s.slice(a,b+1));
-  }
-
-  function loading(name){
-    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(name)+'</b>：AI 正在现场判断（约 10-30 秒）…</div>';
-  }
-  function fail(name,msg){
-    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">'
-      +'<b>'+esc(name)+'</b>：这次没跑出来（'+esc(msg||'网络或通道繁忙')+'）。<br>'
-      +'<a href="javascript:void(0)" id="iqretry" style="color:#7a5af8;font-weight:700">点这里重查一次 →</a></div>';
-    var rb=document.getElementById('iqretry'); if(rb) rb.onclick=function(){run();};
   }
 
   var busy=false;
@@ -284,22 +325,33 @@ details{margin-top:10px}summary{cursor:pointer;font-size:11.5px;color:#8494a4}
     if(busy) return;
     var known=hit(name);
     if(known){ showKnown(known); return; }
-    var key='pd_iq|'+name+'|'+product;
+    var key='pd_iq3|'+name+'|'+product;
     var cached=null; try{ cached=localStorage.getItem(key); }catch(e){}
-    if(cached){ try{ showAI(JSON.parse(cached)); return; }catch(e){} }
-    busy=true; loading(name);
-    ask(name,product).then(function(o){
-      busy=false; try{ localStorage.setItem(key, JSON.stringify(o)); }catch(e){}
-      if(inp&&!inp.value) inp.value=name;
-      showAI(o);
-    }).catch(function(e){ busy=false; fail(name, e&&e.name==='AbortError'?'超时':(e&&e.message)); });
+    busy=true;
+    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(name)+'</b>：先查公司代码与最近公开报道，再整理成档案…</div>';
+    suggest(name).then(function(st){
+      return news(name).then(function(items){
+        if(cached){ try{ var o=JSON.parse(cached); busy=false; showAI(o,name,items,st&&st.code); return; }catch(e){} }
+        return ask(name,product,items,st).then(function(o){
+          busy=false; try{ localStorage.setItem(key, JSON.stringify(o)); }catch(e){}
+          if(inp&&!inp.value) inp.value=name;
+          showAI(o,name,items,st&&st.code);
+        }).catch(function(e){
+          busy=false;
+          box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(name)+'</b>：'
+            +esc(e&&e.message||'这次没跑出来')+'。<br><a href="javascript:void(0)" id="iqretry" style="color:#7a5af8;font-weight:700">点这里再查一次 →</a>'
+            +'（免费通道约 45 秒一条，等半分钟再点）<div style="margin-top:10px"><b>先把查到的公开报道给你：</b>'+srcList(items)+'</div></div>';
+          var rb=document.getElementById('iqretry'); if(rb) rb.onclick=run;
+        });
+      });
+    }).catch(function(e){ busy=false; box.innerHTML='查询失败：'+esc(e&&e.message||''); });
   }
 
   if(btn) btn.onclick=run;
   if(inp) inp.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } };
   if(q) run();
-  else if(keys.length){ showKnown(D[keys[keys.length-1]]); }
-  else box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">上面填一个公司名，点「查」就有了。也可以到任一产品页的列表里点某家的「查这家」。</div>';
+  else if(keys.length) showKnown(D[keys[keys.length-1]]);
+  else box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">上面填一个公司名，点「查」就有了。</div>';
 })();
 </script>
 
