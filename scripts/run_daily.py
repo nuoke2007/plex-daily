@@ -5,7 +5,7 @@ PLEX 每日商机工具 · 本地每日运行脚本
 - 不爬任何登录墙/反爬平台（猎聘/BOSS/脉脉/领英/IATF customerportal 一律不碰，标人工）。
 - 产物：dashboard.html（双击即开）+ leads.xlsx + logs/run_YYYYMMDD.log
 """
-import json, os, re, sys, time, datetime, hashlib, urllib.request, urllib.parse
+import json, os, re, sys, io, time, datetime, hashlib, urllib.request, urllib.parse
 import html as html_lib
 from pathlib import Path
 
@@ -372,10 +372,81 @@ def _tesla_probe(nm, core):
                 rel = (it, seg, "高" if strong else "中")
     return dict(exist=exist, rel=rel, os=osi)
 
+def _chain_list_leads():
+    """用 data/tesla_chain.csv（用户提供的特斯拉中国供应链名单）当候选池。
+    这条路的价值：名单是企业名+层级+产品+海外工厂状态都写好的，不靠模型回忆，
+    也就不会像之前那样把不相关的大厂硬塞进来、或漏掉真正在名单里的中小配套厂。"""
+    fp = Path("data/tesla_chain.csv")
+    if not fp.exists():
+        return []
+    import csv as _csv
+    rows = []
+    with io.open(fp, encoding="utf-8") as fh:
+        for r in _csv.DictReader(fh):
+            if (r.get("name") or "").strip():
+                rows.append(r)
+    if not rows:
+        return []
+    log(f"特斯拉供应链：候选池名单 {len(rows)} 家（data/tesla_chain.csv）")
+    out = []
+    for r in rows:
+        nm = (r.get("name") or "").strip()
+        code = re.sub(r"[^0-9]", "", (r.get("code") or ""))[:6]
+        tier_raw = (r.get("tier") or "").strip()
+        prod = (r.get("product") or "").strip()
+        os_txt = (r.get("overseas") or "").strip()
+        os_st = (r.get("os_status") or "").strip()
+        has_os = (r.get("has_os") or "").startswith("是")
+        # T1 保留但降为中优先级；名单里 T1/T2 混标的，只要有 T2 就按 T2 看待
+        is_t1 = ("T2" not in tier_raw) and ("T1" in tier_raw or "T0" in tier_raw)
+        is_t2 = "T2" in tier_raw
+        if not has_os and not is_t2:
+            continue                       # 既没有海外产能、也不是二三级的，先不进雷达
+        tier_lab = "Tier1/巨头（中优先级）" if is_t1 else (tier_raw or "Tier2/3")
+        _p1 = re.split(r"[；;，,]", prod)[0].strip().strip("、")     # 产品只取第一段，别把整串堆上去
+        _segs, _seen_o = [], set()
+        for seg in re.split(r"[；;\n]", os_txt):
+            k = re.sub(r"[（(].*?[）)]", "", seg).strip()
+            if k and k not in _seen_o and len(k) <= 26:
+                _seen_o.add(k); _segs.append(k)
+        _os_line = "、".join(_segs[:3]) or os_txt[:40]
+        rules = [f"🔗 来源：特斯拉供应链名单（用户提供·交叉验证版）· {r.get('segment') or '配套'} · 画像：{tier_lab}"]
+        rules.append(f"🧩 产品：{_p1[:60]}" if _p1 else "🧩 产品：名单未填")
+        if has_os and os_txt:
+            rules.append(f"🏭 海外：{_os_line}" + (f"（{os_st[:20]}）" if os_st else ""))
+        else:
+            rules.append("🏭 海外：名单标为无海外工厂/未填，优先级靠后")
+        rules.append(("⚠ 名单是二手整理，海外工厂状态与投产年份需逐家核实后再生效" if has_os
+                      else "⚠ 无海外产能，除非新立项否则不是我们画像"))
+        rules.append(f"🎯 画像：{'已上市' if code else '未上市公司'}，{tier_lab}，{_p1[:24] or '汽车零部件'}"
+                     + ("；海外工厂在建/投产正是 MES 选型窗口" if has_os else ""))
+        out.append(dict(
+            sec=code, ukey="TSL" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:6].upper(),
+            name=nm, src="tesla", city="",
+            title=f"特斯拉供应链 {tier_lab}：{_p1[:24] or nm}",
+            date=time.time() * 1000,
+            url="https://so.eastmoney.com/news/s?keyword=" + urllib.parse.quote(nm),
+            phase=("fresh" if is_t1 else "window"), overseas=bool(has_os),
+            conf="高" if (has_os and is_t2) else "中",
+            rule=rules,
+        ))
+    # 二级+有海外 > 二级无海外 > T1
+    out.sort(key=lambda x: (0 if (x["phase"] == "window" and x["overseas"]) else
+                            1 if x["phase"] == "window" else 2))
+    log(f"特斯拉供应链：名单入雷达 {len(out)} 家（其中名单标注有海外工厂 {sum(1 for x in out if x['overseas'])} 家）")
+    return out
+
+
 def discover_tesla_chain():
     """特斯拉供应链视角（Tier2/Tier3 优先）：模型按环节给候选 → 东财公开报道尽可能补证据。
     证据分三档：①报道里看得到海外新产能 ②报道里看得到客户关系 ③只有模型知识（标未核验）。
     没有一条线索会因为“搜不到”被丢掉——非上市小厂本来就不在财经新闻里。"""
+    try:
+        leads = _chain_list_leads()
+        if leads:
+            return leads[:14]
+    except Exception as ex:
+        log("名单池读取失败：" + str(ex)[:60])
     system = ("你是汽车零部件行业的线索分析员，服务对象是罗克韦尔 PLEX（订阅制 SaaS MES）售前。"
       "我们要的画像：给特斯拉（上海/柏林/得州/墨西哥工厂、Megapack、Optimus）或它的 Tier1 配套的"
       "中国 Tier2 / Tier3 中小制造企业，年营收大概 3-30 亿、多数未上市、组织没那么健全；"
@@ -1199,6 +1270,49 @@ def plex_playbook(nm, title, ind):
         f"首通电话三问：①海外厂排产报工现在用系统还是 Excel？②当地买服务器招 IT 的预算/周期能接受吗？③北美/欧洲客户的质量追溯现在靠什么满足？",
     ]
     return chief, lev, steps, loc
+def chain_dossier(f):
+    """供应链线索专用档案：这类企业没有公告，绝不能套“公告显示投资额/董秘办转介”的模板。
+    只写能站得住的三件事：①它在这个链路里的位置 ②哪一条还没核实、怎么核实 ③第一个该打电话的人该是谁。"""
+    nm = f.get("name") or ""
+    txt = " ｜ ".join(f.get("rule") or []) + " " + (f.get("title") or "")
+    tier = "Tier1/巨头" if "Tier1" in txt else (("Tier3" if "Tier3" in txt else "Tier2"))
+    chain = ""
+    m = re.search(r"特斯拉供应链\s*Tier[0-9]?:?([^·｜]*)", txt)
+    if m: chain = m.group(1).strip(" ：·")
+    overseas = ""
+    m2 = re.search(r"模型称有海外基地（([^）]{1,20})）", txt)
+    if m2: overseas = m2.group(1)
+    m3 = re.search(r"🏭 海外：([^｜]{2,60})", txt)
+    if m3 and "没查到" not in (m3.group(1) or ""):
+        overseas = overseas or m3.group(1).strip()
+    verified = "报道佐证" in txt or "✅" in txt
+    in_list = bool("名单" in txt and m3 and "没查到" not in (m3.group(1) or ""))
+    listed = bool(re.search(r"\d{6}", f.get("sec") or ""))
+
+    chief = (f"未具名。{nm}这种{'上市' if listed else '未上市中小'}配套厂，建海外新厂时决策口通常不在总部IT，"
+             f"而在“海外新厂项目组”：工艺/设备归制造副总，IT 由技术副总或总经理直接兼管（小厂往往没有独立 IT 部门）。"
+             f"第一个电话建议打给推动这个新厂立项的人，而不是采购部。")
+
+    if tier == "Tier1/巨头":
+        lev = (f"它是{chain or '特斯拉'}链上的头部供应商，部门齐全、自有 MES/IT 团队，单厂切入基本打不动。"
+               f"但它每建一个新海外基地，都要回答一个问题：新厂的 MES 是复用集团标准还是单独选型——"
+               f"这是集团级标准统一的窗口，比单厂卖软件容易得多。所以放中优先级：等它下一个海外基地立项再进。")
+    else:
+        lev = (f"它是{chain or '整车厂'}的二三级配套厂：规模不大、组织简单，通常没有专职 MES 团队，"
+               f"海外新厂往往是“边建边补IT”，一线既没经验也没预算框架，正是能接受 PLEX SaaS 轻量上线的画像。"
+               + (f"名单记载它的海外产能是“{overseas}”：这是本轮最该先钉死的事实——哪天投产、建到哪一步，决定你什么时候进场。"
+                  if in_list else
+                  (f"模型称其在{overseas}有基地，这一条还没被公开报道证实，是本轮最该先核实的事实。" if overseas and not verified else
+                   "海外产能这条目前只有推断，还没落到具体国家/基地。")))
+
+    steps = [
+        f"核实是否真有海外基地：企查查/天眼查看【{nm}】“对外投资”，找名字里带泰国/墨西哥/越南/匈牙利等地的子公司，并看注册资本——几百万泰铢那种是贸易壳，不是工厂。",
+        f"找现场痕迹：官网“全球布局”页、当地招聘（搜【{nm}】+海外工厂IT/制造工程师/PMC/关务）、行业展会（法兰克福汽配展、墨西哥/泰国中资工业园名单）——招人=设备进场前后，正是选型窗口。",
+        f"找入口：脉脉/Boss 上这家的项目、工艺、IT 岗位；或用它在国内的 T1 客户（博世/拓普等）的采购对接人做一次转介，比自己陌拜效率高。",
+    ]
+    return chief, lev, steps, (f.get("city") or "")
+
+
 def auto_dossier(nm, title, rule, ind):
     """无手写档案时，从公告原文自动抠真料（投资额/阶段/地点），不再套模板。"""
     import re as _re
@@ -2287,9 +2401,13 @@ def card_for(f):
         chief,lev,steps,loc=d["chief"],d["lev"],d["steps"],d["loc"]
         hook=d.get("hook") or "“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
         badge='<span class="ev" style="color:#137333">✓ AI 已查证深挖</span>'
+    elif f.get("src") == "tesla":
+        chief,lev,steps,loc=chain_dossier(f)   # 供应链线索没有公告，走专用档案，不套公告模板
+        hook="“你们海外这个厂，MES 是打算照搬国内那套，还是当地单独找一套？照搬过去半年才上线，当地找一套又没人维护。”"
+        badge='<span class="ev" style="color:#b26a00">⚠ 供应链推断（客户关系与海外基地未核验）</span>'
     else:
         chief,lev,steps,loc=auto_dossier(nm, f["title"], f["rule"], ind)
-        if f.get("city"): loc=f["city"]        # 供应链线索用报道里的所在地，不套“海外（国别见公告）”
+        if f.get("city"): loc=f["city"]        # 用所在地，不套“海外（国别见公告）”
         hook="“传统 MES 海外新厂第一年几百万、半年才上线；PLEX SaaS 一年几十万、几周上线、免运维。”"
         badge='<span class="ev" style="color:#0b6bcb">⚙ AI 已自动解析公告（可深挖）</span>'
     ai_html=""
@@ -2343,13 +2461,18 @@ def card_for(f):
     _sum = _brief((ai or {}).get("signal") or f.get("title") or "", 90)
     _full = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))
     rg=region_of(code).split("·")[0]
-    _body = (f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
+    if f.get("src") == "tesla":
+        _judge_html = "<br>".join("· " + esc(x) for x in (f.get("rule") or [judge]))   # 分条显示，别挤成一大段
+    else:
+        _judge_html = esc(judge)
+    _evlab = "公开报道检索 ↗" if f.get("src") == "tesla" else "公告原文 ↗"
+    _body = (f'<div class="row"><b>为什么是机会：</b>{_judge_html}</div>'
              f'<div class="row">{badge}</div>'
              f'{ai_html}'
              f'{legacy_rows}'
              f'{mail_html}'
              f'{contact_links(code,nm)}'
-             f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
+             f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">{_evlab}</a></div></details>'
              f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>')
     LEADS[code] = {"n": nm, "s": f["sec"] or "", "g": g, "loc": loc, "rg": rg,
                    "sum": _full, "b": _body, "p": f.get("url") or ""}
@@ -2357,7 +2480,7 @@ def card_for(f):
             f'<span class="lr-g">{g}</span>'
             f'<span class="lr-nm">{esc(nm)}</span>'
             f'<span class="lr-code">{esc(f["sec"] or ("未上市" if f.get("ukey") else ""))}</span>'
-            f'<span class="lr-base">📍 {esc(loc)}</span>'
+            f'<span class="lr-base">{("📍 " + esc(loc)) if loc else ""}</span>'
             f'<span class="lr-sum">{esc(_sum)}</span>'
             f'<span class="lr-rg">🗺️ {esc(rg)}</span>'
             f'<span class="lr-go">详情 →</span></a>')
