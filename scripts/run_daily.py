@@ -439,6 +439,16 @@ h1{font-size:24px;color:#003DA5;letter-spacing:-.3px}
 .ld-back{margin-left:auto;font-size:12.5px;color:#00B5E2;font-weight:700;text-decoration:none}
 .ld-sum{font-size:12.5px;color:#5a6b7d;background:#f7fafd;border-radius:8px;padding:9px 13px;margin-bottom:12px;line-height:1.8}
 .ld-body{border:1px solid #e3ebf3;border-radius:10px;padding:14px 16px}
+.iq-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.iq-bar input{flex:1;min-width:220px;max-width:360px;border:1px solid #d7e1ec;border-radius:9px;padding:9px 12px;font-size:13px;font-family:inherit;outline:none}
+.iq-bar input:focus{border-color:#003DA5}
+.iq-bar select{border:1px solid #d7e1ec;border-radius:9px;padding:9px 10px;font-size:13px;background:#fff;font-family:inherit}
+.iq-bar button{background:#003DA5;color:#fff;border:none;border-radius:9px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.iq-bar button:hover{background:#002d7a}
+.iq-card{max-width:900px}
+.iq-vv{border-left:3px solid #e3ebf3;padding:6px 0 6px 11px;margin-top:8px;font-size:12.5px;line-height:1.75}
+.iq-q{background:#f7fafd;border-radius:8px;padding:9px 12px;margin-top:4px;font-size:12.5px;line-height:1.8}
+.iq-note{font-size:12px;color:#8a93a0;line-height:1.8;margin-top:10px}
 .feas{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:5px}
 .feas-高{background:#e8f6ee;color:#0a7f3f}
 .feas-中{background:#fdf3e3;color:#b26a00}
@@ -2531,37 +2541,138 @@ _INQ_RENDER_JS = """
 <script>
 (function(){
   var box=document.getElementById('inqbox');
-  var q=(new URLSearchParams(location.search)).get('c')||'', p=(new URLSearchParams(location.search)).get('p')||'PLEX';
-  var D=window.PD_INQ||{}, keys=Object.keys(D), pick=null;
-  if(q){
+  var qs=new URLSearchParams(location.search);
+  var q=qs.get('c')||'', p=qs.get('p')||'PLEX';
+  var inp=document.getElementById('iqc'), sel=document.getElementById('iqp'), btn=document.getElementById('iqgo');
+  var D=window.PD_INQ||{}, keys=Object.keys(D);
+  if(inp&&q) inp.value=q;
+  if(sel&&p) sel.value=p;
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function hit(name){
+    var f=String(name||'').trim(), got=null;
+    if(!f) return null;
     keys.forEach(function(k){
-      if(pick) return;
-      var e=D[k];
-      if(k===q || e.n===q || (e.n && q && (e.n.indexOf(q)>=0 || q.indexOf(e.n)>=0))) pick=e;
+      if(got) return;
+      var e=D[k], n=e.n||'';
+      if(k===f||n===f||n.indexOf(f)>=0||(f.indexOf(n)>=0&&n.length>3)) got=e;
     });
+    return got;
   }
-  if(!q && !pick && keys.length) pick=D[keys[keys.length-1]];
-  if(!pick){
-    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">'+(q?('「'+q+'」还没查过。<br>'):'还没有临时查询过任何公司。<br>')
-      +'<a href="https://github.com/nuoke2007/plex-daily/new/main?filename='
-      +encodeURIComponent('queue/'+(q||'公司全称')+'-'+p+'.txt')+'&value='
-      +encodeURIComponent((q||'公司全称')+' | '+p)
-      +'" target="_blank" style="color:#7a5af8;font-weight:700">提交查这一家 →</a>'
-      +'（新页面底部点一次绿色 Commit changes；下次自动任务跑完，结果只显示在本页）</div>';
-    return;
+  function head(a){
+    var g=a.g||'待验证';
+    return '<div class="ld-h"><span class="tag" style="background:#eef4fb;color:#003DA5">'+esc(g)+'</span>'
+      +'<b class="ld-nm">'+esc(a.n)+'</b>'+(a.c?'<span class="ld-code">'+esc(a.c)+'</span>':'')
+      +'<span class="ld-meta">'+esc(a.pk||'PLEX')+'</span>'
+      +(a.hq?'<span class="ld-meta">📍 '+esc(a.hq)+'</span>':'')
+      +'<span class="ld-meta" style="color:#8a93a0">临时查询·不入库</span></div>';
   }
-  box.innerHTML='<div class="ld-h"><span class="tag" style="background:#eef4fb;color:#003DA5">'+pick.g+'优先</span>'
-    +'<b class="ld-nm">'+pick.n+'</b><span class="ld-code">'+pick.c+'</span>'
-    +'<span class="ld-meta">'+pick.pk+'</span><span class="ld-meta">🗺️ '+(pick.rg||'待确认')+'</span></div>'
-    +'<div class="ld-body">'+pick.b+'</div>';
+  function li(arr){return '<ul style="margin:4px 0 0 18px;padding:0">'+(arr||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';}
+
+  /* 一致命中已查过的档案：直接显示完整详情（不联网） */
+  function showKnown(e){
+    box.innerHTML=head({g:e.g,n:e.n,c:e.c,hq:'',pk:e.pk})
+      +'<div class="ld-body" style="padding:10px 12px">'+e.b+'</div>';
+  }
+
+  function showAI(o){
+    var v=o.verdict||'待验证', g=(v==='是'?'高':(v==='否'?'低':'中'));
+    var chain=(o.chain||[]).map(function(x){return '<li>'+esc(typeof x==='string'?x:(x.r||'')+(x.w?' — '+x.w:''))+'</li>';}).join('');
+    var ver=(o.verify||[]).map(function(x){
+      return '<div class="iq-vv"><b>'+esc(x.q||'')+'</b><div style="color:#5a6b7d">'+esc(x.how||'')+'</div>'
+        +(x.pass?'<div style="color:#0a7a45">✅ 判据：'+esc(x.pass)+'</div>':'')+'</div>';
+    }).join('');
+    var unk=(o.unknown||[]).length?'<div class="iq-note"><b>还不确定的：</b>'+esc((o.unknown||[]).join('；'))+'</div>':'';
+    box.innerHTML=head({g:g,n:o.company||inp.value,c:o.code||'',hq:o.hq||'未确认',pk:sel.value})
+      +'<div class="ld-body" style="padding:12px 14px;font-size:13px;line-height:1.85">'
+      +'<div class="ld-sum">'+esc(o.why||'')+'</div>'
+      +'<div style="margin-top:8px"><b>依据：</b>'+esc(o.signal||'（模型记忆，未联网核验）')+'</div>'
+      +'<div style="margin-top:8px"><b>该找谁：</b>'+esc(o.dept||'未确认')+'</div>'
+      +'<div style="margin-top:8px"><b>决策链：</b><ul style="margin:4px 0 0 18px;padding:0">'+chain+'</ul></div>'
+      +'<div style="margin-top:8px"><b>杠杆点：</b>'+esc(o.lever||'')+'</div>'
+      +'<div style="margin-top:10px"><b>先验证这三问：</b>'+ver+'</div>'
+      +'<div style="margin-top:10px"><b>今天先做：</b>'+li(o.act)+'</div>'
+      +(o.opener?'<div style="margin-top:10px"><b>开场话术：</b><div class="iq-q">'+esc(o.opener)+'</div></div>':'')
+      +unk
+      +'<div class="iq-note" style="margin-top:12px;border-top:1px dashed #dfe6ef;padding-top:8px">'
+      +'以上是 AI 现场判断，没有联网核验，正式用之前按上面三问自己确认一遍。这条只存在你本机浏览器里，不进 GitHub、不进雷达。</div>'
+      +'</div>';
+  }
+
+  var SYSTEM='你是罗克韦尔/PTC 售前顾问的情报助理。用户给一个公司名和一个产品，你要判断这家公司对该产品有没有真实采购机会，并给出下一步怎么推进。'
+    +'只输出一个 JSON 对象，不要任何解释文字、不要 markdown 代码块。字段：'
+    +'company(公司全称，若只有简称且你不确定是哪家就原样返回)、code(股票代码或空串)、hq(总部城市或"未确认")、'
+    +'verdict("是"/"待验证"/"否")、why(一句话结论，30字内)、signal(你依据的信息，若只是模型记忆就写"模型记忆，未联网核验")、'
+    +'dept(该找的部门)、chain(2-3条，每条一句话写清谁拍板)、lever(2-3句，写这家公司为什么会买/为什么卡住)、'
+    +'verify(恰好3条，每条{q:要确认的问题,how:怎么确认,pass:什么情况算通过})、act(2-3条今天就能做且不用等回复的动作)、'
+    +'opener(客户听得进去的第一句话，40字内)、unknown(数组，列出你没把握的点)。'
+    +'严禁编造人名、手机号、邮箱，不知道就写进 unknown。';
+
+  function ask(name, product){
+    var ctl=new AbortController(), t=setTimeout(function(){ctl.abort();}, 55000);
+    return fetch('https://text.pollinations.ai/openai',{method:'POST',credentials:'omit',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'openai-fast',messages:[{role:'system',content:SYSTEM},
+        {role:'user',content:'公司：'+name+'；产品：'+product+'；今天是 2026 年 11 月。'}],temperature:0.3}),
+      signal:ctl.signal})
+    .then(function(r){if(!r.ok) throw new Error('HTTP '+r.status); return r.json();})
+    .then(function(j){clearTimeout(t); return parse(j.choices[0].message.content);})
+    .catch(function(e){clearTimeout(t); throw e;});
+  }
+  function parse(txt){
+    var s=String(txt||'').replace(/```json/g,'```').split('```').join('').trim();
+    var a=s.indexOf('{'), b=s.lastIndexOf('}');
+    if(a<0||b<=a) throw new Error('no json');
+    return JSON.parse(s.slice(a,b+1));
+  }
+
+  function loading(name){
+    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(name)+'</b>：AI 正在现场判断（约 10-30 秒）…</div>';
+  }
+  function fail(name,msg){
+    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">'
+      +'<b>'+esc(name)+'</b>：这次没跑出来（'+esc(msg||'网络或通道繁忙')+'）。<br>'
+      +'<a href="javascript:void(0)" id="iqretry" style="color:#7a5af8;font-weight:700">点这里重查一次 →</a></div>';
+    var rb=document.getElementById('iqretry'); if(rb) rb.onclick=function(){run();};
+  }
+
+  var busy=false;
+  function run(){
+    var name=(inp&&inp.value||q||'').trim(), product=(sel&&sel.value)||p||'PLEX';
+    if(!name){ if(inp) inp.focus(); return; }
+    if(busy) return;
+    var known=hit(name);
+    if(known){ showKnown(known); return; }
+    var key='pd_iq|'+name+'|'+product;
+    var cached=null; try{ cached=localStorage.getItem(key); }catch(e){}
+    if(cached){ try{ showAI(JSON.parse(cached)); return; }catch(e){} }
+    busy=true; loading(name);
+    ask(name,product).then(function(o){
+      busy=false; try{ localStorage.setItem(key, JSON.stringify(o)); }catch(e){}
+      if(inp&&!inp.value) inp.value=name;
+      showAI(o);
+    }).catch(function(e){ busy=false; fail(name, e&&e.name==='AbortError'?'超时':(e&&e.message)); });
+  }
+
+  if(btn) btn.onclick=run;
+  if(inp) inp.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } };
+  if(q) run();
+  else if(keys.length){ showKnown(D[keys[keys.length-1]]); }
+  else box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">上面填一个公司名，点「查」就有了。也可以到任一产品页的列表里点某家的「查这家」。</div>';
 })();
 </script>
 """
-inq_body = ('<div class="top"><h1>🔎 即查结果</h1></div>'
-            '<div id="inqbox" style="font-size:13px;color:#5a6b7d">正在加载…</div>'
+inq_body = ('<div class="top"><h1>🔎 即查一家</h1>'
+            '<div style="font-size:12.5px;color:#6b7c93;margin:-4px 0 12px">临时的一次查询，结果只留在你本机浏览器，不提交、不排队、不入库。</div></div>'
+            '<div class="iq-bar"><input id="iqc" placeholder="公司全称或简称，例：北京维通利电气">'
+            '<select id="iqp"><option value="PLEX">PLEX</option><option value="FTPC">FTPC</option>'
+            '<option value="ThingWorx">ThingWorx</option><option value="Windchill">Windchill</option>'
+            '<option value="DataMosaix">DataMosaix</option></select>'
+            '<button id="iqgo">查</button></div>'
+            '<div id="inqbox" class="iq-card">正在加载…</div>'
             '<script>window.PD_INQ=' + json.dumps(_inq_data, ensure_ascii=False).replace("</", "<\\/") + ';</script>'
             + _INQ_RENDER_JS)
-(ROOT/"inquiry.html").write_text(shell("即查结果","PLEX",inq_body),encoding="utf-8")
+(ROOT/"inquiry.html").write_text(shell("即查一家","PLEX",inq_body),encoding="utf-8")
 log(f"inquiry.html 已生成（即查 {len(_INQ)} 家）")
 
 # ============================================================
