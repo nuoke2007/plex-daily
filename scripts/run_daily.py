@@ -2551,13 +2551,20 @@ _INQ_RENDER_JS = """
   if(sel&&p&&sel.querySelector('option[value="'+p+'"]')) sel.value=p;
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function nrm(x){
+    return String(x||'').replace(/(北京|上海|苏州|深圳|广州|杭州|宁波|东莞|佛山|常州|无锡|南京|天津|重庆|成都|武汉|合肥|青岛|厦门|郑州|西安|长沙|大连|沈阳|济南|烟台|嘉兴|绍兴|台州)/g,'')
+      .replace(/(股份有限公司|有限责任公司|有限公司|集团|控股|科技|电子|电气|汽车|精密|智能|技术|股份|公司)/g,'').trim();
+  }
   function hit(name){
     var f=String(name||'').trim(), got=null;
     if(!f) return null;
+    var c=nrm(f);
     keys.forEach(function(k){
       if(got) return;
-      var e=D[k], n=e.n||'';
-      if(k===f||n===f||n.indexOf(f)>=0||(f.indexOf(n)>=0&&n.length>3)) got=e;
+      var e=D[k], n=e.n||'', cn=nrm(n);
+      if(k===f||n===f) got=e;
+      else if(c&&cn&&c.length>=2&&cn.length>=2&&(cn===c||cn.indexOf(c)>=0||c.indexOf(cn)>=0)) got=e;
+      else if(n.indexOf(f)>=0||(f.indexOf(n)>=0&&n.length>3)) got=e;
     });
     return got;
   }
