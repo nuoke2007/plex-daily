@@ -2330,7 +2330,7 @@ plex_body=f"""
 <div style="margin-top:10px"><b>高优先</b></div>{''.join(card(c) for c in high)}
 <div style="margin-top:10px"><b>中优先</b></div>{''.join(card(c) for c in mid)}
 <div style="margin-top:10px"><b>低优先</b></div>{''.join(card(c) for c in low)}</details>
-<div class="sec"><div class="sec-h">🤖 AI 已深查档案（{len(PRODUCT_DOSSIERS)} 家 · 雷达内自动深查，每天补）</div>{ai_archive_html or '<div class="empty">暂无</div>'}</div>
+
 <div class="sec"><div class="sec-h">否决池</div><table><tr><th>ID</th><th>公司</th><th>原因</th></tr>{reject_html}</table></div>
 <div class="foot">日志 logs/run_{datetime.date.today().strftime('%Y%m%d')}.log ｜ 标记跟进存在本机浏览器，换手机需重新标记</div>
 """
