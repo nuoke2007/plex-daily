@@ -6,6 +6,7 @@ PLEX 每日商机工具 · 本地每日运行脚本
 - 产物：dashboard.html（双击即开）+ leads.xlsx + logs/run_YYYYMMDD.log
 """
 import json, os, re, sys, time, datetime, hashlib, urllib.request, urllib.parse
+import html as html_lib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -481,7 +482,7 @@ def card(c):
         for a in acts)
     steps = "".join(f'<div class="step"><b>{i+1}.</b>{esc(m)}</div>' for i,m in enumerate(c["manual"]))
     return f"""
-<div class="card open">
+<div class="card">
   <div class="card-h" onclick="this.parentNode.classList.toggle('open')">
     <span class="cid">{c['id']}</span><span class="nm">{esc(c['name'])}</span><span class="code">{c['code']}</span>
     <span class="base">{esc(c['base'])}</span>
@@ -716,7 +717,7 @@ def render_product(p):
     chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(
         f'<button class="rg-chip" data-rg="{esc(rg)}">{esc(rg)}</button>' for rg in rg_order)
     rg_filter_js="""
-<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}.srch{width:100%;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:7px 11px;font-size:12.5px;color:#33475b;margin:2px 0 8px 0;outline:none}.srch:focus{border-color:#003DA5;box-shadow:0 0 0 3px rgba(0,61,165,.08)}.srch-empty{display:none;padding:10px;font-size:12px;color:#8494a4;text-align:center}</style>
+<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}.srch{width:100%;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:7px 11px;font-size:12.5px;color:#33475b;margin:2px 0 8px 0;outline:none}.srch:focus{border-color:#003DA5;box-shadow:0 0 0 3px rgba(0,61,165,.08)}.exp-all{margin:0 0 8px 0;border:1px solid #c8d4e0;background:#fff;color:#003DA5;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer}.srch-empty{display:none;padding:10px;font-size:12px;color:#8494a4;text-align:center}</style>
 <script>
 (function(){var bar=document.getElementById('rgbar');if(!bar)return;
 var inp=bar.querySelector('.srch'), rg='全部';
@@ -748,7 +749,7 @@ if(inp){ inp.oninput=apply; }
   <div class="prod-b" style="grid-template-columns:1fr">
     <div>
       <div style="font-size:12.5px;color:#33475b;margin:2px 0 10px">🆕 今日自动线索 <b style="color:#003DA5">{total}</b> 条 · 已按优先级排序（高在前）</div>
-      <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 安琪、600298）" autocomplete="off"></div>
+      <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 安琪、600298）" autocomplete="off">{_EXPAND_BTN}</div>
       <div class="srch-empty">没有匹配的线索 —— 用下面的「即查模式」查这家公司</div>
       {cards}
       {qk_panel(p["key"], p["who"], p["three"], p["hook"], PRODUCT_WHO_ROLE.get(p["key"],("信息化/数字化负责人",""))[0])}
@@ -808,6 +809,7 @@ else:
 
 # 每日滚动线索：按公告时点分高(窗口)/中(刚公告)/低(超9月)三档
 import urllib.parse as _up2
+_EXPAND_BTN = ('<button class="exp-all" type="button" onclick="var all=[].filter.call(document.querySelectorAll(\'.card[data-rg]\'),function(c){return c.style.display!==\'none\'});var any=all.some(function(c){return !c.classList.contains(\'open\')});all.forEach(function(c){c.classList.toggle(\'open\',any)});this.textContent=any?\'收起全部 ▴\':\'展开全部 ▾\';">展开全部 ▾</button>')
 PHASE_GRADE={"window":"高","fresh":"中","old":"低"}
 
 # ===== AI 逐家深挖档案（真查后写入，按股票代码）=====
@@ -1073,37 +1075,134 @@ def _http_json(url, payload, headers=None, timeout=40):
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read().decode("utf-8"))
 
+_TVLY_DEAD = {"v": False}     # 所有 Tavily key 都不可用后置位，本轮直接走免费源
+_FREE_FAIL = {"n": 0}         # 免费源连续失败计数，>=2 就本轮不再尝试，省时间
+_TVLY_KEYS = [k for k in [os.environ.get("TAVILY_KEY"), os.environ.get("TAVILY_KEY2"),
+                          os.environ.get("TAVILY_KEY3")] if k]
+
+def _ddg(q, n=4):
+    """免费兜底搜索①：DuckDuckGo HTML 版，无需 key"""
+    try:
+        data = urllib.parse.urlencode({"q": q}).encode()
+        req = urllib.request.Request("https://html.duckduckgo.com/html/", data=data,
+                                     headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                                              "Content-Type": "application/x-www-form-urlencoded"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            html = r.read().decode("utf-8", "ignore")
+    except Exception as e:
+        log(f"    ddg 失败：{str(e)[:50]}")
+        return []
+    out = []
+    for m in re.finditer(r'<a rel="nofollow" class="result__a" href="(.*?)">(.*?)</a>', html, re.S):
+        u = html_lib.unescape(m.group(1)); t = re.sub(r"<[^>]+>", "", html_lib.unescape(m.group(2)))
+        out.append({"url": u, "title": t.strip(), "content": ""})
+        if len(out) >= n: break
+    return out
+
+def _bing(q, n=4):
+    """免费兜底搜索②：Bing 网页，无需 key"""
+    try:
+        req = urllib.request.Request("https://www.bing.com/search?" + urllib.parse.urlencode({"q": q, "count": n}),
+                                     headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            html = r.read().decode("utf-8", "ignore")
+    except Exception as e:
+        log(f"    bing 失败：{str(e)[:50]}")
+        return []
+    out = []
+    for m in re.finditer(r'<li class="b_algo".*?<h2><a href="(.*?)".*?>(.*?)</a>.*?(?:<p[^>]*>(.*?)</p>)?', html, re.S):
+        u = html_lib.unescape(m.group(1)); t = re.sub(r"<[^>]+>", "", html_lib.unescape(m.group(2)))
+        c = re.sub(r"<[^>]+>", "", html_lib.unescape(m.group(3) or ""))
+        out.append({"url": u, "title": t.strip(), "content": c.strip()})
+        if len(out) >= n: break
+    return out
+
+def _free_search(q, n=4):
+    if _FREE_FAIL["n"] >= 2:      # 免费源连续失败，本轮不再白耗时间
+        return []
+    for fn in (_bing, _ddg):
+        r = fn(q, n)
+        if r:
+            _FREE_FAIL["n"] = 0
+            log(f"    免费源兜底命中（{fn.__name__}）：{len(r)} 条")
+            return r
+    _FREE_FAIL["n"] += 1
+    return []
+
 def tavily(q, n=4):
-    if not TVLY_KEY: return []
-    for attempt in range(3):
+    # 多个 Tavily key 轮换：一个额度打满自动换下一个；全挂了再走免费源
+    while _TVLY_KEYS and not _TVLY_DEAD["v"]:
+        key = _TVLY_KEYS[0]
         try:
             d = _http_json("https://api.tavily.com/search",
-                           {"api_key": TVLY_KEY, "query": q, "max_results": n,
+                           {"api_key": key, "query": q, "max_results": n,
                             "search_depth": "basic", "include_answer": False}, timeout=30)
             return [{"url": x.get("url",""), "title": x.get("title",""), "content": x.get("content","")}
                     for x in (d.get("results") or [])]
         except Exception as e:
-            log(f"    tavily 第{attempt+1}次失败：{str(e)[:70]}")
-            time.sleep(2 + attempt * 3)
-    return []
+            msg = str(e)[:80]
+            if any(k in msg for k in ("432", "429", "401", "403", "quota", "usage")):
+                _TVLY_KEYS.pop(0)
+                if _TVLY_KEYS:
+                    log(f"    Tavily 额度不可用（{msg}），自动切换到下一个 key")
+                else:
+                    log(f"    Tavily 全部 key 额度不可用（{msg}），本轮切免费源")
+                    _TVLY_DEAD["v"] = True
+                continue
+            log(f"    tavily 失败：{msg}")
+            time.sleep(2)
+            break
+    return _free_search(q, n)
+
+_GLM_DEAD = {"v": False}      # GLM 额度打满后置位，本轮直接走备用模型
+
+def _ai_providers():
+    """按顺序尝试的大模型通道：GLM 优先，额度打满自动切备用（都走 OpenAI 兼容接口）"""
+    ps = []
+    if GLM_KEY:
+        for m in AI_MODELS:
+            ps.append(("glm", "https://open.bigmodel.cn/api/paas/v4/chat/completions", GLM_KEY, m))
+    # 备用通道：只要配了对应 key 就自动可用，无需改代码
+    if os.environ.get("DEEPSEEK_KEY"):
+        ps.append(("deepseek", "https://api.deepseek.com/v1/chat/completions",
+                   os.environ["DEEPSEEK_KEY"], os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")))
+    if os.environ.get("SILICONFLOW_KEY"):
+        ps.append(("siliconflow", "https://api.siliconflow.cn/v1/chat/completions",
+                   os.environ["SILICONFLOW_KEY"], os.environ.get("SILICONFLOW_MODEL", "deepseek-ai/DeepSeek-V3")))
+    if os.environ.get("DASHSCOPE_KEY"):
+        ps.append(("qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+                   os.environ["DASHSCOPE_KEY"], os.environ.get("DASHSCOPE_MODEL", "qwen-plus")))
+    if os.environ.get("OPENROUTER_KEY"):
+        ps.append(("openrouter", "https://openrouter.ai/api/v1/chat/completions",
+                   os.environ["OPENROUTER_KEY"], os.environ.get("OPENROUTER_MODEL", "deepseek/deepseek-chat-v3-0324:free")))
+    return ps
 
 def glm_json(system, user):
-    if not GLM_KEY: return None, None
-    for i, m in enumerate(AI_MODELS):
+    ps = _ai_providers()
+    if not ps: return None, None
+    for i, (prov, url, key, model) in enumerate(ps):
+        if prov == "glm" and _GLM_DEAD["v"]:
+            continue
         try:
-            d = _http_json("https://open.bigmodel.cn/api/paas/v4/chat/completions",
-                {"model": m, "messages": [{"role":"system","content":system},
-                                          {"role":"user","content":user}],
+            d = _http_json(url,
+                {"model": model, "messages": [{"role":"system","content":system},
+                                              {"role":"user","content":user}],
                  "temperature": 0.1, "stream": False, "max_tokens": 3600},
-                {"Authorization": f"Bearer {GLM_KEY}"}, timeout=100)
-            txt = d["choices"][0]["message"]["content"] or ""
+                {"Authorization": f"Bearer {key}"}, timeout=100)
+            msg = (d.get("choices") or [{}])[0].get("message") or {}
+            txt = (msg.get("content") or msg.get("reasoning_content") or "")
             txt = re.sub(r"```json|```", "", txt).strip()
             s, e = txt.find("{"), txt.rfind("}")
             if s >= 0 and e > s:
-                return json.loads(txt[s:e+1]), m
+                return json.loads(txt[s:e+1]), f"{prov}:{model}"
         except Exception as ex:
-            log(f"    glm {m} 不可用：{str(ex)[:70]}")
-            time.sleep(3 + i * 4)          # 指数退避，避开免费档限流
+            msg = str(ex)[:80]
+            log(f"    {prov}:{model} 不可用：{msg}")
+            if prov == "glm" and any(k in msg for k in ("429", "1305", "额度", "402", "quota")):
+                log("    GLM 额度/限流不可用，自动切备用模型通道")
+                _GLM_DEAD["v"] = True
+                continue
+            time.sleep(2 + (i % 3) * 3)      # 轻退避，别把整轮跑成等待
     return None, None
 
 def _load_ai_cache():
@@ -1980,11 +2079,13 @@ def card_for(f):
                        f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
                        f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>')
     rg=region_of(code).split("·")[0]
-    return (f'<div class="card open" data-rg="{esc(rg)}">'
+    _sum = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))[:44]
+    return (f'<div class="card" data-rg="{esc(rg)}">'
       f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
       f'<span class="cid">{g}</span><span class="nm">{esc(nm)}</span><span class="code">{esc(f["sec"] or "")}</span>'
       f'<span class="base">📍 {esc(loc)}</span>'
-      f'<span class="right"><span class="grade">🏭 {esc(ind)}</span> <span class="grade">🗺️ {esc(region_of(code).split("·")[0])}</span></span></div>'
+      f'<span class="sum">{esc(_sum)}</span>'
+      f'<span class="right"><span class="grade">🗺️ {esc(region_of(code).split("·")[0])}</span><span class="arrow">▾</span></span></div>'
       '<div class="card-b">'
       f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
       f'<div class="row">{badge}</div>'
@@ -2009,7 +2110,7 @@ for f in new_findings:
     if r not in _plex_rg: _plex_rg.append(r)
 _plex_chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(f'<button class="rg-chip" data-rg="{esc(r)}">{esc(r)}</button>' for r in _plex_rg)
 _plex_filter_js="""
-<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}.srch{width:100%;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:7px 11px;font-size:12.5px;color:#33475b;margin:2px 0 8px 0;outline:none}.srch:focus{border-color:#003DA5;box-shadow:0 0 0 3px rgba(0,61,165,.08)}.srch-empty{display:none;padding:10px;font-size:12px;color:#8494a4;text-align:center}</style>
+<style>.rg-chip{cursor:pointer;border:1px solid #c8d4e0;background:#fff;color:#33475b;border-radius:14px;padding:4px 12px;font-size:12px;margin:0 6px 6px 0}.rg-chip.active{background:#003DA5;color:#fff;border-color:#003DA5}.rg-bar{position:sticky;top:0;background:#fff;padding:8px 0;z-index:9;border-bottom:1px solid #eef2f7}.srch{width:100%;box-sizing:border-box;border:1px solid #c8d4e0;border-radius:8px;padding:7px 11px;font-size:12.5px;color:#33475b;margin:2px 0 8px 0;outline:none}.srch:focus{border-color:#003DA5;box-shadow:0 0 0 3px rgba(0,61,165,.08)}.exp-all{margin:0 0 8px 0;border:1px solid #c8d4e0;background:#fff;color:#003DA5;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer}.srch-empty{display:none;padding:10px;font-size:12px;color:#8494a4;text-align:center}</style>
 <script>
 (function(){var bar=document.getElementById('rgbar');if(!bar)return;
 var inp=bar.querySelector('.srch'), rg='全部';
@@ -2181,7 +2282,7 @@ plex_body=f"""
   <div class="kpi"><div class="n">{n_window}</div><div class="l">🟢 正好选型窗口</div></div>
   <div class="kpi"><div class="n">{manual_total}</div><div class="l">待手动跟进</div></div>
 </div>
-<div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 均普、600699）" autocomplete="off"></div>
+<div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 均普、600699）" autocomplete="off">{_EXPAND_BTN}</div>
 <div class="srch-empty">没有匹配的线索 —— 用下面的「即查模式」查这家公司</div>
 {qk_panel("PLEX",
    "有海外建厂/新基地/并购扩张的上市制造企业；多工厂要统一制造运营标准",
