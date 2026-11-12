@@ -179,10 +179,14 @@ REJECTED = [
 # 2. 每日自动发现（best-effort；失败优雅降级）
 # ============================================================
 OVERSEAS_KW = ["泰国", "墨西哥", "匈牙利", "塞尔维亚", "摩洛哥", "东欧", "海外", "境外", "出海"]
-ACTION_KW = ["增资", "设立", "对外投资", "购地", "新建", "扩建", "投产", "子公司", "生产基地", "工厂"]
+ACTION_KW = ["增资", "设立", "对外投资", "购地", "新建", "扩建", "投产", "子公司", "生产基地", "工厂",
+             "开工", "竣工", "募投", "技改", "智能制造", "数字化车间", "搬迁", "二期", "三期", "新增产能"]
 NOISE_PLEX = ["回购","减持","增持","分红","股东会","法律意见书","评级","股东大会","摘要","季度报告","年度报告","半年度报告","董事会","监事会","独董","声明","承诺","议案","决议","问询","关注函","担保","质押","会计","减值","审计","更正","补充","批复","处罚","提示","召开","通知","换届","选举","聘任","辞职","薪酬","制度","修订","停牌","复牌","龙虎榜","可转换","债券","票据","授信","贷款"]
 # 单关键词检索（多词 AND 太严会漏），动作关键词在客户端过滤
-AUTO_KEYWORDS = ["泰国", "墨西哥", "匈牙利", "塞尔维亚", "摩洛哥"]
+AUTO_KEYWORDS = ["泰国", "墨西哥", "匈牙利", "塞尔维亚", "摩洛哥",
+                 "越南", "印尼", "印度", "波兰", "德国", "美国", "巴西",
+                 "沙特", "埃及", "土耳其", "马来西亚", "柬埔寨", "菲律宾",
+                 "罗马尼亚", "西班牙", "海外基地", "境外投资"]
 
 def fetch_cninfo(searchkey, column="szse", days=14, page_size=15):
     url = "http://www.cninfo.com.cn/new/hisAnnouncement/query"
@@ -1021,7 +1025,8 @@ def region_of(code):
 GLM_KEY = os.environ.get("GLM_KEY", "").strip()
 TVLY_KEY = os.environ.get("TAVILY_KEY", "").strip()
 AI_CACHE = DATA / "dossiers.json"
-AI_MAX = int(os.environ.get("AI_MAX", "3") or 3)   # 每次运行最多深查几家，护住免费额度
+AI_MAX = int(os.environ.get("AI_MAX", "3") or 3)
+REFRESH_MAX = int(os.environ.get("REFRESH_MAX", "2") or 2)   # 每次运行滚动刷新几家老档案
 AI_MODELS = ["glm-4-plus", "glm-4-flash"]
 REGION_RE = re.compile(r"^(长三角|珠三角|京津冀|华中|华南|西南|西北|华东|华北|东北)·[\u4e00-\u9fa5]{2,4}$")
 PROV_REGION = {
@@ -1089,7 +1094,7 @@ def glm_json(system, user):
             d = _http_json("https://open.bigmodel.cn/api/paas/v4/chat/completions",
                 {"model": m, "messages": [{"role":"system","content":system},
                                           {"role":"user","content":user}],
-                 "temperature": 0.1, "stream": False},
+                 "temperature": 0.1, "stream": False, "max_tokens": 3600},
                 {"Authorization": f"Bearer {GLM_KEY}"}, timeout=100)
             txt = d["choices"][0]["message"]["content"] or ""
             txt = re.sub(r"```json|```", "", txt).strip()
@@ -1124,6 +1129,14 @@ def _save_ai_cache():
     if not _AI_CACHE: return
     try:
         AI_CACHE.parent.mkdir(exist_ok=True)
+        # 保护：若本次只载入/新增了少数几家，先把盘上已有的并回来，避免把 50 家档案写丢
+        try:
+            old = json.loads(AI_CACHE.read_text(encoding="utf-8"))
+            if isinstance(old, dict):
+                for k, v in old.items():
+                    _AI_CACHE.setdefault(k, v)
+        except Exception:
+            pass
         AI_CACHE.write_text(json.dumps(_AI_CACHE, ensure_ascii=False, indent=1), encoding="utf-8")
         log(f"AI 档案缓存已写盘（{len(_AI_CACHE)} 家）")
     except Exception as e:
@@ -1418,6 +1431,23 @@ def _plan_html(ds, escfn=None):
     if not parts: return ""
     return '<div style="margin-top:6px;border-top:1px dashed #dbe4ef;padding-top:6px">' + ''.join(parts) + '</div>'
 
+def _thin(d):
+    """检查 AI 输出是否太薄：返回不合格原因，合格返回空字符串"""
+    if not isinstance(d, dict): return "非 JSON"
+    msgs = []
+    lv = (d.get("lever") or "").strip()
+    if len(lv) < 80: msgs.append("杠杆点不足80字")
+    vf = [x for x in (d.get("verify") or []) if isinstance(x, dict) and (x.get("q") or "").strip()]
+    if len(vf) < 3: msgs.append("验证问题不足3条")
+    if any(not (x.get("pass") or "").strip() or not (x.get("kill") or "").strip() for x in vf):
+        msgs.append("验证缺 pass/kill")
+    act = [x for x in (d.get("act") or []) if str(x).strip()]
+    if len(act) < 2: msgs.append("今日动作不足2条")
+    dec = [x for x in (d.get("deciders") or []) if str(x).strip()]
+    if len(dec) < 2: msgs.append("决策链不足2条")
+    if not (d.get("hq") or "").strip(): msgs.append("缺总部")
+    return "、".join(msgs)
+
 def ai_dossier(code, nm, p, finding):
     """对一家公司做一次自动深查，返回 dossier dict；证据不足则返回 None"""
     if not (GLM_KEY and TVLY_KEY): return None
@@ -1514,13 +1544,22 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
  ],
  "lever":"杠杆点，2-3句说透：为什么这家现在非动不可、卡的是什么机制、不动的代价是什么；必须落到它的基地/产线/客户/审核要求上",
  "verify":[
-   {"q":"要验证的具体问题（一句）","how":"怎么查/问谁（哪条公开信息、打哪个电话问哪句话）","pass":"什么回答说明是真机会","kill":"什么回答可以直接放掉"}
+   {{"q":"要验证的具体问题（一句）","how":"怎么查/问谁（哪条公开信息、打哪个电话问哪句话）","pass":"什么回答说明是真机会","kill":"什么回答可以直接放掉"}}
  ],
  "act":[
    "动作（谁—走哪条通道—第一句问什么—拿到什么）"
  ]
 }}"""
     d, model = glm_json(_AI_SYS, user)
+    # —— 内容太薄（验证没到3条/动作不到2条/杠杆点一句话）就重写一次 ——
+    if d and _thin(d):
+        log("    输出偏薄（" + _thin(d) + "），重写一次")
+        d2, m2 = glm_json(_AI_SYS, user + "\n\n【上一次输出不合格】" + _thin(d) +
+                          "。请补全：lever 至少 80 字且点名它的基地/产线/客户审核；verify 正好 3 条"
+                          "（q/how/pass/kill 全填）；act 2-3 条，每条写清 谁—哪条通道—第一句问什么—拿到什么；"
+                          "deciders 2-4 条并写清所在地。禁止写通用句。")
+        if d2 and not _thin(d2):
+            d, model = d2, m2
     # —— 搭线通道空转就重试一次，逼模型落到真实通道上 ——
     try:
         bad = _ladder_bad(_clean_ladder((d or {}).get("ladder")))
@@ -1647,6 +1686,7 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
                       "pass": str(x.get("pass") or "")[:60], "kill": str(x.get("kill") or "")[:60]}
                      for x in (d.get("verify") or []) if isinstance(x, dict) and (x.get("q") or "").strip()][:3],
           "act": [str(x)[:100] for x in (d.get("act") or []) if str(x).strip()][:3],
+          "pk": p["key"],
           "researched": datetime.date.today().isoformat()}
     mails = (email and [dict(email, kind="实名推断")]) or []
     if not mails: mails = []
@@ -1759,12 +1799,52 @@ def queue_pass():
         else:
             log(f"    队列：{nm} 未查到，保留文件待下次重试")
 
+def _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION):
+    """滚动刷新：高优先档案按"最久没更新"轮流重查；外部信息天天在变，档案不能烂在缓存里"""
+    done = 0
+    _RF = min(REFRESH_MAX, max(1, AI_MAX - 1))
+    try:
+        _PBK = {p0["key"]: p0 for p0 in PRODUCTS}
+        _PBK.setdefault("PLEX", PLEX_PSEUDO)
+        _stale = []
+        for c0, ds0 in PRODUCT_DOSSIERS.items():
+            if (ds0.get("grade") or "") != "高": continue
+            r0 = (ds0.get("researched") or "")[:10]
+            try:
+                gap = (datetime.date.today() - datetime.date.fromisoformat(r0)).days
+            except Exception:
+                gap = 99
+            if gap < 3: continue
+            _stale.append((gap, c0, ds0))
+        _stale.sort(key=lambda x: -x[0])
+        _n = 0
+        for gap, c0, ds0 in _stale:
+            if _n >= _RF: break
+            p0 = _PBK.get(ds0.get("pk") or "PLEX")
+            if not p0: continue
+            log(f"  滚动刷新（{gap}天未更新）：{ds0.get('name')} [{p0['key']}]")
+            ds1 = ai_dossier(c0, ds0.get("name") or c0, p0, {"title": ds0.get("signal") or ""})
+            _n += 1; done += 1
+            if ds1:
+                PRODUCT_DOSSIERS[c0] = ds1
+                _AI_CACHE[c0] = ds1
+                if ds1.get("region"): HQ_REGION[c0] = ds1["region"]
+                log(f"    ✓ 已刷新（{ds1.get('grade')}）")
+            else:
+                log("    刷新失败，保留旧档案")
+    except Exception as ex:
+        log("滚动刷新跳过：" + str(ex)[:60])
+    return done
+
 def ai_research_pass():
     """新线索自动查档；已入档的跳过，不重复烧额度"""
     _load_ai_cache()
     if not (GLM_KEY and TVLY_KEY):
         log("未配置 GLM_KEY / TAVILY_KEY，跳过 AI 自动深查（页面照常生成）")
         return
+    done = _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION)
+    if done: _save_ai_cache()
+
     todo = []
     _seen_code = set()
     for p in PRODUCTS:
@@ -1796,7 +1876,6 @@ def ai_research_pass():
     todo.sort(key=lambda x: (0 if x[3].get("key") == "PLEX" else 1, x[0]))
     if todo:
         log(f"待 AI 深查（仅高优先窗口期）{len(todo)} 家，本次上限 {AI_MAX} 家")
-    done = 0
     for _age, c, nm, p, h in todo:
         if done >= AI_MAX: break
         log(f"  AI 深查：{nm} [{p['key']}]")
@@ -1807,6 +1886,7 @@ def ai_research_pass():
             _AI_CACHE[c] = ds
             if ds.get("region"): HQ_REGION[c] = ds["region"]
             log(f"    ✓ 入档（{ds['demand']}/{ds['grade']}）")
+
     _save_ai_cache()
 
 def card_for(f):
