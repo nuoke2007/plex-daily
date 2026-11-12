@@ -1377,10 +1377,11 @@ def _plan_html(ds, escfn=None):
     esc = escfn or (lambda x: x)
     rows = []
     _init_dup()
-    for i, st in enumerate(ds.get("ladder") or [], 1):
+    for st in (ds.get("ladder") or []):
         if not st.get("to"): continue
         if _dup(st.get("via")) and _dup(st.get("say")):
             continue
+        i = len(rows) + 1
         rows.append(
             '<div style="margin:5px 0;padding:7px 9px;background:#fbfcfe;border-left:3px solid #7a5af8;border-radius:0 6px 6px 0">'
             '<div style="font-size:12px;color:#243b53"><b>第' + str(i) + '步</b>'
@@ -1950,7 +1951,8 @@ def card_for(f):
                  ' <span style="color:' + _dc + ';font-weight:700">选型判断：' + esc(ai.get("demand","")) + '</span>'
                  '<span style="color:#5a6b7b"> —— ' + esc(ai.get("demand_reason","")) + '</span></div>'
                  '<div style="font-size:12px;color:#33414f;line-height:1.6">🔎 信号：' + esc(ai.get("signal","")) + '</div>'
-                 '<div style="font-size:12px;color:#0b6bcb;line-height:1.6">👤 ' + esc(ai.get("chief","")) + '</div>'
+                 + (('<div style="font-size:12px;color:#0b6bcb;line-height:1.6">👤 ' + esc(ai.get("chief","")) + '</div>')
+                  if not (ai.get("deciders") and (ai.get("chief") or "").startswith("未具名")) else '')
                  + _srchtml + _inetxt + '</div>')
         if ai.get("chief"): chief=ai["chief"]
         badge='<span class="ev" style="color:#7a5af8">🤖 AI 自动查证（已覆盖模板判断）</span>'
