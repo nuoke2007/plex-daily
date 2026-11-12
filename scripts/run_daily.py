@@ -403,7 +403,7 @@ def _chain_list_leads():
         if not has_os and not is_t2:
             continue                       # 既没有海外产能、也不是二三级的，先不进雷达
         tier_lab = "Tier1/巨头（中优先级）" if is_t1 else (tier_raw or "Tier2/3")
-        _p1 = re.split(r"[；;，,]", prod)[0].strip().strip("、")     # 产品只取第一段，别把整串堆上去
+        _p1 = re.split(r"[；;，,、/]", prod)[0].strip().strip("、")     # 产品只取第一段，别把整串堆上去
         _segs, _seen_o = [], set()
         for seg in re.split(r"[；;\n]", os_txt):
             k = re.sub(r"[（(].*?[）)]", "", seg).strip()
@@ -444,7 +444,9 @@ def discover_tesla_chain():
     try:
         leads = _chain_list_leads()
         if leads:
-            return leads[:14]
+            _l2 = [x for x in leads if x.get("phase") != "fresh"][:10]
+            _l1 = [x for x in leads if x.get("phase") == "fresh"][:4]   # T1 单独留名额，别被 [:N] 切掉
+            return _l2 + _l1
     except Exception as ex:
         log("名单池读取失败：" + str(ex)[:60])
     system = ("你是汽车零部件行业的线索分析员，服务对象是罗克韦尔 PLEX（订阅制 SaaS MES）售前。"
@@ -2531,9 +2533,9 @@ _tsl = discover_tesla_chain()
 if _tsl:
     _normname = lambda n: re.sub(r"(股份有限公司|有限责任公司|有限公司|集团|控股|股份|公司)$", "", (n or "")).strip()
     _exist = set(_normname(f.get("name")) for f in new_findings) | set(_normname(c.get("name")) for c in CASES)
-    _tsl = [x for x in _tsl if _normname(x["name"]) not in _exist]
-    _tsl = ([x for x in _tsl if x.get("phase") != "fresh"][:3]
-            + [x for x in _tsl if x.get("phase") == "fresh"][:1])   # T1 保 1 席，中优先级
+    _raw = _tsl
+    _tsl = ([x for x in _tsl if _normname(x["name"]) not in _exist and x.get("phase") != "fresh"][:3]
+            + [x for x in _raw if x.get("phase") == "fresh"][:1])   # T1 保 1 席，中优先级（不参与已有个案去重）
     new_findings.extend(_tsl)
     new_findings.sort(key=lambda f: _ord.get(f.get("phase"), 9))
     if len(new_findings) > 15:      # 供应链线索默认 3 条（Tier2/3 优先），T1 另留 1 条作中优先级
