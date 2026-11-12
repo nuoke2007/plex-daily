@@ -36,9 +36,4 @@ jobs:
           git add dashboard.html lead.html ftpc.html thingworx.html windchill.html datamosaix.html inquiry.html leads.xlsx logs/
           git commit -m "daily update" || echo "nothing to commit"
           git push
-      - name: deploy pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          exclude_assets: ".git,scripts,data,logs,.github"
+
