@@ -437,7 +437,7 @@ h1{font-size:24px;color:#003DA5;letter-spacing:-.3px}
 .ld-code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:#8494a4}
 .ld-meta{font-size:12px;color:#5a6b7d}
 .ld-back{margin-left:auto;font-size:12.5px;color:#00B5E2;font-weight:700;text-decoration:none}
-.ld-sum{font-size:12.5px;color:#7a8899;background:#f7fafd;border-radius:8px;padding:8px 12px;margin-bottom:10px}
+.ld-sum{font-size:12.5px;color:#5a6b7d;background:#f7fafd;border-radius:8px;padding:9px 13px;margin-bottom:12px;line-height:1.8}
 .ld-body{border:1px solid #e3ebf3;border-radius:10px;padding:14px 16px}
 .feas{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:5px}
 .feas-高{background:#e8f6ee;color:#0a7f3f}
@@ -1799,12 +1799,12 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
     # 注意：不做"正文里扫省份"的兜底——会抓到公告里的子公司/项目所在地，
     # 把总部区域judge错（曾把云南的贵研铂业判成山东）。认不出就留待确认。
     ds = {"name": nm,
-          "role": (d.get("role") or PRODUCT_WHO_ROLE.get(p["key"], ("信息化/数字化负责人",""))[0])[:60],
-          "why": (d.get("why") or "")[:100],
+          "role": (d.get("role") or PRODUCT_WHO_ROLE.get(p["key"], ("信息化/数字化负责人",""))[0])[:120],
+          "why": (d.get("why") or "")[:400],
           "chief": chief,
           "demand": d.get("demand") or "待验证",
-          "demand_reason": (d.get("demand_reason") or "")[:100],
-          "signal": (d.get("signal") or "")[:240],
+          "demand_reason": (d.get("demand_reason") or "")[:400],
+          "signal": (d.get("signal") or "")[:900],
           "grade": d.get("grade") if d.get("grade") in ("高","中","低") else "中",
           "region": region if region else "",
           "auto": True, "model": model,
@@ -1814,21 +1814,21 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
           "insider": insider,
           "tier": _tier(_title if name else ""),
           "phones": _phones(nm, hits),
-          "window": (d.get("window") or "")[:80],
-          "dept": (d.get("dept") or "")[:40],
-          "dept_ev": (d.get("dept_ev") or "")[:80],
+          "window": (d.get("window") or "")[:200],
+          "dept": (d.get("dept") or "")[:100],
+          "dept_ev": (d.get("dept_ev") or "")[:400],
           "ladder": _clean_ladder(d.get("ladder"), allowed=(name, iname) if iname else (name,)),
-          "hook": (d.get("hook") or "")[:60],
-          "risk": (d.get("risk") or "")[:80],
-          "next": (d.get("next") or "")[:40],
-          "hq": (d.get("hq") or "")[:60],
-          "hq_ev": (d.get("hq_ev") or "")[:40],
-          "deciders": [str(x)[:110] for x in (d.get("deciders") or []) if str(x).strip()][:4],
-          "lever": (d.get("lever") or "")[:260],
-          "verify": [{"q": str(x.get("q") or "")[:70], "how": str(x.get("how") or "")[:90],
-                      "pass": str(x.get("pass") or "")[:60], "kill": str(x.get("kill") or "")[:60]}
+          "hook": (d.get("hook") or "")[:500],
+          "risk": (d.get("risk") or "")[:400],
+          "next": (d.get("next") or "")[:200],
+          "hq": (d.get("hq") or "")[:240],
+          "hq_ev": (d.get("hq_ev") or "")[:200],
+          "deciders": [str(x)[:220] for x in (d.get("deciders") or []) if str(x).strip()][:6],
+          "lever": (d.get("lever") or "")[:1000],
+          "verify": [{"q": str(x.get("q") or "")[:150], "how": str(x.get("how") or "")[:400],
+                      "pass": str(x.get("pass") or "")[:200], "kill": str(x.get("kill") or "")[:200]}
                      for x in (d.get("verify") or []) if isinstance(x, dict) and (x.get("q") or "").strip()][:3],
-          "act": [str(x)[:100] for x in (d.get("act") or []) if str(x).strip()][:3],
+          "act": [str(x)[:240] for x in (d.get("act") or []) if str(x).strip()][:4],
           "pk": p["key"],
           "researched": datetime.date.today().isoformat()}
     mails = (email and [dict(email, kind="实名推断")]) or []
@@ -2125,6 +2125,7 @@ def card_for(f):
                        f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>')
     rg=region_of(code).split("·")[0]
     _sum = _brief((ai or {}).get("signal") or f.get("title") or "", 90)
+    _full = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))
     rg=region_of(code).split("·")[0]
     _body = (f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
              f'<div class="row">{badge}</div>'
@@ -2135,7 +2136,7 @@ def card_for(f):
              f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
              f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>')
     LEADS[code] = {"n": nm, "s": f["sec"] or "", "g": g, "loc": loc, "rg": rg,
-                   "sum": _sum, "b": _body, "p": f.get("url") or ""}
+                   "sum": _full, "b": _body, "p": f.get("url") or ""}
     return (f'<a class="lead-row" data-rg="{esc(rg)}" href="lead.html?c={esc(code)}">'
             f'<span class="lr-g">{g}</span>'
             f'<span class="lr-nm">{esc(nm)}</span>'
