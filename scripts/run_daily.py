@@ -1026,7 +1026,7 @@ GLM_KEY = os.environ.get("GLM_KEY", "").strip()
 TVLY_KEY = os.environ.get("TAVILY_KEY", "").strip()
 AI_CACHE = DATA / "dossiers.json"
 AI_MAX = int(os.environ.get("AI_MAX", "3") or 3)
-REFRESH_MAX = int(os.environ.get("REFRESH_MAX", "2") or 2)   # 每次运行滚动刷新几家老档案
+REFRESH_MAX = int(os.environ.get("REFRESH_MAX", "3") or 3)   # 每次运行滚动刷新几家老档案
 AI_MODELS = ["glm-4-plus", "glm-4-flash"]
 REGION_RE = re.compile(r"^(长三角|珠三角|京津冀|华中|华南|西南|西北|华东|华北|东北)·[\u4e00-\u9fa5]{2,4}$")
 PROV_REGION = {
@@ -1799,6 +1799,16 @@ def queue_pass():
         else:
             log(f"    队列：{nm} 未查到，保留文件待下次重试")
 
+def _infer_pk(ds):
+    """老档案没存产品 key 时按信号/岗位/理由推断，避免把 Windchill/FTPC 的线索当 PLEX 重查"""
+    t = ((ds.get("signal") or "") + " " + (ds.get("role") or "") + " " + (ds.get("why") or "") + " "
+         + (ds.get("demand_reason") or "") + " " + (ds.get("lever") or ""))
+    if any(k in t for k in ("PLM", "Windchill", "BOM", "研发数据", "图纸", "EBOM")): return "WIND"
+    if any(k in t for k in ("ThingWorx", "物联网", "设备联网", "IIoT", "数据采集", "远程监控")): return "TWX"
+    if any(k in t for k in ("DataMosaix", "数据湖", "数据治理", "数据平台")): return "DMX"
+    if any(k in t for k in ("FTPC", "MES", "MOM", "制造执行", "车间", "排产", "追溯")): return "FTPC"
+    return "PLEX"
+
 def _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION):
     """滚动刷新：高优先档案按"最久没更新"轮流重查；外部信息天天在变，档案不能烂在缓存里"""
     done = 0
@@ -1814,13 +1824,13 @@ def _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION):
                 gap = (datetime.date.today() - datetime.date.fromisoformat(r0)).days
             except Exception:
                 gap = 99
-            if gap < 3: continue
+            if gap < 2: continue
             _stale.append((gap, c0, ds0))
         _stale.sort(key=lambda x: -x[0])
         _n = 0
         for gap, c0, ds0 in _stale:
             if _n >= _RF: break
-            p0 = _PBK.get(ds0.get("pk") or "PLEX")
+            p0 = _PBK.get(ds0.get("pk") or _infer_pk(ds0))
             if not p0: continue
             log(f"  滚动刷新（{gap}天未更新）：{ds0.get('name')} [{p0['key']}]")
             ds1 = ai_dossier(c0, ds0.get("name") or c0, p0, {"title": ds0.get("signal") or ""})
