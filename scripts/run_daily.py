@@ -1281,7 +1281,18 @@ def _facts(nm, hits):
         for m in re.finditer(r"20\d{{2}}\s*年\s*\d{{1,2}}\s*月|20\d{{2}}\s*年底|20\d{{2}}\s*年上半年|投产", c):
             seg = c[max(0,m.start()-24):m.start()+40].replace("\n"," ")
             if seg not in times: times.append(seg[:70])
+    addr = []
+    for h in hits:
+        c = (h.get("content") or "")
+        if not _same_subject(nm, c): continue
+        for m in re.finditer(r"(总部|注册地址|办公地址|厂址|地址)[：: ]?\s*([^。；\n]{6,40})", c):
+            seg = (m.group(1) + "：" + m.group(2)).strip()
+            if seg not in addr: addr.append(seg[:60])
+        for m in re.finditer(r"(省|市)[^。；\n]{0,10}(路|街|园区|工业园|开发区)[^。；\n]{0,12}", c):
+            seg = m.group(0).strip()
+            if seg not in addr: addr.append(seg[:40])
     f = []
+    if addr: f.append("⓪ 总部/地址原文：" + " ｜ ".join(addr[:4]))
     if sites: f.append("① 海外/新基地词：" + "、".join(sites[:8]))
     if times: f.append("② 时间点原文：" + " ｜ ".join(times[:3]))
     if depts: f.append("③ 材料中出现的部门/职能词：" + "、".join(depts[:10]))
@@ -1300,7 +1311,7 @@ def _ladder_bad(steps):
     return bad
 
 _DUP_TXT = {}
-_DUP_FIELDS = ("window", "dept_ev", "hook", "risk", "next")
+_DUP_FIELDS = ("window", "dept_ev", "hook", "risk", "next", "hq", "lever")
 
 def _norm_txt(x):
     return re.sub(r"[\s，。；、！？：·（）()\"“”'']", "", (x or "").lower())
@@ -1309,7 +1320,14 @@ def _init_dup():
     """同一句话出现在几家公司：>=2 就是模板话术，渲染时不再显示"""
     if _DUP_TXT: return
     seen = {}
-    pool = list(PRODUCT_DOSSIERS.values()) + list(_INQ.values()) + list(_AI_CACHE.values())
+    # 同一家公司在 PRODUCT_DOSSIERS / _AI_CACHE 里可能有两份拷贝，按"公司名+信号"去重，避免一句话被算两次
+    seen_sig = set()
+    pool = []
+    for d in list(PRODUCT_DOSSIERS.values()) + list(_INQ.values()) + list(_AI_CACHE.values()):
+        if not isinstance(d, dict): continue
+        sig = (d.get("name") or "") + "|" + (d.get("signal") or "")[:30]
+        if sig in seen_sig: continue
+        seen_sig.add(sig); pool.append(d)
     for d in pool:
         for f in _DUP_FIELDS:
             v = _norm_txt(d.get(f))
@@ -1360,17 +1378,41 @@ def _plan_html(ds, escfn=None):
             + '</div>')
     _init_dup()
     parts = []
+    if ds.get("hq"):
+        parts.append('<div style="font-size:12.5px;color:#243b53;margin-top:2px"><b>\U0001f4cd 总部/决策链位置：</b>' + esc(ds["hq"])
+                     + ((' <span style="color:#8494a4">（依据：' + esc(ds.get("hq_ev","")) + '）</span>') if ds.get("hq_ev") else '')
+                     + '<div style="font-size:11.5px;color:#5a6b7b;margin-top:1px">决定权通常在总部；若关键人在海外基地/新厂，说明这条线要先经总部再落到基地。</div></div>')
     if ds.get("window") and not _dup(ds.get("window")):
         parts.append('<div style="font-size:12.5px;color:#243b53"><b>\u23f1 窗口：</b>' + esc(ds["window"]) + '</div>')
     if ds.get("dept") and not (ds.get("dept_ev") and _dup(ds.get("dept_ev"))):
         parts.append('<div style="font-size:12.5px;color:#243b53;margin-top:3px"><b>\U0001f3af 该找的部门：</b>' + esc(ds["dept"])
                      + ((' <span style="color:#8494a4">（依据：' + esc(ds["dept_ev"]) + '）</span>') if ds.get("dept_ev") else '') + '</div>')
+    if ds.get("lever") and not _dup(ds.get("lever")):
+        parts.append('<div style="margin-top:7px;font-size:12.5px;color:#243b53;background:#fbf7ff;border-left:3px solid #7a5af8;border-radius:0 6px 6px 0;padding:7px 10px;line-height:1.75"><b>\U0001f9ed 杠杆点（为什么现在非动不可）：</b>' + esc(ds["lever"]) + '</div>')
+    _dec = [x for x in (ds.get("deciders") or []) if x and not _dup(x)]
+    if _dec:
+        parts.append('<div style="margin-top:6px;font-size:12.5px;color:#243b53"><b>\U0001f5fa 决策链谁说了算：</b></div>'
+                     + ''.join('<div style="font-size:12px;color:#33475b;line-height:1.7;padding-left:6px">· ' + esc(x) + '</div>' for x in _dec))
+    _vf = [x for x in (ds.get("verify") or []) if (x.get("q") or "").strip()]
+    if _vf:
+        _vh = ''.join(
+            '<div style="font-size:12px;color:#33475b;line-height:1.7;padding:5px 0;border-bottom:1px dashed #e8eef5">'
+            '<b>' + str(i) + '. ' + esc(x.get("q","")) + '</b>'
+            + (('<div style="color:#5a6b7b">怎么查：' + esc(x.get("how","")) + '</div>') if x.get("how") else '')
+            + (('<div style="color:#137333">✅ 算真机会：' + esc(x.get("pass","")) + '</div>') if x.get("pass") else '')
+            + (('<div style="color:#a04040">❌ 可以直接放：' + esc(x.get("kill","")) + '</div>') if x.get("kill") else '')
+            + '</div>' for i, x in enumerate(_vf, 1))
+        parts.append('<div style="margin-top:7px"><div style="font-size:12.5px;color:#003DA5;font-weight:700">✅ 先验证它是不是真需求（问完这三句再谈方案）</div>' + _vh + '</div>')
     if rows:
         parts.append('<div style="font-size:12.5px;color:#003DA5;font-weight:700;margin:8px 0 2px">\U0001fa9c 怎么搭上线（按顺序做）</div>' + ''.join(rows))
     if ds.get("hook") and not _dup(ds.get("hook")):
         parts.append('<div style="margin-top:6px;font-size:12.5px;color:#8a4b00;background:#fffdf5;border:1px solid #f0e0b6;border-radius:6px;padding:6px 9px"><b>\U0001f4ac 见到对口人第一句：</b>' + esc(ds["hook"]) + '</div>')
     if ds.get("next") and not _dup(ds.get("next")):
         parts.append('<div style="margin-top:5px;font-size:12.5px;color:#137333"><b>\u25b6 今天先做：</b>' + esc(ds["next"]) + '</div>')
+    _act = [x for x in (ds.get("act") or []) if x and not _dup(x)]
+    if _act:
+        parts.append('<div style="margin-top:6px;font-size:12.5px;color:#243b53"><b>\u25b6 今天就做这几件：</b></div>'
+                     + ''.join('<div style="font-size:12px;color:#33475b;line-height:1.7;padding-left:6px">' + str(i) + '. ' + esc(x) + '</div>' for i, x in enumerate(_act, 1)))
     if ds.get("risk") and not _dup(ds.get("risk")):
         parts.append('<div style="margin-top:4px;font-size:11.5px;color:#a04040"><b>\u26a0 反证：</b>' + esc(ds["risk"]) + '</div>')
     if not parts: return ""
@@ -1465,6 +1507,18 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
  "hook":"针对这家公司具体事实的一句开场（25字内，必须点到它的基地/产线/项目名或公告事实；禁止通用句、产品名、“我们想了解贵司需求”）",
  "risk":"这家的具体不利证据（公告只提意向未定金额/已延期/竞品已中标等）；写不出就填空。禁止“若计划推迟、预算削减”这类到处都能用的废话。",
  "next":"今天就能做的一个动作（20字内，含对象和动作，如 打0571总机转信息中心问MES归谁管）"
+ "hq":"总部所在地：省+市+区/园区或街道，能细到哪一层就写到哪一层（依据注册地址/年报/官网联系地址）；只能写材料里出现的，查不到填空",
+ "hq_ev":"总部地址依据哪条材料（公告/官网页面），20字内",
+ "deciders":[
+   "角色（这家公司自己的部门/岗位叫法）｜在哪（总部/哪个基地/哪个厂）｜他真正关心什么（产能爬坡、多厂口径统一、追溯审核、人工成本）"
+ ],
+ "lever":"杠杆点，2-3句说透：为什么这家现在非动不可、卡的是什么机制、不动的代价是什么；必须落到它的基地/产线/客户/审核要求上",
+ "verify":[
+   {"q":"要验证的具体问题（一句）","how":"怎么查/问谁（哪条公开信息、打哪个电话问哪句话）","pass":"什么回答说明是真机会","kill":"什么回答可以直接放掉"}
+ ],
+ "act":[
+   "动作（谁—走哪条通道—第一句问什么—拿到什么）"
+ ]
 }}"""
     d, model = glm_json(_AI_SYS, user)
     # —— 搭线通道空转就重试一次，逼模型落到真实通道上 ——
@@ -1585,6 +1639,14 @@ to 不许写"负责人""决策者"这类泛称；写具体部门或具体岗位�
           "hook": (d.get("hook") or "")[:60],
           "risk": (d.get("risk") or "")[:80],
           "next": (d.get("next") or "")[:40],
+          "hq": (d.get("hq") or "")[:60],
+          "hq_ev": (d.get("hq_ev") or "")[:40],
+          "deciders": [str(x)[:110] for x in (d.get("deciders") or []) if str(x).strip()][:4],
+          "lever": (d.get("lever") or "")[:260],
+          "verify": [{"q": str(x.get("q") or "")[:70], "how": str(x.get("how") or "")[:90],
+                      "pass": str(x.get("pass") or "")[:60], "kill": str(x.get("kill") or "")[:60]}
+                     for x in (d.get("verify") or []) if isinstance(x, dict) and (x.get("q") or "").strip()][:3],
+          "act": [str(x)[:100] for x in (d.get("act") or []) if str(x).strip()][:3],
           "researched": datetime.date.today().isoformat()}
     mails = (email and [dict(email, kind="实名推断")]) or []
     if not mails: mails = []
