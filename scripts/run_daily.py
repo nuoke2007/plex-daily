@@ -2507,68 +2507,60 @@ _INQ_JS = """<script>
 })();
 </script>"""
 
-_pend = _inq_pending()
-_pend_html = ""
-if _pend:
-    _pend_html = ('<div class="sec" style="border-color:#e3dcff;background:#faf8ff">'
-                  '<div class="sec-h">⏳ 排队中（' + str(len(_pend)) + ' 家 · 等自动任务）</div>'
-                  '<div style="font-size:12.5px;color:#5a6b7b;line-height:1.8">'
-                  + esc("、".join(_pend)) + '</div></div>')
-inq_body=f"""
-<div class="top"><h1>🔎 即查结果（临时查询 · 不进主看板）</h1></div>
-<div class="sec" id="qkbox" style="border-color:#e3dcff;background:#faf8ff">
-  <div class="sec-h">🔍 查一家不在雷达里的公司（临时，不改任何代码）</div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px">
-    <input id="qiName" placeholder="公司全称（写全称，别用缩写）" style="flex:1;min-width:240px;padding:8px 10px;border:1px solid #cdd9e5;border-radius:8px;font-size:13px">
-    <select id="qiProd" style="padding:8px 10px;border:1px solid #cdd9e5;border-radius:8px;font-size:13px">
-      <option value="PLEX">PLEX</option><option value="FTPC">FTPC</option><option value="TWX">ThingWorx</option><option value="WIND">Windchill</option><option value="DMX">DataMosaix</option>
-    </select>
-    <a id="qkgo" class="ev" href="#" target="_blank" style="display:inline-block;background:#7a5af8;color:#fff;text-decoration:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600">🚀 提交给 AI 查</a>
-  </div>
-  <div style="margin-top:10px;font-size:12.5px;color:#5a6b7b;line-height:1.9">
-    提交只要 3 步：① 点上面按钮 → 新窗口打开 GitHub ② 拉到页面最下面点绿色 <b>Commit changes</b> ③ 弹窗里再点一次 <b>Commit changes</b>。<br>
-    <b style="color:#b33a2f">不点这一步＝没提交</b>，本页永远不会出现它的结果。
-    <span id="qkchk" style="color:#0b62c4;cursor:pointer;text-decoration:underline">提交完了，点这里查是否已入队 →</span>
-  </div>
-  <div id="qkstat" style="margin-top:6px;font-size:12.5px;line-height:1.85"></div>
-</div>
+def _inq_detail_html(code, d):
+    """单家即查详情：判断/信号/计划/联系人/邮箱，和主看板详情页同源同结构"""
+    ph = "".join('<div>· <b>%s</b> <a class="ev" href="%s" target="_blank">🔗</a></div>'
+                 % (esc(x.get("num", "")), esc(x.get("src", ""))) for x in (d.get("phones") or []))
+    src = d.get("src") or ""
+    srch = f' <a class="ev" href="{esc(src)}" target="_blank">🔗 出处</a>' if src else ""
+    return ('<div style="font-size:12.5px;color:#3d4c5c;line-height:1.8">'
+            f'<b>判断：</b>{esc(d.get("demand","待验证"))} —— {esc(d.get("demand_reason",""))}<br>'
+            f'<b>信号：</b>{esc(d.get("signal",""))}</div>'
+            + _plan_html(d, esc)
+            + f'<div style="font-size:12.5px;color:#3d4c5c;line-height:1.75;margin-top:8px"><b>联系人：</b>{esc(d.get("chief",""))}{srch}</div>'
+            + _mailbox_html(d, esc)
+            + (('<div style="font-size:12px;color:#8a6b1f;margin-top:3px">📞 ' + ph + '</div>') if ph else ''))
+
+_inq_data = {}
+for _code, _d in _INQ.items():
+    _inq_data[_code] = {"n": _d.get("name", "") or _code, "c": _code, "g": _d.get("grade", "中"),
+                        "rg": _d.get("region", "") or "", "pk": _d.get("product_key", "PLEX"),
+                        "b": _inq_detail_html(_code, _d)}
+
+_INQ_RENDER_JS = """
 <script>
-(function(){{
- var q=new URLSearchParams(location.search), c0=q.get('c')||'', p0=q.get('p')||'PLEX';
- var nameEl=document.getElementById('qiName'), prodEl=document.getElementById('qiProd');
- var go=document.getElementById('qkgo'), chk=document.getElementById('qkchk'), stat=document.getElementById('qkstat');
- if(c0) nameEl.value=c0;
- for(var i=0;i<prodEl.options.length;i++){{ if(prodEl.options[i].value===p0) prodEl.selectedIndex=i; }}
- function upd(){{
-   var n=(nameEl.value||'').trim();
-   if(!n) return;
-   go.href='https://github.com/nuoke2007/plex-daily/new/main?filename='+encodeURIComponent('queue/'+n+'-'+prodEl.value+'.txt')+'&value='+encodeURIComponent(n+' | '+prodEl.value);
- }}
- nameEl.addEventListener('input',upd); prodEl.addEventListener('change',upd); upd();
- function check(){{
-   var n=(nameEl.value||'').trim()||c0;
-   if(!n){{ stat.innerHTML='先在上面填公司名'; return; }}
-   stat.innerHTML='正在查队列…';
-   fetch('https://api.github.com/repos/nuoke2007/plex-daily/contents/queue?t='+Date.now(), {{cache:'no-store'}})
-    .then(function(r){{ return r.json(); }})
-    .then(function(list){{
-       var names=(list||[]).map(function(x){{ return decodeURIComponent(x.name||''); }}).filter(function(x){{ return x.slice(-4)==='.txt'; }});
-       var hit=names.filter(function(x){{ return x.indexOf(n)>=0; }});
-       if(hit.length){{ stat.innerHTML='<b style="color:#1f7a49">✅ 已入队：'+hit.join('、')+'</b>　下一次自动任务（09:00 / 20:30）跑完，结果会自动出现在本页。'; }}
-       else {{ stat.innerHTML='<b style="color:#b33a2f">❌ 队列里还没有「'+n+'」</b>　说明 GitHub 那一步没点成。回去点一次绿色 Commit changes，再回来复查。'; }}
-    }})
-    .catch(function(){{ stat.innerHTML='查队列失败（网络限制），稍后再点一次。'; }});
- }}
- chk.addEventListener('click',check);
- if(c0) check();
-}})();
+(function(){
+  var box=document.getElementById('inqbox');
+  var q=(new URLSearchParams(location.search)).get('c')||'', p=(new URLSearchParams(location.search)).get('p')||'PLEX';
+  var D=window.PD_INQ||{}, keys=Object.keys(D), pick=null;
+  if(q){
+    keys.forEach(function(k){
+      if(pick) return;
+      var e=D[k];
+      if(k===q || e.n===q || (e.n && q && (e.n.indexOf(q)>=0 || q.indexOf(e.n)>=0))) pick=e;
+    });
+  }
+  if(!q && !pick && keys.length) pick=D[keys[keys.length-1]];
+  if(!pick){
+    box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9">'+(q?('「'+q+'」还没查过。<br>'):'还没有临时查询过任何公司。<br>')
+      +'<a href="https://github.com/nuoke2007/plex-daily/new/main?filename='
+      +encodeURIComponent('queue/'+(q||'公司全称')+'-'+p+'.txt')+'&value='
+      +encodeURIComponent((q||'公司全称')+' | '+p)
+      +'" target="_blank" style="color:#7a5af8;font-weight:700">提交查这一家 →</a>'
+      +'（新页面底部点一次绿色 Commit changes；下次自动任务跑完，结果只显示在本页）</div>';
+    return;
+  }
+  box.innerHTML='<div class="ld-h"><span class="tag" style="background:#eef4fb;color:#003DA5">'+pick.g+'优先</span>'
+    +'<b class="ld-nm">'+pick.n+'</b><span class="ld-code">'+pick.c+'</span>'
+    +'<span class="ld-meta">'+pick.pk+'</span><span class="ld-meta">🗺️ '+(pick.rg||'待确认')+'</span></div>'
+    +'<div class="ld-body">'+pick.b+'</div>';
+})();
 </script>
-<div class="sub">这里只放你临时交上来的公司。雷达内的日常线索仍在五个产品页，互不干扰。</div>
-{_pend_html}
-{_INQ_JS}
-<div class="sec"><div class="sec-h">历史已查记录 {len(_INQ)} 家（全部临时查询，与本次查询无关）</div>{_inq_html()}</div>
-<div class="foot">每次自动任务（09:00 / 20:30）处理 queue 队列，查完即写入本页</div>
 """
+inq_body = ('<div class="top"><h1>🔎 即查结果</h1></div>'
+            '<div id="inqbox" style="font-size:13px;color:#5a6b7d">正在加载…</div>'
+            '<script>window.PD_INQ=' + json.dumps(_inq_data, ensure_ascii=False).replace("</", "<\\/") + ';</script>'
+            + _INQ_RENDER_JS)
 (ROOT/"inquiry.html").write_text(shell("即查结果","PLEX",inq_body),encoding="utf-8")
 log(f"inquiry.html 已生成（即查 {len(_INQ)} 家）")
 
