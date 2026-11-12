@@ -406,6 +406,22 @@ h1{font-size:24px;color:#003DA5;letter-spacing:-.3px}
 .card-h .code{font-size:11px;color:#8494a4}
 .card-h .base{font-size:12px;color:#5a6b7d;margin-left:4px}
 .card-h .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.lead-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #e3ebf3;border-radius:8px;margin-bottom:6px;background:#fff;text-decoration:none;font-size:12.5px;color:#33475b}
+.lead-row:hover{background:#f7fafd;border-color:#c8d6e5}
+.lead-row .lr-g{flex:0 0 26px;font-weight:700;color:#003DA5}
+.lead-row .lr-nm{font-weight:700;color:#003DA5;white-space:nowrap}
+.lead-row .lr-code{color:#8494a4;font-size:11px;font-family:ui-monospace,Consolas,monospace}
+.lead-row .lr-base{color:#5a6b7d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:20%}
+.lead-row .lr-sum{flex:1;color:#7a8899;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.lead-row .lr-rg{color:#8494a4;font-size:11.5px;white-space:nowrap}
+.lead-row .lr-go{color:#00B5E2;font-weight:700;white-space:nowrap}
+.ld-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 0 8px}
+.ld-nm{font-size:19px;color:#003DA5}
+.ld-code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:#8494a4}
+.ld-meta{font-size:12px;color:#5a6b7d}
+.ld-back{margin-left:auto;font-size:12.5px;color:#00B5E2;font-weight:700;text-decoration:none}
+.ld-sum{font-size:12.5px;color:#7a8899;background:#f7fafd;border-radius:8px;padding:8px 12px;margin-bottom:10px}
+.ld-body{border:1px solid #e3ebf3;border-radius:10px;padding:14px 16px}
 .feas{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:5px}
 .feas-高{background:#e8f6ee;color:#0a7f3f}
 .feas-中{background:#fdf3e3;color:#b26a00}
@@ -703,16 +719,23 @@ def render_product(p):
                     _chief += _tel_html(_d, esc)
             else:
                 _role,_why=_rw[0],_rw[1]; _chief=''
-            cards+=(f'<div class="lead" data-rg="{esc(rg)}">'
-              f'<div class="lead-top"><span class="badge {GRADE_CLS[g]}">{g}</span><b>{esc(nm)}</b><span class="lc">{esc(code)}</span>'
-              f'<span class="indtag">🏭 {esc(ind)}</span><span class="indtag">🗺️ {esc(rg)}</span></div>'
-              f'<a class="lead-t" href="{h["url"]}" target="_blank">{esc(h["title"])}</a>'
-              f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
-              f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
-              f'{_chief}'
-              f'{contact_links(code,nm,ask,role=_role,why=_why,grade=g)}'
-              f'<div style="margin-top:6px"><a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a></div>'
-              '</div>')
+            _lk = code if code not in LEADS else (code + "-" + p["key"])
+            _loc = ((_d.get("hq") if _d else "") or "")
+            _body = (f'<div class="why"><b>🔍 关键信息：</b>{esc(judge)}</div>'
+                     f'<div class="nxt"><b>🎯 下一步怎么做：</b>{esc(lev).replace("杠杆：","")}</div>'
+                     f'{_chief}'
+                     f'{contact_links(code,nm,ask,role=_role,why=_why,grade=g)}'
+                     f'<div style="margin-top:8px"><a class="btn btn-link" href="{h["url"]}" target="_blank">📄 看公告原文</a></div>')
+            LEADS.setdefault(_lk, {"n": nm, "s": code, "g": g, "loc": _loc or "—",
+                                   "rg": rg, "sum": judge[:46], "b": _body, "p": h["url"],
+                                   "pk": p["key"]})
+            cards+=(f'<a class="lead lead-row" data-rg="{esc(rg)}" href="lead.html?c={esc(_lk)}">'
+              f'<span class="lr-g">{g}</span><span class="lr-nm">{esc(nm)}</span>'
+              f'<span class="lr-code">{esc(code)}</span>'
+              f'<span class="lr-base">🏭 {esc(ind)}</span>'
+              f'<span class="lr-sum">{esc(judge[:46])}</span>'
+              f'<span class="lr-rg">🗺️ {esc(rg)}</span>'
+              f'<span class="lr-go">详情 →</span></a>')
     # 区域筛选条
     chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(
         f'<button class="rg-chip" data-rg="{esc(rg)}">{esc(rg)}</button>' for rg in rg_order)
@@ -749,7 +772,7 @@ if(inp){ inp.oninput=apply; }
   <div class="prod-b" style="grid-template-columns:1fr">
     <div>
       <div style="font-size:12.5px;color:#33475b;margin:2px 0 10px">🆕 今日自动线索 <b style="color:#003DA5">{total}</b> 条 · 已按优先级排序（高在前）</div>
-      <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 安琪、600298）" autocomplete="off">{_EXPAND_BTN}</div>
+      <div class="rg-bar" id="rgbar">📍 按总部区域筛选：{chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 安琪、600298）" autocomplete="off"></div>
       <div class="srch-empty">没有匹配的线索 —— 用下面的「即查模式」查这家公司</div>
       {cards}
       {qk_panel(p["key"], p["who"], p["three"], p["hook"], PRODUCT_WHO_ROLE.get(p["key"],("信息化/数字化负责人",""))[0])}
@@ -2019,6 +2042,7 @@ def ai_research_pass():
 
     _save_ai_cache()
 
+LEADS = {}      # 详情页数据：code -> {n,s,g,loc,rg,sum,b,p}
 def card_for(f):
     g=PHASE_GRADE.get(f.get("phase"),"中")
     ind=industry_of((f["name"] or ""), f["title"])
@@ -2083,23 +2107,26 @@ def card_for(f):
                        f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
                        f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>')
     rg=region_of(code).split("·")[0]
-    _sum = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))[:44]
-    return (f'<div class="card" data-rg="{esc(rg)}">'
-      f'<div class="card-h" onclick="this.parentNode.classList.toggle(\'open\')">'
-      f'<span class="cid">{g}</span><span class="nm">{esc(nm)}</span><span class="code">{esc(f["sec"] or "")}</span>'
-      f'<span class="base">📍 {esc(loc)}</span>'
-      f'<span class="sum">{esc(_sum)}</span>'
-      f'<span class="right"><span class="grade">🗺️ {esc(region_of(code).split("·")[0])}</span><span class="arrow">▾</span></span></div>'
-      '<div class="card-b">'
-      f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
-      f'<div class="row">{badge}</div>'
-      f'{ai_html}'
-      f'{(legacy_rows)}'
-      f'{mail_html}'
-      f'{contact_links(code,nm)}'
-      f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
-      f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>'
-      '</div></div>')
+    _sum = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))[:46]
+    rg=region_of(code).split("·")[0]
+    _body = (f'<div class="row"><b>为什么是机会：</b>{esc(judge)}</div>'
+             f'<div class="row">{badge}</div>'
+             f'{ai_html}'
+             f'{legacy_rows}'
+             f'{mail_html}'
+             f'{contact_links(code,nm)}'
+             f'<details><summary>证据</summary><div class="ev"><a href="{esc(f["url"])}" target="_blank">公告原文 ↗</a></div></details>'
+             f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>')
+    LEADS[code] = {"n": nm, "s": f["sec"] or "", "g": g, "loc": loc, "rg": rg,
+                   "sum": _sum, "b": _body, "p": f.get("url") or ""}
+    return (f'<a class="lead-row" data-rg="{esc(rg)}" href="lead.html?c={esc(code)}">'
+            f'<span class="lr-g">{g}</span>'
+            f'<span class="lr-nm">{esc(nm)}</span>'
+            f'<span class="lr-code">{esc(f["sec"] or "")}</span>'
+            f'<span class="lr-base">📍 {esc(loc)}</span>'
+            f'<span class="lr-sum">{esc(_sum)}</span>'
+            f'<span class="lr-rg">🗺️ {esc(rg)}</span>'
+            f'<span class="lr-go">详情 →</span></a>')
 # 先跑 AI 深查，再渲染卡片——否则 PLEX 卡片永远拿不到当天的档案
 def _ci_push_data():
     """CI 里把 data/（档案、队列、即查结果）回写仓库。workflow 的 commit 步骤不 add data/，
@@ -2148,7 +2175,7 @@ _plex_filter_js="""
 var inp=bar.querySelector('.srch'), rg='全部';
 function apply(){
  var q=(inp&&inp.value||'').trim().toLowerCase(), n=0;
- document.querySelectorAll('.card[data-rg]').forEach(function(el){
+ document.querySelectorAll('.lead-row[data-rg]').forEach(function(el){
    var okr=(rg==='全部'||el.getAttribute('data-rg')===rg);
    var oks=!q||(el.textContent||'').toLowerCase().indexOf(q)>=0;
    if(okr&&oks) n++;
@@ -2314,7 +2341,7 @@ plex_body=f"""
   <div class="kpi"><div class="n">{n_window}</div><div class="l">🟢 正好选型窗口</div></div>
   <div class="kpi"><div class="n">{manual_total}</div><div class="l">待手动跟进</div></div>
 </div>
-<div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 均普、600699）" autocomplete="off">{_EXPAND_BTN}</div>
+<div class="rg-bar" id="rgbar">📍 按总部区域筛选：{_plex_chips}<input class="srch" type="search" placeholder="🔍 搜公司名 / 股票代码 / 行业（如 均普、600699）" autocomplete="off"></div>
 <div class="srch-empty">没有匹配的线索 —— 用下面的「即查模式」查这家公司</div>
 {qk_panel("PLEX",
    "有海外建厂/新基地/并购扩张的上市制造企业；多工厂要统一制造运营标准",
@@ -2332,6 +2359,28 @@ plex_body=f"""
 <div class="foot">日志 logs/run_{datetime.date.today().strftime('%Y%m%d')}.log ｜ 标记跟进存在本机浏览器，换手机需重新标记</div>
 """
 (ROOT/"dashboard.html").write_text(shell("PLEX 每日商机","PLEX",plex_body),encoding="utf-8")
+
+# ---- 线索详情页：列表只放一行，点开看这一家的完整档案 ----
+LEAD_JS = """
+<script>
+(function(){
+  var m=location.search.match(/[?&]c=([^&]+)/), c=m?decodeURIComponent(m[1]):'';
+  var box=document.getElementById('leadbox'), d=(window.PD_LEAD||{})[c];
+  if(!d){box.innerHTML='<div style="padding:18px;font-size:13px;color:#8494a4">没找到这家公司（可能今天已被刷出名单）。<a href="dashboard.html" style="color:#00B5E2">← 返回列表</a></div>';return;}
+  var h='<div class="ld-h"><span class="tag" style="background:#eef4fb;color:#003DA5">'+d.g+'优先</span>'
+    +'<b class="ld-nm">'+d.n+'</b>'
+    +'<span class="ld-code">'+d.s+'</span>'
+    +'<span class="ld-meta">📍 '+d.loc+'</span>'
+    +'<span class="ld-meta">🗺️ '+d.rg+'</span>'
+    +'<a class="ld-back" href="dashboard.html">← 返回列表</a></div>'
+    +'<div class="ld-sum">'+d.sum+'</div>'
+    +'<div class="ld-body">'+d.b+'</div>';
+  box.innerHTML=h;
+  document.title=d.n+' · 销售线索详情';
+})();
+</script>
+"""
+
 log("dashboard.html 已生成（PLEX 首页）")
 
 # ---- 每款产品一个独立页 ----
@@ -2345,6 +2394,15 @@ for p in PRODUCTS:
     fn=FILEMAP[p["key"]]
     (ROOT/fn).write_text(shell(p["name"], p["key"], pbody), encoding="utf-8")
     log(f"{fn} 已生成")
+
+# ---- 线索详情页（所有产品页渲染完，LEADS 才完整）----
+def _write_lead_page():
+    _lead_json = json.dumps(LEADS, ensure_ascii=False).replace("</", "<\\/")
+    lead_body = ('<div id="leadbox" style="font-size:13px;color:#8494a4;padding:10px 0">正在加载…</div>'
+                 '<script>window.PD_LEAD=' + _lead_json + ';</script>' + LEAD_JS)
+    (ROOT/"lead.html").write_text(shell("线索详情","PLEX",lead_body),encoding="utf-8")
+    log(f"lead.html 已生成（{len(LEADS)} 家详情）")
+_write_lead_page()
 
 # ---- 即查结果独立页（临时查的公司不进主看板）----
 def _inq_pending():
