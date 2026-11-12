@@ -395,9 +395,7 @@ def discover_tesla_chain():
     for c in cands[:20]:
         nm = _strip_geo((c.get("name") or "").strip())
         if len(nm) < 3 or nm in seen: continue
-        if any(b in nm for b in TIER1_SKIP):
-            log(f"    {nm}：属 Tier1/巨头，跳过")
-            continue
+        is_t1 = any(b in nm for b in TIER1_SKIP)     # T1 不再剔除，降为中优先级保留
         seen.add(nm)
         core = re.sub(r"(股份有限公司|有限责任公司|有限公司|集团|控股|股份|公司)$", "", nm)
         pr = _tesla_probe(nm, core)          # 只做补证，不再拿它当门槛
@@ -419,21 +417,25 @@ def discover_tesla_chain():
             rules.append(f"🤝 客户：{rel[1][:70]}（{rel[0]['m']} {rel[0]['d']}，证据强度{rel[2]}）")
         else:
             rules.append(f"🤝 客户：模型称 {c.get('customer') or '配套特斯拉/Tier1'}，报道未见 → 未核验")
-        rules.append(f"🎯 画像：{'未上市' if not code else '已上市'}{c.get('tier') or 'Tier2/3'}，{c.get('biz') or '中小制造'}；"
+        rules.append(f"🎯 画像：{'未上市' if not code else '已上市'}"
+                     f"{('，T1/巨头（中优先级：组织齐全，宜从集团标准统一/海外新厂切入）' if is_t1 else '，' + str(c.get('tier') or 'Tier2/3'))}，"
+                     f"{c.get('biz') or '中小制造'}；"
                      + ("海外新厂正是 MES 设备进场前后选型窗口" if osi else "先确认海外基地是否在建，再定切入时点"))
         pick = osi[0] if osi else (rel[0] if rel else pr.get("exist"))
         out.append(dict(
             sec=code, ukey="TSL" + hashlib.md5(nm.encode("utf-8")).hexdigest()[:6].upper(),
             name=nm, src="tesla", city=(c.get("city") or ""),
-            title=f"特斯拉供应链 {c.get('tier') or 'Tier2/3'}：{c.get('biz') or nm}",
+            title=f"特斯拉供应链 {('T1·中优先' if is_t1 else (c.get('tier') or 'Tier2/3'))}：{c.get('biz') or nm}",
             date=time.time() * 1000,
             url=(pick or {}).get("u") or ("https://so.eastmoney.com/news/s?keyword=" + urllib.parse.quote(nm)),
-            phase="window", overseas=bool(osi) or bool(claimed_os),
+            phase=("fresh" if is_t1 else "window"), overseas=bool(osi) or bool(claimed_os),
             conf=(c.get("confidence") or "中"),
             rule=rules,
         ))
         log(f"    {nm}：{label}")
-    out.sort(key=lambda x: (0 if x.get("overseas") else 1, 0 if x.get("conf") == "高" else 1))
+    out.sort(key=lambda x: (1 if (x.get("phase") == "fresh") else 0,      # T1 排后面
+                            0 if x.get("overseas") else 1,
+                            0 if x.get("conf") == "高" else 1))
     log(f"特斯拉供应链：入雷达 {len(out)} 家（其中有海外产能线索 {sum(1 for x in out if x.get('overseas'))} 家）")
     return out
 
@@ -2405,11 +2407,15 @@ _tsl = discover_tesla_chain()
 if _tsl:
     _normname = lambda n: re.sub(r"(股份有限公司|有限责任公司|有限公司|集团|控股|股份|公司)$", "", (n or "")).strip()
     _exist = set(_normname(f.get("name")) for f in new_findings) | set(_normname(c.get("name")) for c in CASES)
-    _tsl = [x for x in _tsl if _normname(x["name"]) not in _exist][:4]
+    _tsl = [x for x in _tsl if _normname(x["name"]) not in _exist]
+    _tsl = ([x for x in _tsl if x.get("phase") != "fresh"][:3]
+            + [x for x in _tsl if x.get("phase") == "fresh"][:1])   # T1 保 1 席，中优先级
     new_findings.extend(_tsl)
     new_findings.sort(key=lambda f: _ord.get(f.get("phase"), 9))
-    if len(new_findings) > 15:      # 供应链线索保留最多 3 条，其余名额留给定公告
-        _keep_t = [f for f in new_findings if f.get("src") == "tesla"][:3]
+    if len(new_findings) > 15:      # 供应链线索默认 3 条（Tier2/3 优先），T1 另留 1 条作中优先级
+        _t2 = [f for f in new_findings if f.get("src") == "tesla" and f.get("phase") != "fresh"][:3]
+        _t1 = [f for f in new_findings if f.get("src") == "tesla" and f.get("phase") == "fresh"][:1]
+        _keep_t = _t2 + _t1
         _keep_a = [f for f in new_findings if f.get("src") != "tesla"][:15 - len(_keep_t)]
         new_findings = _keep_t + _keep_a
     log(f"特斯拉供应链线索并入 {len(_tsl)} 条，本轮共 {len(new_findings)} 条")
