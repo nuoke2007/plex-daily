@@ -2099,6 +2099,34 @@ def card_for(f):
       f'<div style="margin-top:8px"><button class="btn fu-btn" data-fu="{esc(nm)}">📌 标记今天跟进</button></div>'
       '</div></div>')
 # 先跑 AI 深查，再渲染卡片——否则 PLEX 卡片永远拿不到当天的档案
+def _ci_push_data():
+    """CI 里把 data/（档案、队列、即查结果）回写仓库。workflow 的 commit 步骤不 add data/，
+    若不自己推，每天的深查结果下一次运行就丢，档案永远停在旧版本。"""
+    if os.environ.get("GITHUB_ACTIONS") != "true": return
+    try:
+        import subprocess
+        if not Path("data").exists(): return
+        subprocess.run(["git","add","data"], check=False, capture_output=True)
+        r = subprocess.run(["git","commit","-m","data: 档案/队列自动回写"], capture_output=True, text=True)
+        if r.returncode != 0:
+            log("data 无变化，跳过回写")
+            return
+        pr = subprocess.run(["git","push"], capture_output=True, text=True)
+        log("data 回写仓库：" + ("成功" if pr.returncode == 0 else ("失败 " + pr.stderr[:80])))
+    except Exception as ex:
+        log("data 回写失败：" + str(ex)[:60])
+
+def _probe_sources():
+    """CI 里探测一次免费检索源可达性，日志留证；不可达本轮直接不试，省时间"""
+    if os.environ.get("GITHUB_ACTIONS") != "true": return
+    for nm, fn in (("bing", _bing), ("ddg", _ddg)):
+        try:
+            r = fn("测试", 1)
+            log(f"  CI 免费检索源 {nm}：{'可用 ' + str(len(r)) + ' 条' if r else '不可用'}")
+        except Exception as ex:
+            log(f"  CI 免费检索源 {nm}：异常 {str(ex)[:40]}")
+
+_probe_sources()
 queue_pass()
 ai_research_pass()
 cards_win="".join(card_for(f) for f in new_findings if f.get("phase")=="window")
@@ -2554,6 +2582,7 @@ notify()
 # ============================================================
 log_path = LOGS / f"run_{datetime.date.today().strftime('%Y%m%d')}.log"
 log_path.write_text("\n".join(log_lines), encoding="utf-8")
+_ci_push_data()
 print(f"\n完成。首页：{ROOT/'dashboard.html'}  产品页：ftpc/thingworx/windchill/datamosaix.html")
 
 # CI 里自动提交所有页面（workflow 的 commit 步骤只 add dashboard.html，这里补全多页）
