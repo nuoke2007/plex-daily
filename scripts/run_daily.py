@@ -1926,8 +1926,8 @@ def _infer_pk(ds):
 def _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION):
     """滚动刷新：高优先档案按"最久没更新"轮流重查；外部信息天天在变，档案不能烂在缓存里"""
     done = 0
-    # 滚动刷新保底：不管 AI_MAX 设多少，每轮至少刷 3 家高优先，别让额度上限把刷新掐死
-    _RF = max(3, min(REFRESH_MAX, AI_MAX))
+    # 滚动刷新保底：不管 AI_MAX 设多少，每轮至少刷 5 家高优先（一天两轮≈10 家，29 家高优先约 3 天一轮）
+    _RF = max(5, min(REFRESH_MAX, AI_MAX))
     try:
         _PBK = {p0["key"]: p0 for p0 in PRODUCTS}
         _PBK.setdefault("PLEX", PLEX_PSEUDO)
@@ -1939,7 +1939,7 @@ def _refresh_pass(AI_MAX, REFRESH_MAX, PRODUCT_DOSSIERS, _AI_CACHE, HQ_REGION):
                 gap = (datetime.date.today() - datetime.date.fromisoformat(r0)).days
             except Exception:
                 gap = 99
-            if gap < (0 if os.environ.get("BACKFILL") else 2): continue
+            if gap < (0 if os.environ.get("BACKFILL") else 1): continue
             _stale.append((gap, c0, ds0))
         _stale.sort(key=lambda x: -x[0])
         _n = 0
