@@ -416,6 +416,7 @@ def _chain_list_leads():
         os_txt = (r.get("overseas") or "").strip()
         os_st = (r.get("os_status") or "").strip()
         has_os = (r.get("has_os") or "").startswith("是")
+        _facts = _load_chain_facts().get(nm) or {}   # 先取事实，后面规则要用
         # T1 保留但降为中优先级；名单里 T1/T2 混标的，只要有 T2 就按 T2 看待
         is_t1 = ("T2" not in tier_raw) and ("T1" in tier_raw or "T0" in tier_raw)
         is_t2 = "T2" in tier_raw
@@ -445,7 +446,6 @@ def _chain_list_leads():
                       else "⚠ 无海外产能，除非新立项否则不是我们画像")))
         rules.append(f"🎯 画像：{'已上市' if code else '未上市公司'}，{tier_lab}，{_p1[:24] or '汽车零部件'}"
                      + ("；海外新厂在建/投产是 MES 选型窗口" if _near else ""))
-        _facts = _load_chain_facts().get(nm) or {}
         if _facts:
             _fl = [f"🏭 海外基地：{_facts.get('base','')}"]
             for _k, _lab in (("invest","💰 投资/规模"),("start","📅 开工·公告"),("stage","🚧 当前阶段"),
@@ -454,6 +454,7 @@ def _chain_list_leads():
                     _fl.append(f"{_lab}：{_facts.get(_k)}")
             if _facts.get("src_name"):
                 _fl.append("🔗 事实来源：" + _facts.get("src_name") + (" " + _facts.get("src","") if _facts.get("src") else ""))
+            rules = [x for x in rules if not x.startswith("🏭 海外：") and not x.startswith("⏱ 窗口：名单")]
             rules.extend(_fl)
             if str(_facts.get("plan","")).startswith(("2025","2026","2027")):
                 _near = True
