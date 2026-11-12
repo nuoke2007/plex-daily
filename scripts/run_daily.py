@@ -2147,21 +2147,35 @@ def card_for(f):
             f'<span class="lr-go">详情 →</span></a>')
 # 先跑 AI 深查，再渲染卡片——否则 PLEX 卡片永远拿不到当天的档案
 def _ci_push_data():
-    """CI 里把 data/（档案、队列、即查结果）回写仓库。workflow 的 commit 步骤不 add data/，
-    若不自己推，每天的深查结果下一次运行就丢，档案永远停在旧版本。"""
+    """CI 里把 data/（档案/队列/即查）和生成好的页面一起回写仓库。
+    为什么页面也在这里推：workflow 的 commit 步骤与脚本的回写会抢同一个 main，
+    两边同时 push 必有一边被 `fetch first` 拒掉（曾整轮标红）。统一在这里推一次，
+    workflow 那步就变成 nothing to commit 的空操作。
+    push 失败（远端被别人先推了）时先 pull --rebase 再重推，最多 3 次。"""
     if os.environ.get("GITHUB_ACTIONS") != "true": return
     try:
         import subprocess
         if not Path("data").exists(): return
-        subprocess.run(["git","add","data"], check=False, capture_output=True)
-        r = subprocess.run(["git","commit","-m","data: 档案/队列自动回写"], capture_output=True, text=True)
+        pages = ["dashboard.html","lead.html","ftpc.html","thingworx.html",
+                 "windchill.html","datamosaix.html","inquiry.html","leads.xlsx","logs"]
+        subprocess.run(["git","add","data"] + [x for x in pages if Path(x).exists()],
+                       check=False, capture_output=True)
+        r = subprocess.run(["git","commit","-m","daily update: pages + data"],
+                           capture_output=True, text=True)
         if r.returncode != 0:
-            log("data 无变化，跳过回写")
+            log("数据与页面无变化，跳过回写")
             return
-        pr = subprocess.run(["git","push"], capture_output=True, text=True)
-        log("data 回写仓库：" + ("成功" if pr.returncode == 0 else ("失败 " + pr.stderr[:80])))
+        for attempt in range(3):
+            pr = subprocess.run(["git","push"], capture_output=True, text=True)
+            if pr.returncode == 0:
+                log("回写仓库：成功" + ("" if attempt == 0 else f"（第{attempt+1}次）"))
+                return
+            subprocess.run(["git","pull","--rebase","--autostash"],
+                           check=False, capture_output=True)
+            log(f"push 被拒（远端有新提交），已 rebase，重试第{attempt+2}次")
+        log("回写仓库：3 次重试仍失败")
     except Exception as ex:
-        log("data 回写失败：" + str(ex)[:60])
+        log("回写失败：" + str(ex)[:60])
 
 def _probe_sources():
     """CI 里探测一次免费检索源可达性，日志留证；不可达本轮直接不试，省时间"""
