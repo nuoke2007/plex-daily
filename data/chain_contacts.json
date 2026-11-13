@@ -1,0 +1,881 @@
+{
+ "拓普集团": {
+  "addr": "浙江省宁波市北仑区大碶街道育王山路268号,香港湾仔皇后大道东248号大新金融中心40楼",
+  "secretary": "王明臻",
+  "sec_present": "龚玉超",
+  "tel": "0574-86800850",
+  "email": "ir@tuopu.com",
+  "web": "www.tuopu.com",
+  "legal": "邬建树"
+ },
+ "三花智控": {
+  "addr": "浙江省绍兴市新昌县澄潭街道沃西大道219号三花工业园区办公大楼",
+  "secretary": "李智密",
+  "sec_present": "吴美静,张宇青",
+  "tel": "0575-86255360,0571-28020008",
+  "email": "shc@zjshc.com",
+  "web": "www.zjshc.com",
+  "legal": "张亚波"
+ },
+ "五洲新春": {
+  "addr": "浙江省绍兴市新昌县七星街道泰坦大道199号",
+  "secretary": "彭耀辉",
+  "sec_present": "徐凯凯",
+  "tel": "0575-86339263",
+  "email": "xcczqb@xcc-zxz.com",
+  "web": "www.xcc-zxz.com",
+  "legal": "张峰"
+ },
+ "信质集团": {
+  "addr": "浙江省台州市椒江区前所信质路28号",
+  "secretary": "陈世海",
+  "sec_present": "蔡婷婷",
+  "tel": "0576-88928188,0576-88931163,0576-88931165",
+  "email": "xinzhi@chinaxinzhi.com",
+  "web": "www.chinaxinzhi.com",
+  "legal": "尹巍"
+ },
+ "均胜电子": {
+  "addr": "浙江省宁波市高新区清逸路99号,香港铜锣湾勿地臣街1号时代广场2座31楼",
+  "secretary": "俞朝辉",
+  "tel": "0574-87907001",
+  "email": "600699@joyson.com",
+  "web": "www.joyson.com",
+  "legal": "王剑峰"
+ },
+ "旭升集团": {
+  "addr": "宁波市北仑区沿山河南路68号",
+  "secretary": "罗亚华",
+  "sec_present": "王秀林",
+  "tel": "0574-55223689",
+  "email": "xsgf@nbxus.com",
+  "web": "www.nbxus.com",
+  "legal": "张靖"
+ },
+ "联创电子": {
+  "addr": "江西省南昌市南昌高新技术产业开发区京东大道1699号",
+  "secretary": "卢国清",
+  "sec_present": "赖文清",
+  "tel": "0791-88161608",
+  "email": "lce@lcetron.com",
+  "web": "www.lcetron.com",
+  "legal": "曾吉勇"
+ },
+ "蓝思科技": {
+  "addr": "湖南省浏阳生物医药园",
+  "secretary": "江南",
+  "sec_present": "周天舒",
+  "tel": "0731-83285699",
+  "email": "lsgf@hnlens.com",
+  "web": "www.hnlens.com",
+  "legal": "周群飞"
+ },
+ "世运电路": {
+  "addr": "鹤山市共和镇世运路8号",
+  "secretary": "尹嘉亮",
+  "sec_present": "刘晟",
+  "tel": "0750-8911888,0750-8911371,0750-8911768",
+  "email": "olympic@olympicpcb.com",
+  "web": "www.olympicpcb.cn",
+  "legal": "林育成"
+ },
+ "东睦股份": {
+  "addr": "浙江省宁波市鄞州工业园区景江路1508号",
+  "secretary": "肖亚军",
+  "sec_present": "徐璐瑶",
+  "tel": "0574-87841061",
+  "email": "ir@pm-china.com",
+  "web": "www.pm-china.com",
+  "legal": "朱志荣"
+ },
+ "北特科技": {
+  "addr": "上海市嘉定区华亭镇华业路666号",
+  "secretary": "刘功友",
+  "sec_present": "邹丽娟",
+  "tel": "021-62190266-666",
+  "email": "touzizhe@beite.net.cn",
+  "web": "www.beite.net.cn",
+  "legal": "靳坤"
+ },
+ "卧龙电驱": {
+  "addr": "浙江省绍兴市上虞区曹娥街道复兴西路555号,香港湾仔皇后大道东183号合和中心46楼",
+  "secretary": "戴芩",
+  "sec_present": "李赛凤",
+  "tel": "0575-82176628,0575-82176629",
+  "email": "wolong600580@wolong.com",
+  "web": "www.wolong.com.cn",
+  "legal": "庞欣元"
+ },
+ "双环传动": {
+  "addr": "浙江省杭州市余杭区五常街道荆长大道658-1号2幢和合大厦",
+  "secretary": "陈海霞",
+  "sec_present": "冉冲",
+  "tel": "0571-87103999-6006,0571-81671018",
+  "email": "shdmb@gearsnet.com",
+  "web": "www.gearsnet.com",
+  "legal": "吴长鸿"
+ },
+ "安培龙": {
+  "addr": "深圳市坪山区坑梓街道金沙社区聚园路1号安培龙智能传感器产业园1A栋201、1A栋、1B栋、2栋",
+  "secretary": "靳盼盼、邬若军(代)",
+  "sec_present": "彭碧泳",
+  "tel": "0755-28289825",
+  "email": "ir@ampron.com",
+  "web": "www.ampron.com",
+  "legal": "邬若军"
+ },
+ "斯菱股份": {
+  "addr": "浙江省新昌县澄潭街道江东路3号",
+  "secretary": "安娜",
+  "sec_present": "蔡航丽",
+  "tel": "0575-86031996",
+  "email": "stock@bbsbearing.com",
+  "web": "www.slingbearings.com",
+  "legal": "姜岭"
+ },
+ "汇川技术": {
+  "addr": "深圳市龙华区观湖街道鹭湖社区澜清二路6号汇川技术总部大厦1单元101",
+  "secretary": "宋君恩",
+  "sec_present": "陈晨",
+  "tel": "0755-83185787",
+  "email": "ir@inovance.com",
+  "web": "www.inovance.com",
+  "legal": "朱兴明"
+ },
+ "江苏雷利(鼎智科技)": {
+  "addr": "江苏省常州市武进区遥观镇钱家塘路19号",
+  "secretary": "殷成龙",
+  "sec_present": "潘俊闵",
+  "tel": "0519-88369800",
+  "email": "jsleili@leiligroup.com",
+  "web": "www.czleili.com",
+  "legal": "苏达"
+ },
+ "瑞可达": {
+  "addr": "苏州市吴中区五浦上路88号",
+  "secretary": "王博",
+  "sec_present": "熊小丽",
+  "tel": "0512-68888799",
+  "email": "stock@recodeal.com",
+  "web": "www.recodeal.com",
+  "legal": "吴世均"
+ },
+ "科达利": {
+  "addr": "深圳市南山区科技南路16号深圳湾科技生态园11栋A座27层",
+  "secretary": "罗丽娇",
+  "sec_present": "赖红琼",
+  "tel": "0755-26400270",
+  "email": "ir@kedali.com.cn",
+  "web": "www.kedali.com.cn",
+  "legal": "励建立"
+ },
+ "贝斯特": {
+  "addr": "无锡市滨湖区胡埭镇陆藕东路186号",
+  "secretary": "陈斌",
+  "sec_present": "邓丽",
+  "tel": "0510-82475767",
+  "email": "zhengquan@wuxibest.com",
+  "web": "www.wuxibest.com",
+  "legal": "曹余华"
+ },
+ "宁德时代": {
+  "addr": "中国福建省宁德市蕉城区漳湾镇新港路2号,香港中环毕打街20号会德丰大厦5楼",
+  "secretary": "蒋理",
+  "sec_present": "陈津",
+  "tel": "0593-8901666",
+  "email": "CATL-IR@catl.com",
+  "web": "www.catl.com",
+  "legal": "曾毓群"
+ },
+ "万马股份": {
+  "addr": "浙江省杭州市临安区青山湖街道科技大道2159号万马创新园",
+  "secretary": "逄轩",
+  "sec_present": "邵淑青",
+  "tel": "0571-63755256,0571-63755192",
+  "email": "investor@wanmagroup.com",
+  "web": "www.wanmaco.com",
+  "legal": "黄胜强"
+ },
+ "上声电子": {
+  "addr": "苏州市相城区元和街道科技园中创路333号",
+  "secretary": "朱文元",
+  "sec_present": "郭鹏",
+  "tel": "0512-65795888-8366",
+  "email": "Sonavox_zq@chinasonavox.com",
+  "web": "sonavox-group.com",
+  "legal": "周建明"
+ },
+ "东山精密": {
+  "addr": "苏州市吴中区太湖东路99号运河小镇总部产业园12号楼",
+  "secretary": "冒小燕",
+  "sec_present": "周浩",
+  "tel": "0512-80190019",
+  "email": "dsbj@dsbj.com",
+  "web": "www.dsbj.com",
+  "legal": "袁永刚"
+ },
+ "中恒电气": {
+  "addr": "浙江省杭州市高新区之江科技工业园东信大道69号",
+  "secretary": "方能杰",
+  "sec_present": "张耀月",
+  "tel": "0571-86699838",
+  "email": "zhengquan@hzzh.com",
+  "web": "www.hzzh.com",
+  "legal": "包晓茹"
+ },
+ "亿纬锂能": {
+  "addr": "广东省惠州市仲恺高新区惠风七路38号",
+  "secretary": "江敏",
+  "sec_present": "杨慧艳",
+  "tel": "0752-5751928,0752-2605878",
+  "email": "ir@evebattery.com",
+  "web": "www.evebattery.com",
+  "legal": "刘金成"
+ },
+ "伯特利": {
+  "addr": "中国(安徽)自由贸易试验区芜湖片区泰山路19号",
+  "secretary": "陈忠喜",
+  "sec_present": "张爱萍",
+  "tel": "0553-5619216,0553-5669308",
+  "email": "investor@btl-auto.com",
+  "web": "www.btl-auto.com",
+  "legal": "YUANYONGBIN(袁永彬)"
+ },
+ "保隆科技": {
+  "addr": "上海市松江区沈砖公路5500号",
+  "secretary": "文剑峰",
+  "sec_present": "张红梅",
+  "tel": "021-31273333",
+  "email": "sbac@baolong.biz",
+  "web": "www.baolong.biz",
+  "legal": "张祖秋"
+ },
+ "凌云股份": {
+  "addr": "河北省涿州市松林店镇",
+  "secretary": "李超",
+  "sec_present": "王海霞",
+  "tel": "0312-3951002",
+  "email": "info@lygf.com",
+  "web": "www.lingyun.com.cn",
+  "legal": "罗开全"
+ },
+ "华域汽车": {
+  "addr": "上海市浦东新区科苑路501号",
+  "secretary": "茅其炜",
+  "tel": "021-23102080",
+  "email": "huayuqiche@hasco-group.com",
+  "web": "www.hasco-group.com",
+  "legal": "王晓秋"
+ },
+ "博俊科技": {
+  "addr": "昆山开发区龙江路88号",
+  "secretary": "周后高",
+  "sec_present": "陈伦",
+  "tel": "0512-36689825",
+  "email": "ir@sh-bojun.com",
+  "web": "www.sh-bojun.com",
+  "legal": "伍亚林"
+ },
+ "四维图新": {
+  "addr": "北京市海淀区永旭南路1号四维图新大厦",
+  "secretary": "孟庆昕",
+  "tel": "010-82306399",
+  "email": "info@seewayai.com",
+  "web": "www.seewayai.com",
+  "legal": "程鹏"
+ },
+ "多利科技": {
+  "addr": "江苏省苏州市昆山市巴城镇金凤凰路799号",
+  "secretary": "何世荣",
+  "tel": "0512-82696685",
+  "email": "shirong.he@duoli-tech.com",
+  "web": "www.shdlgroup.com",
+  "legal": "蒋建强"
+ },
+ "奥特佳": {
+  "addr": "江苏省南京市江宁区秣周东路8号",
+  "secretary": "窦海涛",
+  "sec_present": "彭铁汉",
+  "tel": "025-52600072",
+  "email": "securities@aotecar.com",
+  "web": "www.aotecar.com",
+  "legal": "王振坤"
+ },
+ "威唐工业": {
+  "addr": "无锡市新吴区鸿山街道建鸿路32号",
+  "secretary": "张一峰",
+  "sec_present": "伍言知",
+  "tel": "0510-68561147",
+  "email": "boardsecretary@vt-ind.com",
+  "web": "www.vt-ind.com",
+  "legal": "张锡亮"
+ },
+ "宁波华翔": {
+  "addr": "上海市浦东新区白杨路1160号",
+  "secretary": "张远达",
+  "sec_present": "陈梦梦",
+  "tel": "021-68948127,021-68949998",
+  "email": "Stock-dp@nbhx.com",
+  "web": "www.nbhx.com.cn",
+  "legal": "周晓峰"
+ },
+ "嵘泰股份": {
+  "addr": "江苏省扬州市江都区仙城工业园乐和路8号",
+  "secretary": "张伟中",
+  "sec_present": "陈伟",
+  "tel": "0514-85335333-8003",
+  "email": "weizhong.zhang@rtco.com.cn",
+  "web": "www.rtco.com.cn",
+  "legal": "夏诚亮"
+ },
+ "常熟汽饰": {
+  "addr": "江苏省常熟市海虞北路288号",
+  "secretary": "罗喜芳",
+  "sec_present": "曹胜",
+  "tel": "0512-52330018",
+  "email": "csqs@caip.com.cn",
+  "web": "www.caip.com.cn",
+  "legal": "罗小春"
+ },
+ "广东鸿图": {
+  "addr": "广东省肇庆市高要区金渡世纪大道168号",
+  "secretary": "刘刚年",
+  "sec_present": "谭妙玲",
+  "tel": "0758-8512658",
+  "email": "htir@ght-china.com,tml@ght-china.com",
+  "web": "www.ght-china.com",
+  "legal": "刘卫东"
+ },
+ "德尔股份": {
+  "addr": "辽宁省阜新市细河区开发大街59号",
+  "secretary": "张磊",
+  "sec_present": "杨爽",
+  "tel": "0418-3399169",
+  "email": "zqb@dare-auto.com",
+  "web": "www.dare-auto.com",
+  "legal": "李毅"
+ },
+ "德赛西威": {
+  "addr": "广东省惠州市惠南高新科技产业园惠泰北路6号",
+  "secretary": "章俊",
+  "sec_present": "林洵沛",
+  "tel": "0752-2638669",
+  "email": "Securities@desaysv.com",
+  "web": "www.desaysv.com",
+  "legal": "高大鹏"
+ },
+ "文灿股份": {
+  "addr": "佛山市南海区里水镇和顺小学路10号",
+  "secretary": "刘世博",
+  "sec_present": "黄凌辉",
+  "tel": "0757-85121488",
+  "email": "securities@wencan.com",
+  "web": "www.wencan.com",
+  "legal": "唐杰雄"
+ },
+ "新泉股份": {
+  "addr": "江苏省常州市新北区黄河西路555号",
+  "secretary": "高海龙",
+  "sec_present": "陈学谦",
+  "tel": "0519-88198555,0519-85122303,0519-85120170",
+  "email": "xinquantzb@xinquan.cn",
+  "web": "www.xinquan.cn",
+  "legal": "唐志华"
+ },
+ "春兴精工": {
+  "addr": "江苏省苏州市工业园区唯亭镇金陵东路120号",
+  "secretary": "徐雅娟",
+  "tel": "0512-62625328",
+  "email": "cxjg@chunxing-group.com",
+  "web": "www.chunxing-group.com",
+  "legal": "袁静"
+ },
+ "模塑科技": {
+  "addr": "江苏省江阴市周庄镇长青路8号",
+  "secretary": "单琛雁",
+  "sec_present": "王晖",
+  "tel": "0510-86222318,0510-86242802",
+  "email": "scy@000700.com",
+  "web": "www.000700.com",
+  "legal": "曹克波"
+ },
+ "欣旺达": {
+  "addr": "深圳市宝安区石岩街道石龙社区龙强路2号欣旺达电子股份有限公司智慧园区,香港铜锣湾希慎道33号利园一期19楼1919室",
+  "secretary": "曾玓",
+  "sec_present": "刘荣波",
+  "tel": "0755-27352064",
+  "email": "sunwoda@sunwoda.com",
+  "web": "www.sunwoda.com",
+  "legal": "王威"
+ },
+ "沪光股份": {
+  "addr": "昆山市张浦镇沪光路388号",
+  "secretary": "成磊",
+  "sec_present": "夏亚南",
+  "tel": "0512-57222222,0512-50325196",
+  "email": "ir@kshg.com",
+  "web": "www.kshg.com",
+  "legal": "成三荣"
+ },
+ "沪电股份": {
+  "addr": "江苏省昆山市玉山镇东龙路1号",
+  "secretary": "李明贵",
+  "sec_present": "钱元君",
+  "tel": "0512-57356148,0512-57356136",
+  "email": "Yuanjun_Qian@wustec.com",
+  "web": "www.wustec.com",
+  "legal": "陈梅芳"
+ },
+ "津荣天宇": {
+  "addr": "天津市华苑产业区(环外)海泰创新四路3号",
+  "secretary": "张小丽",
+  "sec_present": "刘欣",
+  "tel": "022-83750361",
+  "email": "jrtyzq@tjjinrong.com",
+  "web": "www.tjjinrong.com",
+  "legal": "孙兴文"
+ },
+ "爱柯迪": {
+  "addr": "浙江省宁波市江北区金山路588号",
+  "secretary": "董丽萍",
+  "tel": "0574-87562112",
+  "email": "ikd@ikd-china.com",
+  "web": "www.ikd-china.com",
+  "legal": "张建成"
+ },
+ "福耀玻璃": {
+  "addr": "福建省福清市福耀工业村II区",
+  "secretary": "李小溪",
+  "sec_present": "张伟",
+  "tel": "0591-85383777,0591-85363777",
+  "email": "600660@fuyaogroup.com",
+  "web": "www.fuyaogroup.com",
+  "legal": "曹晖"
+ },
+ "福赛科技": {
+  "addr": "芜湖市鸠江经济开发区灵鸢路2号",
+  "secretary": "潘玉惠",
+  "sec_present": "房尚任",
+  "tel": "0553-5963555",
+  "email": "fs@foresight-int.com",
+  "web": "www.foresight-int.com",
+  "legal": "陆文波"
+ },
+ "继峰股份": {
+  "addr": "宁波市北仑区育王山路388号",
+  "secretary": "刘杰",
+  "sec_present": "潘阿斌",
+  "tel": "0574-86163701",
+  "email": "ir@nb-jf.com",
+  "web": "www.nb-jf.com",
+  "legal": "王义平"
+ },
+ "美利信": {
+  "addr": "重庆市巴南区天安路1号附1号、附2号",
+  "secretary": "徐圆圆",
+  "sec_present": "郭海芳",
+  "tel": "023-66283857",
+  "email": "cqmlx@djmillison.com",
+  "web": "www.millison.com.cn",
+  "legal": "余亚军"
+ },
+ "银轮股份": {
+  "addr": "浙江省天台县福溪街道始丰东路8号",
+  "secretary": "陈敏",
+  "sec_present": "徐丽芬",
+  "tel": "0576-83938250",
+  "email": "002126@yinlun.cn",
+  "web": "www.yinlun.cn",
+  "legal": "徐小敏"
+ },
+ "中国宝安(贝特瑞)": {
+  "addr": "广东省深圳市笋岗东路1002号宝安广场A座28、29层",
+  "secretary": "郭山清",
+  "sec_present": "李哲,张晓明",
+  "tel": "0755-25170382,0755-25161202,0755-25170336",
+  "email": "zgbajt@163.net",
+  "web": "www.chinabaoan.com",
+  "legal": "黄旭"
+ },
+ "天赐材料": {
+  "addr": "广东省广州市黄埔区云埔工业区东诚片康达路8号,香港湾仔皇后大道东248号大新金融中心40楼",
+  "secretary": "韩恒",
+  "sec_present": "卢小翠",
+  "tel": "020-66608666",
+  "email": "ir@tinci.com",
+  "web": "www.tinci.com",
+  "legal": "徐金富"
+ },
+ "天齐锂业": {
+  "addr": "四川省成都市天府新区红梁西一街166号",
+  "secretary": "张文宇",
+  "sec_present": "付旭梅",
+  "tel": "028-85183501",
+  "email": "ir@tianqilithium.com",
+  "web": "www.tianqilithium.com",
+  "legal": "蒋安琪"
+ },
+ "安洁科技": {
+  "addr": "苏州市太湖国家旅游度假区香山街道孙武路2011号",
+  "secretary": "马玉燕",
+  "sec_present": "蒋源源",
+  "tel": "0512-66316043",
+  "email": "zhengquan@anjiesz.com",
+  "web": "www.anjiecorp.com",
+  "legal": "吕莉"
+ },
+ "容百科技": {
+  "addr": "浙江省余姚市谭家岭东路39号",
+  "secretary": "黄英俊,白厚善(代)",
+  "tel": "0574-62730998",
+  "email": "ir@ronbaymat.com",
+  "web": "www.ronbaymat.com",
+  "legal": "白厚善"
+ },
+ "恩捷股份": {
+  "addr": "云南省玉溪市高新区抚仙路125号",
+  "secretary": "白云飞",
+  "sec_present": "汤怡桐",
+  "tel": "021-58352680",
+  "email": "groupheadquarter@cxxcl.cn",
+  "web": "www.semcorp.com",
+  "legal": "Paul Xiaoming Lee"
+ },
+ "斯达半导": {
+  "addr": "浙江嘉兴市南湖区科兴路988号",
+  "secretary": "张哲",
+  "sec_present": "李君月",
+  "tel": "0573-82586699",
+  "email": "investor-relation@powersemi.com",
+  "web": "www.powersemi.com",
+  "legal": "沈华"
+ },
+ "格林美": {
+  "addr": "深圳市宝安区新安街道海旺社区宝兴路88号星通大厦43楼",
+  "secretary": "潘骅",
+  "sec_present": "何阳,朱鹏云",
+  "tel": "0755-33386666",
+  "email": "info@gem.com.cn,ir@gem.com.cn",
+  "web": "www.gem.com.cn",
+  "legal": "许开华"
+ },
+ "璞泰来": {
+  "addr": "上海市浦东新区叠桥路456弄116-117号,香港湾仔皇后大道东183号合和中心46楼",
+  "secretary": "张小全",
+  "sec_present": "周文森",
+  "tel": "021-61902930",
+  "email": "IR@putailai.com",
+  "web": "www.putailai.com",
+  "legal": "梁丰"
+ },
+ "立中集团": {
+  "addr": "保定市清苑区发展西街359号",
+  "secretary": "李志国",
+  "sec_present": "冯禹淇",
+  "tel": "0312-5806816",
+  "email": "info@stnm.com.cn",
+  "web": "www.lizhonggroup.com",
+  "legal": "臧永兴"
+ },
+ "赣锋锂业": {
+  "addr": "江西省新余经济开发区龙腾路",
+  "secretary": "任宇尘",
+  "sec_present": "罗泽人",
+  "tel": "0790-6415606",
+  "email": "info@ganfenglithium.com",
+  "web": "www.ganfenglithium.com",
+  "legal": "李良彬"
+ },
+ "埃斯顿": {
+  "addr": "南京市江宁区吉印大道1888号(江宁开发区),香港中环康乐广场1号怡和大厦4楼",
+  "secretary": "肖婷婷",
+  "sec_present": "郑春华",
+  "tel": "0512-52785597,025-52785597",
+  "email": "zqb@estun.com",
+  "web": "www.estun.com",
+  "legal": "吴波"
+ },
+ "震裕科技": {
+  "addr": "浙江省宁波市宁海县滨海新城东港南路6号",
+  "secretary": "张子健",
+  "sec_present": "郭银芬",
+  "tel": "0574-65386699",
+  "email": "irm@zhenyumould.com",
+  "web": "www.zhenyumould.com",
+  "legal": "蒋震林"
+ },
+ "鸣志电器": {
+  "addr": "上海市闵行区闵北路88弄7号楼",
+  "secretary": "温治中",
+  "sec_present": "叶骏超",
+  "tel": "021-52634688",
+  "email": "dm@moons.com.cn",
+  "web": "www.moons.com.cn",
+  "legal": "常建鸣"
+ },
+ "上海机电": {
+  "addr": "上海市江场路1450号T5幢14层",
+  "secretary": "陈名",
+  "sec_present": "邢晖华",
+  "tel": "021-68547168",
+  "email": "sec@chinasec.cn",
+  "web": "www.chinasec.cn",
+  "legal": "庄华"
+ },
+ "中大力德": {
+  "addr": "浙江省宁波市慈溪市新兴产业集群区宗汉街道新兴一路185号",
+  "secretary": "伍旭君",
+  "sec_present": "周央君",
+  "tel": "0574-63537088",
+  "email": "china@zd-motor.com",
+  "web": "www.zd-motor.com",
+  "legal": "岑国建"
+ },
+ "中研股份": {
+  "addr": "吉林省长春市绿园经济技术开发区中研路1177号",
+  "secretary": "刘尧通",
+  "tel": "0431-89625599",
+  "email": "jlzypeek@126.com",
+  "web": "www.zypeek.cn",
+  "legal": "谢怀杰"
+ },
+ "兆威机电": {
+  "addr": "深圳市宝安区燕罗街道燕川社区燕湖路62号办公楼101,香港铜锣湾希慎道33号利园一期19楼1910室",
+  "secretary": "牛东峰",
+  "tel": "0755-27323929",
+  "email": "tz@szzhaowei.net",
+  "web": "www.szzhaowei.net",
+  "legal": "李海周"
+ },
+ "力星股份": {
+  "addr": "江苏省如皋市如城街道兴源大道68号",
+  "secretary": "陈芳",
+  "sec_present": "许波进",
+  "tel": "0513-87513793,0513-87190053",
+  "email": "board@jgbr.cn",
+  "web": "www.jgbr.com.cn",
+  "legal": "施祥贵"
+ },
+ "唯科科技": {
+  "addr": "厦门火炬高新区(翔安)产业区春光路1152号-1156号(双号),厦门火炬高新区(翔安)产业区春光路1166号,厦门火炬高新区(翔安)产业区春光路1170号",
+  "secretary": "王俊杰",
+  "sec_present": "魏贞",
+  "tel": "0592-7769618",
+  "email": "vkir@vokegroup.com",
+  "web": "www.vokegroup.com",
+  "legal": "庄辉阳"
+ },
+ "奥比中光": {
+  "addr": "香港铜锣湾希慎道33号利园一期19楼1917室,深圳市南山区西丽街道松坪山社区高新北一道88号奥比科技大厦",
+  "secretary": "靳尚",
+  "sec_present": "郭凯琳",
+  "tel": "0755-26402692",
+  "email": "ir@orbbec.com",
+  "web": "www.orbbec.com.cn",
+  "legal": "黄源浩"
+ },
+ "恒勃股份": {
+  "addr": "浙江省台州市海昌路1500号",
+  "secretary": "阮江平",
+  "sec_present": "苏贵",
+  "tel": "0576-89225888",
+  "email": "stock@hengbo.cc",
+  "web": "www.chinahengbo.com",
+  "legal": "周书忠"
+ },
+ "恒立液压": {
+  "addr": "江苏省常州市武进高新区龙潜路99号",
+  "secretary": "张小芳",
+  "sec_present": "周佳立、高镪",
+  "tel": "0519-86163673",
+  "email": "hlzqb@hengli.net",
+  "web": "www.henglihydraulic.com",
+  "legal": "汪立平"
+ },
+ "昊志机电": {
+  "addr": "广州市黄埔区禾丰路68号",
+  "secretary": "肖泳林",
+  "sec_present": "徐汉强",
+  "tel": "020-62868399",
+  "email": "zqswb@haozhihs.com",
+  "web": "www.haozhihs.com",
+  "legal": "汤秀清"
+ },
+ "柯力传感": {
+  "addr": "宁波市江北区长兴路199号",
+  "secretary": "叶方之",
+  "sec_present": "尚婉蓉",
+  "tel": "0574-87562290",
+  "email": "dmb@kelichina.com",
+  "web": "www.kelichina.com",
+  "legal": "柯建东"
+ },
+ "步科股份": {
+  "addr": "中国(上海)自由贸易试验区申江路5709号、秋月路26号3幢北侧三楼",
+  "secretary": "刘耘",
+  "sec_present": "邵凯真",
+  "tel": "0755-86336477",
+  "email": "sec@kinco.cn",
+  "web": "www.kinco.cn",
+  "legal": "唐咚"
+ },
+ "浙江荣泰": {
+  "addr": "浙江省嘉兴市南湖区凤桥镇中兴路308号,香港湾仔皇后大道东183号合和中心46楼",
+  "secretary": "陈弢",
+  "sec_present": "吴婷圆",
+  "tel": "0573-83625213",
+  "email": "public@glorymica.com",
+  "web": "www.glorymica.com",
+  "legal": "曹梅盛"
+ },
+ "福莱新材": {
+  "addr": "浙江省嘉兴市嘉善县姚庄镇利群路269号",
+  "secretary": "聂胜",
+  "sec_present": "叶婷婷",
+  "tel": "0573-89100971",
+  "email": "zqsw@fulai.com.cn",
+  "web": "www.fulai.com.cn",
+  "legal": "夏厚君"
+ },
+ "肇民科技": {
+  "addr": "上海市金山区金山卫镇秦弯路633号",
+  "secretary": "肖俊",
+  "sec_present": "肖霞",
+  "tel": "021-57930288",
+  "email": "stock@hps-sh.com",
+  "web": "www.hps-sh.com",
+  "legal": "邵雄辉"
+ },
+ "芯动联科": {
+  "addr": "上海市浦东新区张东路1388号13栋,香港铜锣湾希慎道33号利园一期19楼1915室",
+  "secretary": "谷彩云",
+  "sec_present": "黄竹",
+  "tel": "021-61051366",
+  "email": "investor@w-ibeda.com",
+  "web": "www.w-ibeda.com",
+  "legal": "励寅"
+ },
+ "雷赛智能": {
+  "addr": "深圳市南山区西丽街道曙光社区智谷研发楼B栋15-20层",
+  "secretary": "张显",
+  "sec_present": "左诗语",
+  "tel": "0755-26400242",
+  "email": "ir@leisai.com",
+  "web": "www.leisai.com",
+  "legal": "李卫平"
+ },
+ "新朋股份": {
+  "addr": "上海市青浦区华新镇华隆路1698号",
+  "secretary": "李文君",
+  "sec_present": "顾俊",
+  "tel": "021-31166512",
+  "email": "xinpengstock@xinpeng.com",
+  "web": "www.xinpeng.com",
+  "legal": "宋琳"
+ },
+ "比亚迪(弗迪电池)": {
+  "addr": "深圳市坪山区比亚迪路3009号,香港新界大埔白石角科学园东路1号核心大厦1E号5楼505-510室",
+  "secretary": "李黔",
+  "sec_present": "程燕,吴越",
+  "tel": "0755-89888888,0755-89888888-62126",
+  "email": "db@byd.com",
+  "web": "www.bydglobal.com",
+  "legal": "王传福"
+ },
+ "长盈精密": {
+  "addr": "深圳市宝安区燕罗街道象山大道78号长盈精密总部",
+  "secretary": "胡宇龙",
+  "sec_present": "陶静",
+  "tel": "0755-27347334-8068",
+  "email": "IR@ewpt.com",
+  "web": "www.ewpt.com",
+  "legal": "陈奇星"
+ },
+ "金力永磁": {
+  "addr": "江西省赣州市经济技术开发区金岭西路81号",
+  "secretary": "赖训珑",
+  "sec_present": "刘昭淋",
+  "tel": "0797-8068059",
+  "email": "jlmag_info@jlmag.com.cn",
+  "web": "www.jlmag.com.cn",
+  "legal": "蔡报贵"
+ },
+ "凯众股份": {
+  "addr": "上海市浦东新区建业路813号",
+  "secretary": "贾洁",
+  "sec_present": "喻会",
+  "tel": "021-58388958",
+  "email": "kaizhongdm@carthane.com",
+  "web": "www.carthane.com",
+  "legal": "杨建刚"
+ },
+ "宏发股份": {
+  "addr": "福建省厦门市集美北部工业区东林路564号",
+  "secretary": "林旦旦",
+  "sec_present": "章晓琴",
+  "tel": "0592-6106688,0592-6196768,0592-6196766",
+  "email": "zqb@hongfa.com",
+  "web": "www.hongfa.cn",
+  "legal": "郭满金"
+ },
+ "岱美股份": {
+  "addr": "上海市浦东新区北蔡镇莲溪路1299号",
+  "secretary": "王清涛",
+  "sec_present": "李俊晓",
+  "tel": "021-68945881",
+  "email": "IR@daimay.com",
+  "web": "www.daimay.com",
+  "legal": "姜银台"
+ },
+ "绿的谐波": {
+  "addr": "苏州市吴中区木渎镇尧峰西路68号",
+  "secretary": "归来",
+  "sec_present": "归来",
+  "tel": "0512-66566009",
+  "email": "info@leaderdrive.com",
+  "web": "www.leaderdrive.cn",
+  "legal": "左昱昱"
+ },
+ "丰立智能": {
+  "addr": "浙江省台州市黄岩区院桥镇高洋路9号",
+  "secretary": "于玲娟",
+  "sec_present": "康春辉",
+  "tel": "0576-84875999",
+  "email": "fore08@cn-fore.com",
+  "web": "www.cn-fore.com",
+  "legal": "王友利"
+ },
+ "晋拓股份": {
+  "addr": "上海市松江区文工路518号",
+  "secretary": "谢林雷",
+  "sec_present": "郝越",
+  "tel": "021-57898686",
+  "email": "webmaster@jintuo.com.cn",
+  "web": "www.sh-jintuo.com",
+  "legal": "张东"
+ },
+ "汉威科技": {
+  "addr": "河南省郑州高新开发区雪松路169号",
+  "secretary": "肖锋",
+  "sec_present": "蒋宇辉",
+  "tel": "0371-67169159",
+  "email": "hwdz@hwsensor.com",
+  "web": "www.hanwei.cn",
+  "legal": "任红军"
+ },
+ "禾川科技": {
+  "addr": "浙江龙游经济开发区亲善路5号",
+  "secretary": "徐建明",
+  "sec_present": "徐建明",
+  "tel": "0570-7117288",
+  "email": "hcfaxp@hcfa.cn",
+  "web": "www.hcfa.cn",
+  "legal": "王项彬"
+ },
+ "骏创科技": {
+  "addr": "江苏省苏州市",
+  "tel": "",
+  "email": "",
+  "secretary": ""
+ }
+}
