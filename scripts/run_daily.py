@@ -1002,7 +1002,17 @@ def render_product(p):
     order={"高":0,"中":1,"低":2}
     leads.sort(key=lambda x: order[x[0]])
     total=len(leads)
-    leads=leads[:15]
+    # 首页列表：公告窗口线索最多 15 条，但特斯拉供应链名单池里“有核实事实”的不受这条截断
+    # （名单池本来就是这个雷达的主线，不能因为公告多就把它挤掉）
+    try:
+        _cf_nm=set(_load_chain_facts().keys())
+    except Exception:
+        _cf_nm=set()
+    _chain_keep=[x for x in leads if x[6].get("src")=="tesla" and x[5] in _cf_nm]
+    _other=[x for x in leads if x[6].get("src")!="tesla"][:15]
+    leads=_other+_chain_keep
+    if _chain_keep:
+        log(f"首页名单池：特斯拉供应链含核实事实 {len(_chain_keep)} 家全量上首页（其余公告线索 {len(_other)} 条）")
     # 各产品对董秘的搭线话术
     PRODUCT_ASK={
       "FTPC":"关注到贵司新基地投产/多厂扩张，希望15分钟对接制造/IT负责人交流多工厂MES/MOM标准统一",
