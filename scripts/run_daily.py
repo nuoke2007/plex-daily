@@ -1115,7 +1115,7 @@ def render_product(p):
               f'<span class="lr-code">{esc(code)}</span>'
               f'<span class="lr-base">🏭 {esc(ind)}</span>'
               f'<span class="lr-sum">{esc(_brief(judge, 90))}</span>'
-              f'<span class="lr-rg">🗺️ {esc(rg)}</span>'
+              f'<span class="lr-rg">🗺️ {esc(reg)}</span>'
               f'<span class="lr-go">详情 →</span></a>')
     # 区域筛选条
     chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(
