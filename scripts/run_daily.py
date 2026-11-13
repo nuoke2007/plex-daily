@@ -1441,10 +1441,15 @@ HQ_REGION={
  "603906":"长三角·江苏","300183":"华东·山东",
  # DataMosaix
  "688529":"长三角·上海","603002":"珠三角·广东","688306":"长三角·浙江","603011":"华东·安徽",
+ # 供应链名单：区域按注册地/总部逐家核准（来源：交易所公司概况/招股书）
+ "603667":"长三角·浙江","603920":"珠三角·广东","603009":"长三角·上海","301687":"长三角·江苏",
+ "002896":"长三角·浙江","603119":"长三角·浙江","688322":"珠三角·广东","688005":"长三角·浙江",
+ "605333":"长三角·江苏","301550":"长三角·浙江","603659":"长三角·上海","002920":"珠三角·广东",
+ "603728":"长三角·上海","603211":"长三角·上海","605133":"长三角·江苏",
 }
 def region_of(code):
     c=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
-    return HQ_REGION.get(c, "其他/待确认")
+    return HQ_REGION.get(c, "区域未标注")
 
 
 # ============================================================
@@ -1455,7 +1460,7 @@ def region_of(code):
 GLM_KEY = os.environ.get("GLM_KEY", "").strip()
 TVLY_KEY = os.environ.get("TAVILY_KEY", "").strip()
 AI_CACHE = DATA / "dossiers.json"
-AI_MAX = int(os.environ.get("AI_MAX", "3") or 3)
+AI_MAX = int(os.environ.get("AI_MAX", "8") or 8)
 REFRESH_MAX = int(os.environ.get("REFRESH_MAX", "3") or 3)   # 每次运行滚动刷新几家老档案
 # 智谱是主力通道（同一个 key，四档模型按质量排：plus 最好，flash 只写空话放最后）
 AI_MODELS = ["glm-4-plus", "glm-4-air", "glm-4-flash-250414", "glm-4-flash"]
