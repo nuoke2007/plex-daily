@@ -486,7 +486,8 @@ def discover_tesla_chain():
             _facts_nm = set(_load_chain_facts().keys())
             _with_f = [x for x in _all2 if x["name"] in _facts_nm]
             _rest2 = [x for x in _all2 if x["name"] not in _facts_nm][:12]
-            _l1 = ([x for x in leads if x.get("phase") == "fresh" and x["name"] in _facts_nm][:10]
+            _l1 = (sorted([x for x in leads if x.get("phase") == "fresh" and x["name"] in _facts_nm],
+                          key=lambda x: hashlib.md5((x["name"] + str(datetime.date.today())).encode("utf-8")).hexdigest())[:12]
                    + [x for x in leads if x.get("phase") == "fresh" and x["name"] not in _facts_nm][:2])  # T1 中优先级：已核实的优先上
             return _with_f[:40] + _rest2 + _l1
     except Exception as ex:
