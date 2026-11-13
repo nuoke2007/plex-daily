@@ -3214,32 +3214,47 @@ _INQ_RENDER_JS = """
     .then(function(j){ clearTimeout(t); return parse(j.choices[0].message.content); })
     .catch(function(e){ clearTimeout(t); throw e; });
   }
-  /* 模型返回的 JSON 经常带裸换行、尾逗号、缺收尾括号——先修再解析，修不好就抠字段，绝不把原始报错甩给用户 */
+  /* 模型返回的 JSON 常带裸换行、尾逗号、缺收尾括号：先修再解析，修不好就抠字段，绝不把原始报错甩给用户。
+     注意：本段嵌在 Python 字符串里，代码中一律不用反斜杠字符字面量，改用 charCode 判断。 */
+  function ch(c){ return c.charCodeAt(0); }
   function fixString(t){
     var out='', q=false, esc2=false;
     for(var i=0;i<t.length;i++){
-      var c=t.charAt(i);
+      var c=t.charAt(i), k=ch(c);
       if(esc2){ out+=c; esc2=false; continue; }
-      if(c==='\\'){ out+=c; esc2=true; continue; }
-      if(c==='"'){ q=!q; out+=c; continue; }
-      if(q && (c==='\n'||c==='\r')){ out+=' '; continue; }
-      if(q && c==='\t'){ out+=' '; continue; }
+      if(k===92){ out+=c; esc2=true; continue; }
+      if(k===34){ q=!q; out+=c; continue; }
+      if(q && (k===10 || k===13 || k===9)){ out+=' '; continue; }
       out+=c;
     }
     return out;
   }
-  function balance(t){
-    var d1=0,d2=0,q=false,esc2=false;
-    for(var i=0;i<t.length;i++){
+  function dropTrailingCommas(t){
+    var out='', i=0;
+    while(i<t.length){
       var c=t.charAt(i);
+      if(ch(c)===44){
+        var j=i+1;
+        while(j<t.length && (ch(t.charAt(j))===32 || ch(t.charAt(j))===10 || ch(t.charAt(j))===13 || ch(t.charAt(j))===9)) j++;
+        var nx=t.charAt(j);
+        if(ch(nx)===125 || ch(nx)===93){ i++; continue; }
+      }
+      out+=c; i++;
+    }
+    return out;
+  }
+  function balance(t){
+    var d1=0, d2=0, q=false, esc2=false;
+    for(var i=0;i<t.length;i++){
+      var c=t.charAt(i), k=ch(c);
       if(esc2){ esc2=false; continue; }
-      if(c==='\\'){ esc2=true; continue; }
-      if(c==='"'){ q=!q; continue; }
+      if(k===92){ esc2=true; continue; }
+      if(k===34){ q=!q; continue; }
       if(q) continue;
-      if(c==='{') d1++;
-      else if(c==='}') d1--;
-      else if(c==='[') d2++;
-      else if(c===']') d2--;
+      if(k===123) d1++;
+      else if(k===125) d1--;
+      else if(k===91) d2++;
+      else if(k===93) d2--;
     }
     if(q) t+='"';
     while(d2-- > 0) t+=']';
@@ -3247,34 +3262,53 @@ _INQ_RENDER_JS = """
     return t;
   }
   function repair(body){
-    var t=String(body).replace(/[\u201c\u201d]/g,'"').replace(/[\u2018\u2019]/g,"'");
-    t=fixString(t);
-    t=t.replace(/,\s*(\}|\])/g,'$1');
-    t=t.replace(/(\}|\])\s*,\s*(\}|\])/g,'$2');
+    var t=fixString(String(body));
+    t=dropTrailingCommas(t);
     t=balance(t);
-    t=t.replace(/,\s*(\}|\])/g,'$1');
-    return t;
+    return dropTrailingCommas(t);
   }
   function pick(t, k){
-    var m=t.match(new RegExp('"'+k+'"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"'));
-    return m?m[1].replace(/\\n/g,' ').replace(/\\\\"/g,'"'):'';
+    var key='"' + k + '"';
+    var i=t.indexOf(key);
+    if(i<0) return '';
+    var j=t.indexOf(':', i+key.length);
+    if(j<0) return '';
+    var p=t.indexOf('"', j);
+    if(p<0) return '';
+    var out='', esc2=false;
+    for(var x=p+1;x<t.length;x++){
+      var c=t.charAt(x), kk=ch(c);
+      if(esc2){ if(kk===110) out+=' '; else if(kk!==114) out+=c; esc2=false; continue; }
+      if(kk===92){ esc2=true; continue; }
+      if(kk===34) break;
+      out+=c;
+    }
+    var a2=0, b2=out.length;
+    while(a2<b2 && (ch(out.charAt(a2))===32 || ch(out.charAt(a2))===10 || ch(out.charAt(a2))===13)) a2++;
+    while(b2>a2 && (ch(out.charAt(b2-1))===32 || ch(out.charAt(b2-1))===10 || ch(out.charAt(b2-1))===13)) b2--;
+    return out.slice(a2,b2);
   }
   function salvage(t){
-    var o={entity:pick(t,'entity')||pick(t,'company'),code:pick(t,'code'),hq:pick(t,'hq'),
-           verdict:pick(t,'verdict')||'待验证',why:pick(t,'why'),signal:pick(t,'signal'),
-           dept:pick(t,'dept'),lever:pick(t,'lever'),opener:pick(t,'opener')};
-    if(!o.signal&&!o.why) throw new Error('模型这次没把结果说完整');
-    o.chain=[]; o.act=[]; o.verify=[]; o.exclude=[]; o.unknown=['模型返回内容不完整，下面只有概要，建议换一家同名主体重查'];
+    var o={entity:pick(t,'entity')||pick(t,'company'), code:pick(t,'code'), hq:pick(t,'hq'),
+           verdict:pick(t,'verdict')||'待验证', why:pick(t,'why'), signal:pick(t,'signal'),
+           dept:pick(t,'dept'), lever:pick(t,'lever'), opener:pick(t,'opener')};
+    if(!o.signal && !o.why) throw new Error('模型这次没把结果说完整，再点一次重查');
+    o.chain=[]; o.act=[]; o.verify=[]; o.exclude=[]; o.fromNews=[];
+    o.unknown=['模型返回不完整，这里只有概要，换一个同名主体重查能拿到完整版'];
     return o;
   }
   function parse(txt){
-    var s=String(txt||'').replace(/```json|```/g,'').trim();
-    var a=s.indexOf('{'), b=s.lastIndexOf('}');
-    if(a<0) throw new Error('模型没按格式返回');
+    var s=String(txt||'').split('`').join('').trim();
+    var a=s.indexOf('{');
+    if(a<0) throw new Error('模型没按格式返回，再点一次重查');
+    var b=s.lastIndexOf('}');
     var body=s.slice(a, b>a?b+1:s.length);
-    var tries=[body, repair(body)];
+    var tries=[body, repair(body), dropTrailingCommas(body)];
     for(var i=0;i<tries.length;i++){
-      try{ var o=JSON.parse(tries[i]); if(o&&(o.signal||o.why||o.entity)) return o; }catch(e){}
+      try{
+        var o=JSON.parse(tries[i]);
+        if(o && (o.signal || o.why || o.entity)) return o;
+      }catch(e){}
     }
     return salvage(repair(body));
   }
