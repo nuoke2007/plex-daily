@@ -1446,6 +1446,12 @@ HQ_REGION={
  "002896":"长三角·浙江","603119":"长三角·浙江","688322":"珠三角·广东","688005":"长三角·浙江",
  "605333":"长三角·江苏","301550":"长三角·浙江","603659":"长三角·上海","002920":"珠三角·广东",
  "603728":"长三角·上海","603211":"长三角·上海","605133":"长三角·江苏",
+ "002050":"长三角·浙江","002472":"长三角·浙江","601689":"长三角·浙江","300750":"华东·福建",
+ "002812":"长三角·上海","603305":"长三角·浙江","600933":"长三角·浙江","603197":"长三角·上海",
+ "002328":"长三角·上海","002850":"珠三角·广东","603596":"华东·安徽","002709":"珠三角·广东",
+ "300014":"珠三角·广东","603179":"长三角·江苏","002126":"长三角·浙江","002384":"长三角·江苏",
+ "002463":"长三角·江苏","300580":"长三角·江苏","000700":"长三角·江苏","300748":"华中·江西",
+ "301307":"西南·重庆","002594":"珠三角·广东","688017":"长三角·江苏","002048":"长三角·浙江",
 }
 def region_of(code):
     c=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
@@ -2604,13 +2610,12 @@ if _tsl:
     except Exception:
         _cf_nm = set()
     # 名单池是主线：有核实事实的 Tier2/3 全量上首页（最多 40 家），另留 6 家未核实在观察，T1 保 4 席作中优先级
-    _t2_f = [x for x in _raw if _normname(x["name"]) not in _exist and x.get("phase") != "fresh" and x["name"] in _cf_nm][:40]
-    _t2_n = [x for x in _raw if _normname(x["name"]) not in _exist and x.get("phase") != "fresh" and x["name"] not in _cf_nm][:6]
+    _keep_a = [f for f in new_findings if f.get("src") != "tesla"][:15]
+    _akey = set((f.get("sec") or "").replace(".SH", "").replace(".SZ", "").zfill(6) for f in _keep_a)
+    _t2_f = [x for x in _raw if (x.get("sec") or "") not in _akey and x.get("phase") != "fresh" and x["name"] in _cf_nm][:40]
+    _t2_n = [x for x in _raw if (x.get("sec") or "") not in _akey and x.get("phase") != "fresh" and x["name"] not in _cf_nm][:6]
     _t1 = [x for x in _raw if x.get("phase") == "fresh"][:4]
     _tsl = _t2_f + _t2_n + _t1
-    new_findings.extend(_tsl)
-    new_findings.sort(key=lambda f: _ord.get(f.get("phase"), 9))
-    _keep_a = [f for f in new_findings if f.get("src") != "tesla"][:15]
     new_findings = _keep_a + _tsl
     log(f"特斯拉供应链线索并入 {len(_tsl)} 条（核实 {len(_t2_f)}/观察 {len(_t2_n)}/T1 {len(_t1)}），本轮共 {len(new_findings)} 条")
 
