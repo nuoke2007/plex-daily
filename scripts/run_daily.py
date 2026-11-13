@@ -1115,7 +1115,7 @@ def render_product(p):
               f'<span class="lr-code">{esc(code)}</span>'
               f'<span class="lr-base">🏭 {esc(ind)}</span>'
               f'<span class="lr-sum">{esc(_brief(judge, 90))}</span>'
-              f'<span class="lr-rg">🗺️ {esc(rg)}</span>'
+              f'<span class="lr-rg">🗺️ {esc(_rfull)}</span>'
               f'<span class="lr-go">详情 →</span></a>')
     # 区域筛选条
     chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(
@@ -2596,10 +2596,12 @@ def card_for(f):
                        f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
                        f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
                        f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>')
-    rg=region_of(code, nm).split("·")[0]
+    _rfull=region_of(code, nm)
+    rg=_rfull.split("·")[0]
     _sum = _brief((ai or {}).get("signal") or f.get("title") or "", 90)
     _full = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))
-    rg=region_of(code, nm).split("·")[0]
+    _rfull=region_of(code, nm)
+    rg=_rfull.split("·")[0]
     if f.get("src") == "tesla":
         _judge_html = "<br>".join("· " + esc(x) for x in (f.get("rule") or [judge]))   # 分条显示，别挤成一大段
     else:
@@ -2621,7 +2623,7 @@ def card_for(f):
             f'<span class="lr-code">{esc(f["sec"] or ("未上市" if f.get("ukey") else ""))}</span>'
             f'<span class="lr-base">{("📍 " + esc(loc)) if loc else ""}</span>'
             f'<span class="lr-sum">{esc(_sum)}</span>'
-            f'<span class="lr-rg">🗺️ {esc(rg)}</span>'
+            f'<span class="lr-rg">🗺️ {esc(_rfull)}</span>'
             f'<span class="lr-go">详情 →</span></a>')
 # 先跑 AI 深查，再渲染卡片——否则 PLEX 卡片永远拿不到当天的档案
 def _ci_push_data():
