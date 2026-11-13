@@ -1051,7 +1051,7 @@ def render_product(p):
     from collections import OrderedDict
     by_region=OrderedDict()
     for g,judge,lev,agelab,ind,nm,h in leads:
-        reg=region_of(h.get("sec"))
+        reg=region_of(h.get("sec"), h.get("name") or "")
         by_region.setdefault(reg,[]).append((g,judge,lev,agelab,ind,nm,h))
     cards=""
     rg_order=[]
@@ -1512,13 +1512,15 @@ HQ_REGION={
  "002463":"长三角·江苏","300580":"长三角·江苏","000700":"长三角·江苏","300748":"华中·江西",
  "301307":"西南·重庆","002594":"珠三角·广东","688017":"长三角·江苏","002048":"长三角·浙江",
 }
-def region_of(code):
-    c=(code or "").replace(".SH","").replace(".SZ","").replace(".BJ","").zfill(6)
+def region_of(code, name=""):
+    c=(code or "").replace(".SH","").replace(".SZ","").replace(".BJ","").strip()
     _rm=_load_region_map()
-    if c in _rm:
-        return _rm[c]                      # 精确到省·市（按注册地）
-    if c in HQ_REGION:
-        return HQ_REGION[c].split("·")[-1]  # 老表只有大区·省，取省份
+    if c and c.isdigit() and c.zfill(6) in _rm:
+        return _rm[c.zfill(6)]              # 精确到省·市（按注册地）
+    if name and ("n:"+name) in _rm:
+        return _rm["n:"+name]               # 未上市/无代码企业按名字索引
+    if c and c.zfill(6) in HQ_REGION:
+        return HQ_REGION[c.zfill(6)].split("·")[-1]
     return "待核"
 
 
@@ -2594,10 +2596,10 @@ def card_for(f):
                        f'<div class="row"><b>杠杆点：</b>{esc(lev)}</div>'
                        f'<div class="row"><b>怎么开口：</b>{esc(hook)}</div>'
                        f'<div style="margin-top:8px"><b style="font-size:12.5px;color:#b26a00">📋 你要做（按顺序）：</b>{steps_html}</div>')
-    rg=region_of(code).split("·")[0]
+    rg=region_of(code, nm).split("·")[0]
     _sum = _brief((ai or {}).get("signal") or f.get("title") or "", 90)
     _full = re.sub(r"[\s\n]+", " ", ((ai or {}).get("signal") or f.get("title") or ""))
-    rg=region_of(code).split("·")[0]
+    rg=region_of(code, nm).split("·")[0]
     if f.get("src") == "tesla":
         _judge_html = "<br>".join("· " + esc(x) for x in (f.get("rule") or [judge]))   # 分条显示，别挤成一大段
     else:
@@ -2696,7 +2698,7 @@ n_window=len([f for f in new_findings if f.get("phase")=="window"])
 # PLEX 区域筛选条
 _plex_rg=[]
 for f in new_findings:
-    r=region_of(f.get("sec")).split("·")[0]
+    r=region_of(f.get("sec"), f.get("name") or "").split("·")[0]
     if r not in _plex_rg: _plex_rg.append(r)
 _plex_chips='<button class="rg-chip active" data-rg="全部">全部</button>'+"".join(f'<button class="rg-chip" data-rg="{esc(r)}">{esc(r)}</button>' for r in _plex_rg)
 _plex_filter_js="""
