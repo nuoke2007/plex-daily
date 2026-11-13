@@ -3270,11 +3270,18 @@ _INQ_RENDER_JS = """
   function pick(t, k){
     var key='"' + k + '"';
     var i=t.indexOf(key);
-    if(i<0) return '';
-    var j=t.indexOf(':', i+key.length);
+    var base=0;
+    if(i>=0){ base=i+key.length; }
+    else {
+      i=t.indexOf(k);
+      if(i<0) return '';
+      base=i+k.length;
+    }
+    var j=t.indexOf(':', base);
     if(j<0) return '';
     var p=t.indexOf('"', j);
     if(p<0) return '';
+    if(t.slice(base, j).length > 6) return '';   // 中间隔太远，多半是误命中
     var out='', esc2=false;
     for(var x=p+1;x<t.length;x++){
       var c=t.charAt(x), kk=ch(c);
