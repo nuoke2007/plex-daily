@@ -608,7 +608,16 @@ for kw in AUTO_KEYWORDS:
 # 按选型窗口排序：window 在前，fresh 次之，old 最后
 _ord = {"window": 0, "fresh": 1, "old": 2}
 new_findings.sort(key=lambda f: _ord.get(f.get("phase"), 9))
-new_findings = new_findings[:15]
+# 公告线索限 15 条；特斯拉供应链名单池（含核实事实的）单独保留，不被公告挤掉
+try:
+    _cf_nm = set(_load_chain_facts().keys())
+except Exception:
+    _cf_nm = set()
+_chain_f = [f for f in new_findings if f.get("src") == "tesla" and f.get("name") in _cf_nm]
+_chain_o = [f for f in new_findings if f.get("src") == "tesla" and f.get("name") not in _cf_nm][:6]
+_ann = [f for f in new_findings if f.get("src") != "tesla"][:15]
+new_findings = _ann + _chain_f + _chain_o
+log(f"名单池：特斯拉供应链带核实事实 {len(_chain_f)} 家全量上首页（公告线索 {len(_ann)} 条，其余名单 {len(_chain_o)} 条）")
 
 log(f"今日自动发现：{len(new_findings)} 条（源状态：{source_status}）")
 
@@ -1002,17 +1011,7 @@ def render_product(p):
     order={"高":0,"中":1,"低":2}
     leads.sort(key=lambda x: order[x[0]])
     total=len(leads)
-    # 首页列表：公告窗口线索最多 15 条，但特斯拉供应链名单池里“有核实事实”的不受这条截断
-    # （名单池本来就是这个雷达的主线，不能因为公告多就把它挤掉）
-    try:
-        _cf_nm=set(_load_chain_facts().keys())
-    except Exception:
-        _cf_nm=set()
-    _chain_keep=[x for x in leads if x[6].get("src")=="tesla" and x[5] in _cf_nm]
-    _other=[x for x in leads if x[6].get("src")!="tesla"][:15]
-    leads=_other+_chain_keep
-    if _chain_keep:
-        log(f"首页名单池：特斯拉供应链含核实事实 {len(_chain_keep)} 家全量上首页（其余公告线索 {len(_other)} 条）")
+    leads=leads[:15]
     # 各产品对董秘的搭线话术
     PRODUCT_ASK={
       "FTPC":"关注到贵司新基地投产/多厂扩张，希望15分钟对接制造/IT负责人交流多工厂MES/MOM标准统一",
