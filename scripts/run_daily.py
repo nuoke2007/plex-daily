@@ -3202,7 +3202,7 @@ _INQ_RENDER_JS = """
     var ctl=new AbortController(), t=setTimeout(function(){ctl.abort();}, 50000);
     var fc=facts.length?facts.map(function(x,i){return (i+1)+'. ['+x.d+' '+x.m+'] '+x.t+'。'+x.c;}).join('\\n'):'（没有检索到相关公开报道）';
     var cs=cands.length?cands.slice(0,8).map(function(x){return x.n+'（'+(x.mfg?'制造类':'非制造')+'，报道里出现'+x.c+'次）';}).join('；'):'（没有识别到同名主体）';
-    var msg='用户输入：'+(hint?name+'（补充说明：'+hint+'）':name)+'；目标产品：'+product+'；今天 2026-11-12。'
+    var msg='用户输入：'+(hint?name+'（补充说明：'+hint+'）':name)+'；目标产品：'+product+'；今天 '+new Date().toISOString().slice(0,10)+'。'
       +'股票信息：'+((codeInfo&&codeInfo.code)?(codeInfo.code+' '+codeInfo.name+' '+(codeInfo.market||'')):'未匹配到A股上市主体')+'。'
       +'新闻里出现的同名主体：'+cs+'。'
       +'\\n公开报道：\\n'+fc;
@@ -3214,11 +3214,69 @@ _INQ_RENDER_JS = """
     .then(function(j){ clearTimeout(t); return parse(j.choices[0].message.content); })
     .catch(function(e){ clearTimeout(t); throw e; });
   }
+  /* 模型返回的 JSON 经常带裸换行、尾逗号、缺收尾括号——先修再解析，修不好就抠字段，绝不把原始报错甩给用户 */
+  function fixString(t){
+    var out='', q=false, esc2=false;
+    for(var i=0;i<t.length;i++){
+      var c=t.charAt(i);
+      if(esc2){ out+=c; esc2=false; continue; }
+      if(c==='\\'){ out+=c; esc2=true; continue; }
+      if(c==='"'){ q=!q; out+=c; continue; }
+      if(q && (c==='\n'||c==='\r')){ out+=' '; continue; }
+      if(q && c==='\t'){ out+=' '; continue; }
+      out+=c;
+    }
+    return out;
+  }
+  function balance(t){
+    var d1=0,d2=0,q=false,esc2=false;
+    for(var i=0;i<t.length;i++){
+      var c=t.charAt(i);
+      if(esc2){ esc2=false; continue; }
+      if(c==='\\'){ esc2=true; continue; }
+      if(c==='"'){ q=!q; continue; }
+      if(q) continue;
+      if(c==='{') d1++;
+      else if(c==='}') d1--;
+      else if(c==='[') d2++;
+      else if(c===']') d2--;
+    }
+    if(q) t+='"';
+    while(d2-- > 0) t+=']';
+    while(d1-- > 0) t+='}';
+    return t;
+  }
+  function repair(body){
+    var t=String(body).replace(/[\u201c\u201d]/g,'"').replace(/[\u2018\u2019]/g,"'");
+    t=fixString(t);
+    t=t.replace(/,\s*(\}|\])/g,'$1');
+    t=t.replace(/(\}|\])\s*,\s*(\}|\])/g,'$2');
+    t=balance(t);
+    t=t.replace(/,\s*(\}|\])/g,'$1');
+    return t;
+  }
+  function pick(t, k){
+    var m=t.match(new RegExp('"'+k+'"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"'));
+    return m?m[1].replace(/\\n/g,' ').replace(/\\\\"/g,'"'):'';
+  }
+  function salvage(t){
+    var o={entity:pick(t,'entity')||pick(t,'company'),code:pick(t,'code'),hq:pick(t,'hq'),
+           verdict:pick(t,'verdict')||'待验证',why:pick(t,'why'),signal:pick(t,'signal'),
+           dept:pick(t,'dept'),lever:pick(t,'lever'),opener:pick(t,'opener')};
+    if(!o.signal&&!o.why) throw new Error('模型这次没把结果说完整');
+    o.chain=[]; o.act=[]; o.verify=[]; o.exclude=[]; o.unknown=['模型返回内容不完整，下面只有概要，建议换一家同名主体重查'];
+    return o;
+  }
   function parse(txt){
-    var s=String(txt||'').replace(/```/g,'').trim();
+    var s=String(txt||'').replace(/```json|```/g,'').trim();
     var a=s.indexOf('{'), b=s.lastIndexOf('}');
-    if(a<0||b<=a) throw new Error('模型没按格式返回');
-    return JSON.parse(s.slice(a,b+1));
+    if(a<0) throw new Error('模型没按格式返回');
+    var body=s.slice(a, b>a?b+1:s.length);
+    var tries=[body, repair(body)];
+    for(var i=0;i<tries.length;i++){
+      try{ var o=JSON.parse(tries[i]); if(o&&(o.signal||o.why||o.entity)) return o; }catch(e){}
+    }
+    return salvage(repair(body));
   }
 
   var busy=false;
@@ -3252,7 +3310,9 @@ _INQ_RENDER_JS = """
             showAI(o,name,items,st&&st.code,cands);
           }).catch(function(e){
             busy=false;
-            box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(raw)+'</b>：'+esc(e&&e.message||'这次没跑出来')+'。<br>'
+            var _em=String(e&&e.message||'');
+            if(/JSON|Expected|position|token|Unexpected/i.test(_em)) _em='模型这次返回的格式有问题（已自动修复一次），点下面重查即可';
+            box.innerHTML='<div style="font-size:13px;color:#5a6b7d;line-height:1.9"><b>'+esc(raw)+'</b>：'+esc(_em||'这次没跑出来')+'。<br>'
               +'<a href="javascript:void(0)" id="iqretry" style="color:#7a5af8;font-weight:700">点这里再查一次 →</a>（免费通道约 45 秒一条，等半分钟再点）'
               +(cands.length?'<div class="iq-ents" style="margin-top:10px"><b>新闻里的同名主体：</b>'
                 +cands.slice(0,6).map(function(x){return '<span class="iq-chip">'+esc(x.n)+'<span style="color:'+(x.mfg?'#0a7a45':'#8a93a0')+';margin-left:5px">'+(x.mfg?'制造':'非制造')+'</span></span>';}).join('')+'</div>':'')
