@@ -2614,7 +2614,10 @@ if _tsl:
     _akey = set((f.get("sec") or "").replace(".SH", "").replace(".SZ", "").zfill(6) for f in _keep_a)
     _t2_f = [x for x in _raw if (x.get("sec") or "") not in _akey and x.get("phase") != "fresh" and x["name"] in _cf_nm][:40]
     _t2_n = [x for x in _raw if (x.get("sec") or "") not in _akey and x.get("phase") != "fresh" and x["name"] not in _cf_nm][:6]
-    _t1 = [x for x in _raw if x.get("phase") == "fresh"][:4]
+    # T1 保留但中优先级：已核实海外项目的 T1 先上（最多 8 家），其余 T1 轮换 2 席
+    _t1_f = [x for x in _raw if x.get("phase") == "fresh" and x["name"] in _cf_nm][:8]
+    _t1_o = [x for x in _raw if x.get("phase") == "fresh" and x["name"] not in _cf_nm][:2]
+    _t1 = _t1_f + _t1_o
     _tsl = _t2_f + _t2_n + _t1
     new_findings = _keep_a + _tsl
     log(f"特斯拉供应链线索并入 {len(_tsl)} 条（核实 {len(_t2_f)}/观察 {len(_t2_n)}/T1 {len(_t1)}），本轮共 {len(new_findings)} 条")
