@@ -608,16 +608,7 @@ for kw in AUTO_KEYWORDS:
 # 按选型窗口排序：window 在前，fresh 次之，old 最后
 _ord = {"window": 0, "fresh": 1, "old": 2}
 new_findings.sort(key=lambda f: _ord.get(f.get("phase"), 9))
-# 公告线索限 15 条；特斯拉供应链名单池（含核实事实的）单独保留，不被公告挤掉
-try:
-    _cf_nm = set(_load_chain_facts().keys())
-except Exception:
-    _cf_nm = set()
-_chain_f = [f for f in new_findings if f.get("src") == "tesla" and f.get("name") in _cf_nm]
-_chain_o = [f for f in new_findings if f.get("src") == "tesla" and f.get("name") not in _cf_nm][:6]
-_ann = [f for f in new_findings if f.get("src") != "tesla"][:15]
-new_findings = _ann + _chain_f + _chain_o
-log(f"名单池：特斯拉供应链带核实事实 {len(_chain_f)} 家全量上首页（公告线索 {len(_ann)} 条，其余名单 {len(_chain_o)} 条）")
+new_findings = new_findings[:15]
 
 log(f"今日自动发现：{len(new_findings)} 条（源状态：{source_status}）")
 
@@ -2608,17 +2599,20 @@ if _tsl:
     _normname = lambda n: re.sub(r"(股份有限公司|有限责任公司|有限公司|集团|控股|股份|公司)$", "", (n or "")).strip()
     _exist = set(_normname(f.get("name")) for f in new_findings) | set(_normname(c.get("name")) for c in CASES)
     _raw = _tsl
-    _tsl = ([x for x in _tsl if _normname(x["name"]) not in _exist and x.get("phase") != "fresh"][:3]
-            + [x for x in _raw if x.get("phase") == "fresh"][:1])   # T1 保 1 席，中优先级（不参与已有个案去重）
+    try:
+        _cf_nm = set(_load_chain_facts().keys())
+    except Exception:
+        _cf_nm = set()
+    # 名单池是主线：有核实事实的 Tier2/3 全量上首页（最多 40 家），另留 6 家未核实在观察，T1 保 4 席作中优先级
+    _t2_f = [x for x in _raw if _normname(x["name"]) not in _exist and x.get("phase") != "fresh" and x["name"] in _cf_nm][:40]
+    _t2_n = [x for x in _raw if _normname(x["name"]) not in _exist and x.get("phase") != "fresh" and x["name"] not in _cf_nm][:6]
+    _t1 = [x for x in _raw if x.get("phase") == "fresh"][:4]
+    _tsl = _t2_f + _t2_n + _t1
     new_findings.extend(_tsl)
     new_findings.sort(key=lambda f: _ord.get(f.get("phase"), 9))
-    if len(new_findings) > 15:      # 供应链线索默认 3 条（Tier2/3 优先），T1 另留 1 条作中优先级
-        _t2 = [f for f in new_findings if f.get("src") == "tesla" and f.get("phase") != "fresh"][:3]
-        _t1 = [f for f in new_findings if f.get("src") == "tesla" and f.get("phase") == "fresh"][:1]
-        _keep_t = _t2 + _t1
-        _keep_a = [f for f in new_findings if f.get("src") != "tesla"][:15 - len(_keep_t)]
-        new_findings = _keep_t + _keep_a
-    log(f"特斯拉供应链线索并入 {len(_tsl)} 条，本轮共 {len(new_findings)} 条")
+    _keep_a = [f for f in new_findings if f.get("src") != "tesla"][:15]
+    new_findings = _keep_a + _tsl
+    log(f"特斯拉供应链线索并入 {len(_tsl)} 条（核实 {len(_t2_f)}/观察 {len(_t2_n)}/T1 {len(_t1)}），本轮共 {len(new_findings)} 条")
 
 _probe_sources()
 queue_pass()
