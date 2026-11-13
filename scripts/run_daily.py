@@ -3300,7 +3300,7 @@ _INQ_RENDER_JS = """
   function parse(txt){
     var s=String(txt||'').split('`').join('').trim();
     var a=s.indexOf('{');
-    if(a<0) throw new Error('模型没按格式返回，再点一次重查');
+    if(a<0) return salvage(repair(s));   // 连大括号都没有时，直接按 key: value 抠字段
     var b=s.lastIndexOf('}');
     var body=s.slice(a, b>a?b+1:s.length);
     var tries=[body, repair(body), dropTrailingCommas(body)];
