@@ -375,6 +375,40 @@ def _tesla_probe(nm, core):
 CHAIN_FACTS = {}
 
 
+CHAIN_CONTACTS = {}
+def _load_chain_contacts():
+    """读 data/chain_contacts.json：每家的董秘/证券事务代表、公开电话、邮箱、官网、注册地址（东财 F10 口径）。"""
+    global CHAIN_CONTACTS
+    if CHAIN_CONTACTS:
+        return CHAIN_CONTACTS
+    for p in (Path("data/chain_contacts.json"), Path("chain_contacts.json")):
+        try:
+            if p.exists():
+                CHAIN_CONTACTS = json.loads(p.read_text(encoding="utf-8"))
+                log(f"企业公开联系方式：载入 {len(CHAIN_CONTACTS)} 家")
+                return CHAIN_CONTACTS
+        except Exception as e:
+            log(f"联系方式载入失败 {p}: {e}")
+    return {}
+
+
+REGION_MAP = {}
+def _load_region_map():
+    """读 data/hq_region.json：股票代码 → 省·市（按注册地，东财 F10 口径）。"""
+    global REGION_MAP
+    if REGION_MAP:
+        return REGION_MAP
+    for p in (Path("data/hq_region.json"), Path("hq_region.json")):
+        try:
+            if p.exists():
+                REGION_MAP = json.loads(p.read_text(encoding="utf-8"))
+                log(f"总部省市表：载入 {len(REGION_MAP)} 家")
+                return REGION_MAP
+        except Exception as e:
+            log(f"总部省市表载入失败 {p}: {e}")
+    return {}
+
+
 def _load_chain_facts():
     """读 data/chain_facts.json：海外项目的公告/研报口径事实（基地/投资/开工/阶段/投产/产能/来源）。"""
     global CHAIN_FACTS
@@ -1372,6 +1406,29 @@ def chain_dossier(f):
         # 有公开可查的入口就用真的：谁在管这个厂、去哪查主体、园区/招聘怎么接人
         chief = _hunt[0]
         steps = _hunt[1:4] or steps
+    _cc = _load_chain_contacts().get(nm) or {}
+    if _cc:
+        _tel = _cc.get("tel") or ""
+        _mail = _cc.get("email") or ""
+        _sec = _cc.get("secretary") or ""
+        _pres = _cc.get("sec_present") or ""
+        _web = _cc.get("web") or ""
+        _addr = _cc.get("addr") or ""
+        _lines = []
+        if _sec or _pres:
+            _lines.append("联系人：" + "、".join(x for x in [_sec + ("（董事会秘书）" if _sec else ""),
+                                                          _pres + ("（证券事务代表）" if _pres else "")] if x))
+        if _tel:
+            _lines.append("电话：" + _tel)
+        if _mail:
+            _lines.append("邮箱：" + _mail)
+        if _web:
+            _lines.append("官网：" + _web)
+        if _addr:
+            _lines.append("注册地址：" + _addr)
+        _blk = "；".join(_lines)
+        steps = [f"今天就能打的电话（公开信息，董秘办口径）：{_blk}"] + steps
+        chief = (chief + f" ｜ 公开直达入口：{_blk}")
     return chief, lev, steps, (f.get("city") or "")
 
 
@@ -1456,8 +1513,13 @@ HQ_REGION={
  "301307":"西南·重庆","002594":"珠三角·广东","688017":"长三角·江苏","002048":"长三角·浙江",
 }
 def region_of(code):
-    c=(code or "").replace(".SH","").replace(".SZ","").zfill(6)
-    return HQ_REGION.get(c, "区域未标注")
+    c=(code or "").replace(".SH","").replace(".SZ","").replace(".BJ","").zfill(6)
+    _rm=_load_region_map()
+    if c in _rm:
+        return _rm[c]                      # 精确到省·市（按注册地）
+    if c in HQ_REGION:
+        return HQ_REGION[c].split("·")[-1]  # 老表只有大区·省，取省份
+    return "待核"
 
 
 # ============================================================
