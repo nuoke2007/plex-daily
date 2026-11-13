@@ -485,9 +485,10 @@ def discover_tesla_chain():
             _all2 = [x for x in leads if x.get("phase") != "fresh"]
             _facts_nm = set(_load_chain_facts().keys())
             _with_f = [x for x in _all2 if x["name"] in _facts_nm]
-            _rest2 = [x for x in _all2 if x["name"] not in _facts_nm][:10]
-            _l1 = [x for x in leads if x.get("phase") == "fresh"][:4]   # T1 单独留名额，别被 [:N] 切掉
-            return _with_f[:24] + _rest2 + _l1
+            _rest2 = [x for x in _all2 if x["name"] not in _facts_nm][:12]
+            _l1 = ([x for x in leads if x.get("phase") == "fresh" and x["name"] in _facts_nm][:10]
+                   + [x for x in leads if x.get("phase") == "fresh" and x["name"] not in _facts_nm][:2])  # T1 中优先级：已核实的优先上
+            return _with_f[:40] + _rest2 + _l1
     except Exception as ex:
         log("名单池读取失败：" + str(ex)[:60])
     system = ("你是汽车零部件行业的线索分析员，服务对象是罗克韦尔 PLEX（订阅制 SaaS MES）售前。"
